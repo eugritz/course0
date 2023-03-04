@@ -19,9 +19,7 @@ void Project0::start() {
     sf::Vector2i windowSize((mandelbrot::END.x - mandelbrot::BEGIN.x) / SCALE,
                             (mandelbrot::END.y - mandelbrot::BEGIN.y) / SCALE);
     _window.create(sf::VideoMode(windowSize.x, windowSize.y), "Project0");
-
     _mandel.create(windowSize);
-    _mandel.update();
 
     gameLoop();
 }
@@ -38,6 +36,7 @@ void Project0::gameLoop() {
                 _window.close();
         }
 
+        _mandel.stepRender();
         _window.draw(_mandel);
         _window.display();
     }

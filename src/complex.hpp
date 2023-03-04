@@ -6,17 +6,17 @@ typedef long double Real;
 
 template<typename T>
 class Complex {
-    T _re, _im;
-
 public:
-    Complex() : _re((T)0), _im((T)0) {}
-    Complex(const Complex &other) : _re(other._re), _im(other._im) {}
-    Complex(const T &re, const T &im) : _re(re), _im(im) {}
-    Complex(const T &re) : _re(re), _im((T)0) {}
+    T re, im;
+
+    Complex() : re((T)0), im((T)0) {}
+    Complex(const Complex &other) : re(other.re), im(other.im) {}
+    Complex(const T &re, const T &im) : re(re), im(im) {}
+    Complex(const T &re) : re(re), im((T)0) {}
 
     Complex operator+=(const Complex &other) {
-        _re += other._re;
-        _im += other._im;
+        re += other.re;
+        im += other.im;
         return *this;
     }
 
@@ -26,26 +26,27 @@ public:
     }
 
     Complex operator*=(const Complex &other) {
-        Complex c;
-        c._re = _re * other._re - _im * other._im;
-        c._im = _re * other._im + _im * other._re;
-
-        *this = c;
+        T r = re * other.re - im * other.im;
+        T i = re * other.im + im * other.re;
+        re = r;
+        im = i;
         return *this;
     }
 
     Complex operator*(const Complex &other) {
-        Complex c(*this);
-        return c *= other;
+        T r = re * other.re - im * other.im;
+        T i = re * other.im + im * other.re;
+        Complex c(r, i);
+        return c;
     }
 
     Complex operator=(const Complex &other) {
-        _re = other._re;
-        _im = other._im;
+        re = other.re;
+        im = other.im;
         return *this;
     }
 
     T module_sqr() const {
-        return _re * _re + _im * _im;
+        return re * re + im * im;
     }
 };
