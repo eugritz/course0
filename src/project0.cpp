@@ -6,6 +6,7 @@
 
 Project0 *Project0::_instance;
 mandelbrot::Mandelbrot _mandel;
+int _fillTime;
 
 Project0 *Project0::getInstance() {
     if (_instance == nullptr)
@@ -19,14 +20,14 @@ void Project0::start() {
     sf::Vector2i windowSize((mandelbrot::END.x - mandelbrot::BEGIN.x) / SCALE,
                             (mandelbrot::END.y - mandelbrot::BEGIN.y) / SCALE);
     _window.create(sf::VideoMode(windowSize.x, windowSize.y), "Project0");
-    _mandel.create(windowSize);
 
+    _mandel.create(windowSize);
     gameLoop();
 }
 
 void Project0::gameLoop() {
     while (_window.isOpen()) {
-        int timeElapsed = _clock.restart().asMilliseconds();
+        long long timeElapsed = _clock.restart().asMicroseconds();
 
         _window.clear();
 
@@ -36,7 +37,14 @@ void Project0::gameLoop() {
                 _window.close();
         }
 
-        _mandel.stepRender();
+        if (!_mandel.isRendered())
+            _mandel.stepRender();
+        else if (!_mandel.isFilled() && _fillTime > FILL_TIMEOUT) {
+            _mandel.stepFill();
+            _fillTime = 0;
+        } else if (!_mandel.isFilled())
+            _fillTime += timeElapsed;
+
         _window.draw(_mandel);
         _window.display();
     }

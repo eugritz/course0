@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 #define SCALE 0.005
+#define FILL_TIMEOUT 100
 
 class Project0 {
     static Project0 *_instance;

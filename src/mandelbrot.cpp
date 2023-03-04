@@ -3,7 +3,6 @@
 #include <cmath>
 
 #include "project0.h"
-#include "complex.hpp"
 
 using namespace mandelbrot;
 
@@ -34,6 +33,10 @@ void Mandelbrot::create(sf::Vector2i size, sf::Vector2<Real> begin,
     _done = new unsigned[_size.x * _size.y];
     _data = new unsigned[_size.x * _size.y];
 
+    _rendered = false;
+    _filled = false;
+    _fill_step = 0;
+
     for (unsigned x = 0; x < _size.x; x++) {
         _queue.push(x);
         _queue.push((_size.y - 1) * _size.x + x);
@@ -49,22 +52,42 @@ void Mandelbrot::setStartPosition(Real x, Real y) {
     _start.y = y;
 }
 
+bool Mandelbrot::isRendered() const {
+    return _rendered;
+}
+
+bool Mandelbrot::isFilled() const {
+    return _filled;
+}
+
 void Mandelbrot::stepRender() {
-    if (!_queue.empty()) {
+    if (!_rendered && !_queue.empty()) {
         scan(_queue.front());
         _queue.pop();
         return;
     }
 
-    for (unsigned i = 0; i < _size.x * _size.y - 1; i++) {
-        if (_done[i] & LOADED && !(_done[i+1] & LOADED)) {
-            unsigned int x1 = i % _size.x, y1 = i / _size.x;
-            unsigned int x2 = (i + 1) % _size.x, y2 = (i + 1) / _size.x;
+    _rendered = true;
+}
+
+void Mandelbrot::stepFill() {
+    if (_filled || _fill_step >= _size.x * _size.y - 1) {
+        _filled = true;
+        return;
+    }
+
+    unsigned i = 0, j = _fill_step;
+    for (; i < _size.x; i++) {
+        if (_done[i + j] & LOADED && !(_done[i + j + 1] & LOADED)) {
+            unsigned int x1 = (i + j) % _size.x, y1 = (i + j) / _size.x;
+            unsigned int x2 = (i + j + 1) % _size.x, y2 = (i + j + 1) / _size.x;
             sf::Color clr = _image.getPixel(x1, y1);
             _image.setPixel(x2, y2, clr);
-            _done[i + 1] |= LOADED;
+            _done[i + j + 1] |= LOADED;
         }
     }
+
+    _fill_step += i;
 }
 
 void Mandelbrot::render() {
@@ -84,6 +107,8 @@ void Mandelbrot::render() {
             _image.setPixel(imageX, imageY, colorFromResult(iter));
         }
     }
+
+    _rendered = true;
 }
 
 void Mandelbrot::draw(sf::RenderTarget &target, sf::RenderStates states) const {
