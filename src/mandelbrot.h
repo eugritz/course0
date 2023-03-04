@@ -5,8 +5,8 @@
 
 namespace mandelbrot {
 
-const sf::Vector2<Real> BEGIN(-2.5, -1.5);
-const sf::Vector2<Real> END(2, 1.5);
+const sf::Vector2<Real> BEGIN(-2, -1.25);
+const sf::Vector2<Real> END(1, 1.25);
 
 class Mandelbrot : public sf::Drawable {
     sf::Vector2i _size;

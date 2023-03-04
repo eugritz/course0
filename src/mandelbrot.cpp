@@ -1,4 +1,6 @@
 #include "mandelbrot.h"
+
+#include "project0.h"
 #include "complex.hpp"
 
 using namespace mandelbrot;
@@ -21,7 +23,7 @@ void Mandelbrot::create(sf::Vector2i size, sf::Vector2<Real> begin,
 }
 
 void Mandelbrot::update() {
-    const Real epsilon = 0.005;
+    const Real epsilon = SCALE;
     const int iters = 250;
     const int ballout = 10000;
 
