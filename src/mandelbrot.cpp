@@ -12,6 +12,11 @@ const int iters = 500;
 sf::Color colorFromResult(unsigned int res);
 
 Mandelbrot::Mandelbrot() {}
+Mandelbrot::Mandelbrot(sf::Vector2i size, sf::Vector2<Real> origin,
+                       Real radius) {
+    create(size, origin, radius);
+}
+
 Mandelbrot::Mandelbrot(sf::Vector2i size, sf::Vector2<Real> begin,
                        sf::Vector2<Real> end) {
     create(size, begin, end);
@@ -20,6 +25,21 @@ Mandelbrot::Mandelbrot(sf::Vector2i size, sf::Vector2<Real> begin,
 Mandelbrot::~Mandelbrot() {
     if (_done) delete _done;
     if (_data) delete _data;
+}
+
+void Mandelbrot::create(sf::Vector2i size, sf::Vector2<Real> origin,
+                        Real radius) {
+    _size = size;
+    _begin.x = origin.x - radius;
+    _begin.y = origin.y + radius;
+    _end.x = origin.x + radius;
+    _end.y = origin.y - radius;
+
+    stepX = (_end.x - _begin.x) / size.x;
+    stepY = (_end.y - _begin.y) / size.y;
+
+    _image.create(_size.x, _size.y);
+    reset();
 }
 
 void Mandelbrot::create(sf::Vector2i size, sf::Vector2<Real> begin,

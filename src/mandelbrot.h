@@ -29,10 +29,12 @@ class Mandelbrot : public sf::Drawable {
 
 public:
     Mandelbrot();
+    Mandelbrot(sf::Vector2i size, sf::Vector2<Real> origin, Real radius);
     Mandelbrot(sf::Vector2i size, sf::Vector2<Real> begin = BEGIN,
                sf::Vector2<Real> end = END);
     ~Mandelbrot();
 
+    void create(sf::Vector2i size, sf::Vector2<Real> origin, Real radius);
     void create(sf::Vector2i size, sf::Vector2<Real> begin = BEGIN,
                 sf::Vector2<Real> end = END);
     void reset();

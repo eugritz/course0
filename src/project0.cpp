@@ -17,6 +17,9 @@ Project0 *Project0::getInstance() {
 void Project0::start() {
     if (_window.isOpen()) return;
 
+    sf::Vector2<Real> p1(-0.5, 0);
+    Real rad1 = 1.5;
+
     sf::Vector2i windowSize(WIDTH, HEIGHT);
     _window.create(sf::VideoMode(windowSize.x, windowSize.y), "Project0");
 
