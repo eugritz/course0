@@ -76,6 +76,18 @@ void Mandelbrot::reset() {
     }
 }
 
+sf::Vector2i Mandelbrot::getSize() const {
+    return _size;
+}
+
+sf::Vector2<Real> Mandelbrot::getFirstPoint() const {
+    return _begin;
+}
+
+sf::Vector2<Real> Mandelbrot::getSecondPoint() const {
+    return _end;
+}
+
 bool Mandelbrot::isRendered() const {
     return _rendered;
 }

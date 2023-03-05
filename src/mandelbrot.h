@@ -39,6 +39,10 @@ public:
                 sf::Vector2<Real> end = END);
     void reset();
 
+    sf::Vector2i getSize() const;
+    sf::Vector2<Real> getFirstPoint() const;
+    sf::Vector2<Real> getSecondPoint() const;
+
     bool isRendered() const;
     bool isFilled() const;
 
