@@ -6,7 +6,7 @@
 
 using namespace mandelbrot;
 
-const Real epsilon = SCALE;
+Real stepX, stepY;
 const int iters = 500;
 
 sf::Color colorFromResult(unsigned int res);
@@ -27,7 +27,9 @@ void Mandelbrot::create(sf::Vector2i size, sf::Vector2<Real> begin,
     _size = size;
     _begin = begin;
     _end = end;
-    setStartPosition(_begin.x, _begin.y);
+
+    stepX = (_end.x - _begin.x) / size.x;
+    stepY = (_end.y - _begin.y) / size.y;
 
     _image.create(_size.x, _size.y);
     reset();
@@ -52,11 +54,6 @@ void Mandelbrot::reset() {
         _queue.push(y * _size.x);
         _queue.push((y + 1) * _size.x - 1);
     }
-}
-
-void Mandelbrot::setStartPosition(Real x, Real y) {
-    _start.x = x;
-    _start.y = y;
 }
 
 bool Mandelbrot::isRendered() const {
@@ -99,13 +96,12 @@ void Mandelbrot::stepFill() {
 
 void Mandelbrot::render() {
     sf::Color color;
-    int imageX = (_begin.x - _start.x) / epsilon,
+    int imageX = 0, imageY = 0;
+    for (Real currX = _begin.x; currX <= _end.x; currX += stepX, imageX++) {
         imageY = 0;
-    for (Real currX = _start.x; currX <= _end.x; currX += epsilon, imageX++) {
-        imageY = std::abs(_begin.y - _start.y) / epsilon;
         while (imageX >= _size.x)
             imageX--;
-        for (Real currY = _start.y; currY <= _end.y; currY += epsilon, imageY++) {
+        for (Real currY = _begin.y; currY <= _end.y; currY += stepX, imageY++) {
             while (imageY >= _size.y)
                 imageY--;
 
@@ -180,8 +176,8 @@ int Mandelbrot::iterate(Real x, Real y) {
 
 int Mandelbrot::iterate(unsigned nth, unsigned col, unsigned row) {
     Complex<Real> curr;
-    Real x = _begin.x + col * epsilon;
-    Real y = _begin.y + row * epsilon;
+    Real x = _begin.x + col * stepX;
+    Real y = _begin.y + row * stepY;
     return iterate(x, y);
 }
 

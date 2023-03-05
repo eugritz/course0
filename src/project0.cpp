@@ -17,8 +17,7 @@ Project0 *Project0::getInstance() {
 void Project0::start() {
     if (_window.isOpen()) return;
 
-    sf::Vector2i windowSize((mandelbrot::END.x - mandelbrot::BEGIN.x) / SCALE,
-                            (mandelbrot::END.y - mandelbrot::BEGIN.y) / SCALE);
+    sf::Vector2i windowSize(WIDTH, HEIGHT);
     _window.create(sf::VideoMode(windowSize.x, windowSize.y), "Project0");
 
     _mandel.create(windowSize);

@@ -11,12 +11,12 @@ namespace mandelbrot {
 const int QUEUED = 1;
 const int LOADED = 2;
 
-const sf::Vector2<Real> BEGIN(-2, -1.25);
-const sf::Vector2<Real> END(1, 1.25);
+const sf::Vector2<Real> BEGIN(-2, 1.25);
+const sf::Vector2<Real> END(1, -1.25);
 
 class Mandelbrot : public sf::Drawable {
-    sf::Vector2<Real> _start;
-    sf::Vector2<Real> _begin, _end;
+    sf::Vector2<Real> _begin;
+    sf::Vector2<Real> _end;
 
     sf::Vector2i _size;
     sf::Image _image;
@@ -37,7 +37,6 @@ public:
                 sf::Vector2<Real> end = END);
     void reset();
 
-    void setStartPosition(Real x, Real y);
     bool isRendered() const;
     bool isFilled() const;
 

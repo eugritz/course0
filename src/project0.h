@@ -2,7 +2,9 @@
 
 #include <SFML/Graphics.hpp>
 
-#define SCALE 0.005
+#define WIDTH 600
+#define HEIGHT 500
+
 #define FILL_TIMEOUT 100
 
 class Project0 {
