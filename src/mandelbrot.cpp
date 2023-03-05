@@ -18,8 +18,8 @@ Mandelbrot::Mandelbrot(sf::Vector2i size, sf::Vector2<Real> begin,
 }
 
 Mandelbrot::~Mandelbrot() {
-    delete _done;
-    delete _data;
+    if (_done) delete _done;
+    if (_data) delete _data;
 }
 
 void Mandelbrot::create(sf::Vector2i size, sf::Vector2<Real> begin,
@@ -28,8 +28,14 @@ void Mandelbrot::create(sf::Vector2i size, sf::Vector2<Real> begin,
     _begin = begin;
     _end = end;
     setStartPosition(_begin.x, _begin.y);
-    _image.create(_size.x, _size.y);
 
+    _image.create(_size.x, _size.y);
+    reset();
+}
+
+void Mandelbrot::reset() {
+    if (_done) delete _done;
+    if (_data) delete _data;
     _done = new unsigned[_size.x * _size.y];
     _data = new unsigned[_size.x * _size.y];
 
@@ -37,6 +43,7 @@ void Mandelbrot::create(sf::Vector2i size, sf::Vector2<Real> begin,
     _filled = false;
     _fill_step = 0;
 
+    std::queue<unsigned>().swap(_queue);
     for (unsigned x = 0; x < _size.x; x++) {
         _queue.push(x);
         _queue.push((_size.y - 1) * _size.x + x);

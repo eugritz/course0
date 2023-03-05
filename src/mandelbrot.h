@@ -35,6 +35,7 @@ public:
 
     void create(sf::Vector2i size, sf::Vector2<Real> begin = BEGIN,
                 sf::Vector2<Real> end = END);
+    void reset();
 
     void setStartPosition(Real x, Real y);
     bool isRendered() const;
