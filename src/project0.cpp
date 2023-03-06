@@ -9,6 +9,7 @@
 
 Project0 *Project0::_instance;
 
+int _zoomPoint = 0;
 mandelbrot::Mandelbrot _mandel;
 sf::RectangleShape _zoomFrame;
 
@@ -27,22 +28,13 @@ Project0 *Project0::getInstance() {
 void Project0::start() {
     if (_window.isOpen()) return;
 
-    sf::Vector2<Real> p1(-0.5, 0);
-    Real rad1 = 1.5;
-    sf::Vector2<Real> p2(-1.36022, 0.0653316);
-    Real rad2 = 0.25;
-
     sf::Vector2i windowSize(WIDTH, HEIGHT);
     _window.create(sf::VideoMode(windowSize.x, windowSize.y), "Project0");
-    _mandel.create(windowSize, p1, rad1);
 
-    ZoomArea zoom = calculateZoomArea(_mandel, p2, rad2);
-    _zoomFrame.setSize(zoom.size);
-    _zoomFrame.setOrigin(_zoomFrame.getSize() / 2.0f);
-    _zoomFrame.setPosition(zoom.position);
-    _zoomFrame.setFillColor(sf::Color::Transparent);
-    _zoomFrame.setOutlineColor(sf::Color::Red);
-    _zoomFrame.setOutlineThickness(2.0f);
+    _mandel.create(windowSize, ZOOM_POINTS[_zoomPoint].position,
+            ZOOM_POINTS[_zoomPoint].radius);
+    _zoomPoint++;
+    setupZoomFrame();
 
     gameLoop();
 }
@@ -72,7 +64,20 @@ void Project0::gameLoop() {
 
         _window.draw(_mandel);
 
-        if (!_frameComplete && _mandel.isFilled()) {
+        bool lastPoint = _zoomPoint == POINTS_COUNT;
+        if (_frameComplete || (_mandel.isFilled() && lastPoint)) {
+            _frameComplete = false;
+            _frameBlinkCount = 0;
+            _frameBlinkTime = 0;
+
+            if (lastPoint)
+                _zoomPoint = 0;
+            sf::Vector2i windowSize(WIDTH, HEIGHT);
+            _mandel.create(windowSize, ZOOM_POINTS[_zoomPoint].position,
+                    ZOOM_POINTS[_zoomPoint].radius);
+            _zoomPoint++;
+            setupZoomFrame();
+        } else if (_mandel.isFilled()) {
             if (_frameShow) {
                 _window.draw(_zoomFrame);
                 _frameComplete = _frameBlinkCount > FRAME_BLINK_COUNT;
@@ -85,19 +90,20 @@ void Project0::gameLoop() {
             }
 
             _frameBlinkTime += timeElapsed.asMicroseconds();
-        } else if (_frameComplete) {
-            _frameComplete = false;
-            _frameBlinkCount = 0;
-            _frameBlinkTime = 0;
-
-            sf::Vector2<Real> p2(-1.36022, 0.0653316);
-            Real rad2 = 0.25;
-
-            sf::Vector2i windowSize(WIDTH, HEIGHT);
-            _mandel.create(windowSize, p2, rad2);
-            _zoomFrame.setSize(sf::Vector2f(0, 0));
         }
 
         _window.display();
     }
+}
+
+void Project0::setupZoomFrame() {
+    ZoomArea zoom = calculateZoomArea(_mandel, ZOOM_POINTS[_zoomPoint].position,
+            ZOOM_POINTS[_zoomPoint].radius);
+
+    _zoomFrame.setSize(zoom.size);
+    _zoomFrame.setOrigin(_zoomFrame.getSize() / 2.0f);
+    _zoomFrame.setPosition(zoom.position);
+    _zoomFrame.setFillColor(sf::Color::Transparent);
+    _zoomFrame.setOutlineColor(sf::Color::Red);
+    _zoomFrame.setOutlineThickness(2.0f);
 }

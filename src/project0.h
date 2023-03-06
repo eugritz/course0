@@ -20,4 +20,7 @@ public:
 
     void start();
     void gameLoop();
+
+private:
+    void setupZoomFrame();
 };
