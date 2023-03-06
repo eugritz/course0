@@ -216,8 +216,8 @@ int Mandelbrot::iterate(unsigned nth, unsigned col, unsigned row) {
 
 sf::Color colorFromResult(unsigned res) {
     sf::Color clr = sf::Color::Black;
-    clr.r = clr.r + 10 * res < 0x100 ? clr.r + 5 * res : 0xff;
-    clr.g = clr.g + 4 * res < 0x100 ? clr.g + 5 * res : 0xff;
-    clr.b = clr.b + 2 * res < 0x100 ? clr.b + 5 * res : 0xff;
+    clr.r = clr.r + 10 * res < 0x100 ? clr.r + 8 * res : 0xbb;
+    clr.g = clr.g + 2 * res < 0x100 ? clr.g + 2 * res : 0xbb;
+    clr.b = clr.b + 5 * res < 0x100 ? clr.b + 5 * res : 0xbb;
     return clr;
 }

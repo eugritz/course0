@@ -9,7 +9,7 @@
 
 Project0 *Project0::_instance;
 
-int _zoomPoint = 0;
+int _zoomPoint = ZOOM_START;
 mandelbrot::Mandelbrot _mandel;
 sf::RectangleShape _zoomFrame;
 
@@ -64,7 +64,7 @@ void Project0::gameLoop() {
 
         _window.draw(_mandel);
 
-        bool lastPoint = _zoomPoint == POINTS_COUNT;
+        bool lastPoint = _zoomPoint == ZOOM_COUNT;
         if (_frameComplete || (_mandel.isFilled() && lastPoint)) {
             _frameComplete = false;
             _frameBlinkCount = 0;
@@ -106,4 +106,4 @@ void Project0::setupZoomFrame() {
     _zoomFrame.setFillColor(sf::Color::Transparent);
     _zoomFrame.setOutlineColor(sf::Color::Red);
     _zoomFrame.setOutlineThickness(2.0f);
-}
+} 
