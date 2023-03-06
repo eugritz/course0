@@ -1,6 +1,7 @@
 #include "mandelbrot.h"
 
 #include <cmath>
+#include <cstring>
 
 #include "project0.h"
 
@@ -56,14 +57,14 @@ void Mandelbrot::create(sf::Vector2i size, sf::Vector2<Real> begin,
 }
 
 void Mandelbrot::reset() {
-    if (_done) delete _done;
-    if (_data) delete _data;
-    _done = new unsigned[_size.x * _size.y];
-    _data = new unsigned[_size.x * _size.y];
+    if (_done) std::memset(_done, 0, _size.x * _size.y * sizeof(unsigned));
+    else _done = new unsigned[_size.x * _size.y];
+    if (_data) std::memset(_data, 0, _size.x * _size.y * sizeof(unsigned));
+    else _data = new unsigned[_size.x * _size.y];
 
     _rendered = false;
     _filled = false;
-    _fill_step = 0;
+    _fillStep = 0;
 
     std::queue<unsigned>().swap(_queue);
     for (unsigned x = 0; x < _size.x; x++) {
@@ -107,12 +108,12 @@ void Mandelbrot::stepRender() {
 }
 
 void Mandelbrot::stepFill() {
-    if (_filled || _fill_step >= _size.x * _size.y - 1) {
+    if (_filled || _fillStep >= _size.x * _size.y - 1) {
         _filled = true;
         return;
     }
 
-    unsigned i = 0, j = _fill_step;
+    unsigned i = 0, j = _fillStep;
     for (; i < _size.x; i++) {
         if (_done[i + j] & LOADED && !(_done[i + j + 1] & LOADED)) {
             unsigned int x1 = (i + j) % _size.x, y1 = (i + j) / _size.x;
@@ -123,7 +124,7 @@ void Mandelbrot::stepFill() {
         }
     }
 
-    _fill_step += i;
+    _fillStep += i;
 }
 
 void Mandelbrot::render() {

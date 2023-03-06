@@ -14,7 +14,9 @@ sf::RectangleShape _zoomFrame;
 
 int _fillTime;
 int _frameBlinkTime;
+int _frameBlinkCount;
 bool _frameShow;
+bool _frameComplete;
 
 Project0 *Project0::getInstance() {
     if (_instance == nullptr)
@@ -70,16 +72,30 @@ void Project0::gameLoop() {
 
         _window.draw(_mandel);
 
-        if (_mandel.isFilled()) {
-            if (_frameShow)
+        if (!_frameComplete && _mandel.isFilled()) {
+            if (_frameShow) {
                 _window.draw(_zoomFrame);
+                _frameComplete = _frameBlinkCount > FRAME_BLINK_COUNT;
+            }
 
             if (_frameBlinkTime >= FRAME_BLINK_TIMEOUT) {
                 _frameShow = !_frameShow;
                 _frameBlinkTime = 0;
+                _frameBlinkCount++;
             }
 
             _frameBlinkTime += timeElapsed.asMicroseconds();
+        } else if (_frameComplete) {
+            _frameComplete = false;
+            _frameBlinkCount = 0;
+            _frameBlinkTime = 0;
+
+            sf::Vector2<Real> p2(-1.36022, 0.0653316);
+            Real rad2 = 0.25;
+
+            sf::Vector2i windowSize(WIDTH, HEIGHT);
+            _mandel.create(windowSize, p2, rad2);
+            _zoomFrame.setSize(sf::Vector2f(0, 0));
         }
 
         _window.display();

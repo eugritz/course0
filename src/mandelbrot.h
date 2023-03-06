@@ -25,7 +25,7 @@ class Mandelbrot : public sf::Drawable {
     std::queue<unsigned> _queue;
 
     bool _rendered, _filled;
-    unsigned _fill_step;
+    unsigned _fillStep;
 
 public:
     Mandelbrot();
