@@ -6,7 +6,7 @@
 #define HEIGHT 500
 
 #define FILL_TIMEOUT 100
-#define FRAME_BLINK_COUNT 7
+#define FRAME_BLINK_COUNT 8
 #define FRAME_BLINK_TIMEOUT 450000
 
 class Project0 {

@@ -17,7 +17,6 @@ int _fillTime;
 int _frameBlinkTime;
 int _frameBlinkCount;
 bool _frameShow;
-bool _frameComplete;
 
 Project0 *Project0::getInstance() {
     if (_instance == nullptr)
@@ -64,11 +63,12 @@ void Project0::gameLoop() {
 
         _window.draw(_mandel);
 
+        bool frameComplete = _frameBlinkCount > FRAME_BLINK_COUNT;
         bool lastPoint = _zoomPoint == ZOOM_COUNT;
-        if (_frameComplete || (_mandel.isFilled() && lastPoint)) {
-            _frameComplete = false;
+        if (frameComplete || (_mandel.isFilled() && lastPoint)) {
             _frameBlinkCount = 0;
             _frameBlinkTime = 0;
+            _frameShow = false;
 
             if (lastPoint)
                 _zoomPoint = 0;
@@ -80,7 +80,6 @@ void Project0::gameLoop() {
         } else if (_mandel.isFilled()) {
             if (_frameShow) {
                 _window.draw(_zoomFrame);
-                _frameComplete = _frameBlinkCount > FRAME_BLINK_COUNT;
             }
 
             if (_frameBlinkTime >= FRAME_BLINK_TIMEOUT) {
