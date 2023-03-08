@@ -8,7 +8,7 @@ public:
     virtual ~Scene() = default;
 
     virtual void update(sf::Time elapsed) = 0;
-    virtual void draw(sf::RenderStates states) const = 0;
+    virtual void draw(sf::RenderStates states) = 0;
     virtual bool handleEvent(const sf::Event &event) = 0;
 
 protected:

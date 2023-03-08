@@ -25,7 +25,7 @@ public:
     IntroScene(sf::RenderTarget *target);
 
     void update(sf::Time elapsed);
-    void draw(sf::RenderStates states) const;
+    void draw(sf::RenderStates states);
     bool handleEvent(const sf::Event &event);
 
 private:

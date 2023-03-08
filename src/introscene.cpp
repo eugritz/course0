@@ -57,7 +57,7 @@ void IntroScene::update(sf::Time elapsed) {
 }
 
 
-void IntroScene::draw(sf::RenderStates states) const {
+void IntroScene::draw(sf::RenderStates states) {
     _target->draw(_mandel, states);
     if (_frameShow) {
         _target->draw(_zoomFrame, states);
