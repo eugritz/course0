@@ -2,7 +2,7 @@
 
 ZoomArea calculateZoomArea(const mandelbrot::Mandelbrot &mandel, 
                            sf::Vector2<Real> origin, Real radius) {
-    sf::Vector2i size = mandel.getSize();
+    sf::Vector2u size = mandel.getSize();
     sf::Vector2<Real> begin = mandel.getFirstPoint();
     sf::Vector2<Real> end = mandel.getSecondPoint();
 

@@ -18,7 +18,7 @@ class Mandelbrot : public sf::Drawable {
     sf::Vector2<Real> _begin;
     sf::Vector2<Real> _end;
 
-    sf::Vector2i _size;
+    sf::Vector2u _size;
     sf::Image _image;
 
     unsigned *_done, *_data;
@@ -29,17 +29,17 @@ class Mandelbrot : public sf::Drawable {
 
 public:
     Mandelbrot();
-    Mandelbrot(sf::Vector2i size, sf::Vector2<Real> origin, Real radius);
-    Mandelbrot(sf::Vector2i size, sf::Vector2<Real> begin = BEGIN,
+    Mandelbrot(sf::Vector2u size, sf::Vector2<Real> origin, Real radius);
+    Mandelbrot(sf::Vector2u size, sf::Vector2<Real> begin = BEGIN,
                sf::Vector2<Real> end = END);
     ~Mandelbrot();
 
-    void create(sf::Vector2i size, sf::Vector2<Real> origin, Real radius);
-    void create(sf::Vector2i size, sf::Vector2<Real> begin = BEGIN,
+    void create(sf::Vector2u size, sf::Vector2<Real> origin, Real radius);
+    void create(sf::Vector2u size, sf::Vector2<Real> begin = BEGIN,
                 sf::Vector2<Real> end = END);
     void reset();
 
-    sf::Vector2i getSize() const;
+    sf::Vector2u getSize() const;
     sf::Vector2<Real> getFirstPoint() const;
     sf::Vector2<Real> getSecondPoint() const;
 

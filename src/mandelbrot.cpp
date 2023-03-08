@@ -13,12 +13,12 @@ const int iters = 500;
 sf::Color colorFromResult(unsigned int res);
 
 Mandelbrot::Mandelbrot() {}
-Mandelbrot::Mandelbrot(sf::Vector2i size, sf::Vector2<Real> origin,
+Mandelbrot::Mandelbrot(sf::Vector2u size, sf::Vector2<Real> origin,
                        Real radius) {
     create(size, origin, radius);
 }
 
-Mandelbrot::Mandelbrot(sf::Vector2i size, sf::Vector2<Real> begin,
+Mandelbrot::Mandelbrot(sf::Vector2u size, sf::Vector2<Real> begin,
                        sf::Vector2<Real> end) {
     create(size, begin, end);
 }
@@ -28,7 +28,7 @@ Mandelbrot::~Mandelbrot() {
     if (_data) delete _data;
 }
 
-void Mandelbrot::create(sf::Vector2i size, sf::Vector2<Real> origin,
+void Mandelbrot::create(sf::Vector2u size, sf::Vector2<Real> origin,
                         Real radius) {
     _size = size;
     _begin.x = origin.x - radius;
@@ -43,7 +43,7 @@ void Mandelbrot::create(sf::Vector2i size, sf::Vector2<Real> origin,
     reset();
 }
 
-void Mandelbrot::create(sf::Vector2i size, sf::Vector2<Real> begin,
+void Mandelbrot::create(sf::Vector2u size, sf::Vector2<Real> begin,
                         sf::Vector2<Real> end) {
     _size = size;
     _begin = begin;
@@ -77,7 +77,7 @@ void Mandelbrot::reset() {
     }
 }
 
-sf::Vector2i Mandelbrot::getSize() const {
+sf::Vector2u Mandelbrot::getSize() const {
     return _size;
 }
 
