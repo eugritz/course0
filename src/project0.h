@@ -5,12 +5,11 @@
 #define WIDTH 600
 #define HEIGHT 500
 
-#define FILL_TIMEOUT 100
-#define FRAME_BLINK_COUNT 8
-#define FRAME_BLINK_TIMEOUT 450000
+class Scene;
 
 class Project0 {
     static Project0 *_instance;
+    Scene *_scene;
 
     sf::RenderWindow _window;
     sf::Clock _clock;
@@ -20,7 +19,4 @@ public:
 
     void start();
     void gameLoop();
-
-private:
-    void setupZoomFrame();
 };
