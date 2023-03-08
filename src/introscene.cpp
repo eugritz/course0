@@ -4,14 +4,14 @@
 #include "project0.h"
 #include "zoomarea.h"
 
-IntroScene::IntroScene(sf::Vector2i size) {
-    _zoomPoint = 0;
+IntroScene::IntroScene(sf::RenderTarget *target) : Scene(target) {
+    _zoomPoint = ZOOM_START;
     _frameBlinkTime = 0;
     _frameBlinkCount = 0;
     _frameShow = false;
     _finishing = false;
 
-    _mandel.create(size, ZOOM_POINTS[_zoomPoint].position,
+    _mandel.create(target->getSize(), ZOOM_POINTS[_zoomPoint].position,
             ZOOM_POINTS[_zoomPoint].radius);
     _zoomPoint++;
     setupZoomFrame();
@@ -38,8 +38,7 @@ void IntroScene::update(sf::Time elapsed) {
 
         if (lastPoint)
             _zoomPoint = 0;
-        sf::Vector2i windowSize(WIDTH, HEIGHT);
-        _mandel.create(windowSize, ZOOM_POINTS[_zoomPoint].position,
+        _mandel.create(_target->getSize(), ZOOM_POINTS[_zoomPoint].position,
                 ZOOM_POINTS[_zoomPoint].radius);
         _zoomPoint++;
         setupZoomFrame();
@@ -58,10 +57,10 @@ void IntroScene::update(sf::Time elapsed) {
 }
 
 
-void IntroScene::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-    target.draw(_mandel, states);
+void IntroScene::draw(sf::RenderStates states) const {
+    _target->draw(_mandel, states);
     if (_frameShow) {
-        target.draw(_zoomFrame, states);
+        _target->draw(_zoomFrame, states);
     }
 }
 

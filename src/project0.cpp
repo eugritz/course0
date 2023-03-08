@@ -17,7 +17,7 @@ Project0 *Project0::getInstance() {
 void Project0::start() {
     if (_window.isOpen()) return;
     _window.create(sf::VideoMode(WIDTH, HEIGHT), "Project0");
-    _scene = new IntroScene({ WIDTH, HEIGHT });
+    _scene = new IntroScene(&_window);
     gameLoop();
 }
 
@@ -43,7 +43,7 @@ void Project0::gameLoop() {
 
         if (_scene != nullptr) {
             _scene->update(timeElapsed);
-            _scene->draw(_window, sf::RenderStates::Default);
+            _scene->draw(sf::RenderStates::Default);
         }
 
         _window.display();
