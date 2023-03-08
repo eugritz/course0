@@ -10,7 +10,7 @@
 class Scene;
 
 enum GameEvent {
-    INTRO_FINISHED
+    INTRO_FINISHED,
 };
 
 class Project0 {

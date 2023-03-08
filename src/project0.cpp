@@ -3,8 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "introscene.h"
-#include "mandelbrot.h"
-#include "zoomarea.h"
+#include "menuscene.h"
 
 Project0 *Project0::_instance;
 
@@ -54,7 +53,7 @@ void Project0::handleGameEvent(GameEvent event) {
     switch (event) {
         case INTRO_FINISHED:
             delete _scene;
-            _scene = nullptr;
+            _scene = new MenuScene(&_window);
             break;
     };
 }
