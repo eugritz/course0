@@ -29,15 +29,36 @@ void Project0::gameLoop() {
 
         sf::Event event;
         while (_window.pollEvent(event)) {
-            if (!_scene->handleEvent(event))
+            if (_scene != nullptr && !_scene->handleEvent(event))
                 continue;
             if (event.type == sf::Event::Closed)
                 _window.close();
         }
 
-        _scene->update(timeElapsed);
-        _scene->draw(_window, sf::RenderStates::Default);
+        while (!_eventBus.empty()) {
+            GameEvent gameEvent = _eventBus.front();
+            handleGameEvent(gameEvent);
+            _eventBus.pop();
+        }
+
+        if (_scene != nullptr) {
+            _scene->update(timeElapsed);
+            _scene->draw(_window, sf::RenderStates::Default);
+        }
 
         _window.display();
     }
+}
+
+void Project0::handleGameEvent(GameEvent event) {
+    switch (event) {
+        case INTRO_FINISHED:
+            delete _scene;
+            _scene = nullptr;
+            break;
+    };
+}
+
+void Project0::postEvent(GameEvent event) {
+    _eventBus.push(event);
 }

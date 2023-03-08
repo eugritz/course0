@@ -1,6 +1,7 @@
 #include "introscene.h"
 
 #include "mandelbrot.h"
+#include "project0.h"
 #include "zoomarea.h"
 
 IntroScene::IntroScene(sf::Vector2i size) {
@@ -8,6 +9,7 @@ IntroScene::IntroScene(sf::Vector2i size) {
     _frameBlinkTime = 0;
     _frameBlinkCount = 0;
     _frameShow = false;
+    _finishing = false;
 
     _mandel.create(size, ZOOM_POINTS[_zoomPoint].position,
             ZOOM_POINTS[_zoomPoint].radius);
@@ -64,13 +66,24 @@ void IntroScene::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 }
 
 bool IntroScene::handleEvent(const sf::Event &event) {
+    if (event.type == sf::Event::KeyPressed) {
+        if (event.key.code == sf::Keyboard::Enter ||
+            event.key.code == sf::Keyboard::Escape ||
+            event.key.code == sf::Keyboard::Space) {
+            _finishing = true;
+        }
+    } else if (event.type == sf::Event::KeyReleased) {
+        if (_finishing) {
+            Project0::getInstance()->postEvent(INTRO_FINISHED);
+            _finishing = false;
+        }
+    }
     return true;
 }
 
 void IntroScene::setupZoomFrame() {
     ZoomArea zoom = calculateZoomArea(_mandel, ZOOM_POINTS[_zoomPoint].position,
             ZOOM_POINTS[_zoomPoint].radius);
-
     _zoomFrame.setSize(zoom.size);
     _zoomFrame.setOrigin(_zoomFrame.getSize() / 2.0f);
     _zoomFrame.setPosition(zoom.position);

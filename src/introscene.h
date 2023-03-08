@@ -21,6 +21,7 @@ class IntroScene : public Scene {
     int _frameBlinkTime;
     int _frameBlinkCount;
     bool _frameShow;
+    bool _finishing;
 
 public:
     IntroScene(sf::Vector2i size);
