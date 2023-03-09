@@ -1,6 +1,9 @@
 #include "menuscene.h"
 
+#include <cmath>
+
 #include "fragrect.hpp"
+#include "resources.hpp"
 
 MenuScene::MenuScene(sf::RenderTarget *target) : Scene(target) {
     _colorOffset = 0.f;
@@ -12,19 +15,8 @@ MenuScene::MenuScene(sf::RenderTarget *target) : Scene(target) {
     _background.setPosition(_target->getSize().x / 2.f,
                             _target->getSize().y / 2.f);
 
-    const std::string vertexShader = \
-    "uniform float off;"
-    "void main() {" \
-    "    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;" \
-    "    gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;" \
-    "    gl_FrontColor = vec4(" \
-    "        (cos(2.0 * gl_Position.x - 0.5 + 1.5 + off) + 1.0) / 2.5f," \
-    "        (cos(2.0 * gl_Position.x - 0.5       + off) + 1.0) / 2.5f," \
-    "        (cos(2.0 * gl_Position.x - 0.5 - 1.0 + off) + 1.0) / 2.5f," \
-    "        1.0" \
-    "    );" \
-    "}";
-    _borderShader.loadFromMemory(vertexShader, sf::Shader::Vertex);
+    const std::string vertexSource = RESOURCE(border_vert);
+    _borderShader.loadFromMemory(vertexSource, sf::Shader::Vertex);
     _borderShader.setUniform("off", _colorOffset);
 }
 
@@ -66,6 +58,8 @@ void MenuScene::draw(sf::RenderStates states) {
     _target->draw(r4, &_borderShader);
 
     _colorOffset += 0.0001f;
+    if (_colorOffset > 2.f * M_PI)
+        _colorOffset = 0.f;
     _borderShader.setUniform("off", _colorOffset);
 }
 
