@@ -40,22 +40,22 @@ void MenuScene::draw(sf::RenderStates states) {
     float margin = 10.f;
     float thickness = 5.f;
 
-    FragmentRectangleShape r1(sf::Vector2f(size.x - 2.f * margin, thickness), 2, 1);
+    FragmentRectangleShape r1(sf::Vector2f(size.x - 2.f * margin, thickness), 10, 1);
     r1.setFillColor(sf::Color::White);
     r1.setOrigin(r1.getSize().x / 2.f, 0.f);
     r1.setPosition(center.x, center.y - size.y / 2.f + margin);
 
-    FragmentRectangleShape r2(sf::Vector2f(size.x - 2.f * margin, thickness), 2, 1);
+    FragmentRectangleShape r2(sf::Vector2f(size.x - 2.f * margin, thickness), 10, 1);
     r2.setFillColor(sf::Color::White);
     r2.setOrigin(r2.getSize().x / 2.f, r2.getSize().y);
     r2.setPosition(center.x, center.y + size.y / 2.f - margin);
 
-    FragmentRectangleShape r3(sf::Vector2f(thickness, size.y - 2.f * margin), 1, 2);
+    FragmentRectangleShape r3(sf::Vector2f(thickness, size.y - 2.f * margin), 1, 10);
     r3.setFillColor(sf::Color::White);
     r3.setOrigin(r3.getSize().x, r3.getSize().y / 2.f);
     r3.setPosition(center.x + size.x / 2.f - margin, center.y);
 
-    FragmentRectangleShape r4(sf::Vector2f(thickness, size.y - 2.f * margin), 1, 2);
+    FragmentRectangleShape r4(sf::Vector2f(thickness, size.y - 2.f * margin), 1, 10);
     r4.setFillColor(sf::Color::White);
     r4.setOrigin(r4.getSize().x - thickness, r4.getSize().y / 2.f);
     r4.setPosition(center.x - size.x / 2.f + margin, center.y);
