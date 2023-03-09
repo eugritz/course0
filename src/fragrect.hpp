@@ -7,7 +7,8 @@ class FragmentRectangleShape : public sf::Shape {
     int _fx, _fy;
 
 public:
-    FragmentRectangleShape(sf::Vector2f size, int fragX, int fragY) {
+    FragmentRectangleShape(sf::Vector2f size = {0, 0}, int fragX = 1,
+            int fragY = 1) {
         _size = size;
         _fx = fragX;
         _fy = fragY;
@@ -15,7 +16,19 @@ public:
     }
 
     const sf::Vector2f &getSize() const {
+        sf::RectangleShape as;
         return _size;
+    }
+
+    void setSize(const sf::Vector2f &size) {
+        _size = size;
+        update();
+    }
+
+    void setFragments(int fragX, int fragY) {
+        _fx = fragX;
+        _fy = fragY;
+        update();
     }
 
     virtual std::size_t getPointCount() const {
