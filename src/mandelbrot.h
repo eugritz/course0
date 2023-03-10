@@ -34,6 +34,7 @@ public:
                sf::Vector2<Real> end = END);
     ~Mandelbrot();
 
+    void init();
     void create(sf::Vector2u size, sf::Vector2<Real> origin, Real radius);
     void create(sf::Vector2u size, sf::Vector2<Real> begin = BEGIN,
                 sf::Vector2<Real> end = END);
