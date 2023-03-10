@@ -51,6 +51,10 @@ void Project0::gameLoop() {
 
 void Project0::handleGameEvent(GameEvent event) {
     switch (event) {
+        case INTRO_STARTED:
+            delete _scene;
+            _scene = new IntroScene(&_window);
+            break;
         case INTRO_FINISHED:
             delete _scene;
             _scene = new MenuScene(&_window);

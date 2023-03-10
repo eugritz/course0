@@ -10,6 +10,7 @@
 class Scene;
 
 enum GameEvent {
+    INTRO_STARTED,
     INTRO_FINISHED,
 };
 

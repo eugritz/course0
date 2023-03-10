@@ -31,8 +31,8 @@ public:
     sf::Text &operator[](std::size_t index);
     const sf::Text &operator[](std::size_t index) const;
 
-    void addItem(const sf::String &title);
-    void fillItem(const sf::String &title);
+    std::size_t addItem(const sf::String &title);
+    std::size_t fillItem(const sf::String &title);
 
     std::size_t getItemCount() const;
     sf::Vector2f getSize() const;

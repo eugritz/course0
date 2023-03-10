@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "fragrect.hpp"
+#include "project0.h"
 #include "resources.hpp"
 
 const float margin = MENU_BORDER_MARGIN;
@@ -12,12 +13,13 @@ const float width = MENU_BORDER_WIDTH;
 MenuScene::MenuScene(sf::RenderTarget *target) : Scene(target) {
     _colorOffsetTimeout = 0;
     _colorOffset = 0.f;
-
     _inputBlinking = false;
     _inputBlinkingSwitch = false;
     _inputBlinkingTimeout = 0;
     _inputControl = false;
     _inputAlt = false;
+    _focusedItemIndex = 0;
+    _focusedItemFound = false;
 
     const std::string vertexSource = RESOURCE(border_vert);
     _borderShader.loadFromMemory(vertexSource, sf::Shader::Vertex);
@@ -45,12 +47,12 @@ void MenuScene::update(sf::Time elapsed) {
     }
 
     if (_inputBlinking && _inputBlinkingSwitch) {
-        sf::String input = _menu[INPUT].getString();
-        _menu[INPUT].setString(input + "_");
+        sf::String input = _inputText->getString();
+        _inputText->setString(input + "_");
         _inputBlinkingSwitch = false;
     } else if (!_inputBlinking && _inputBlinkingSwitch) {
-        sf::String input = _menu[INPUT].getString();
-        _menu[INPUT].setString(input.substring(0, input.getSize() - 1));
+        sf::String input = _inputText->getString();
+        _inputText->setString(input.substring(0, input.getSize() - 1));
         _inputBlinkingSwitch = false;
     }
 
@@ -80,7 +82,7 @@ bool MenuScene::handleEvent(const sf::Event &event) {
     bool blocked = _inputControl || _inputAlt;
 
     if (!blocked && event.type == sf::Event::TextEntered) {
-        sf::String input = _menu[INPUT].getString();
+        sf::String input = _inputText->getString();
         if (event.text.unicode == 8) {
             _input = _input.substring(0, _input.getSize() - 1);
         } else if (event.text.unicode > 31) {
@@ -89,11 +91,16 @@ bool MenuScene::handleEvent(const sf::Event &event) {
             return true;
         }
 
-        _menu[INPUT].setString(PROMPT + _input);
+        _inputText->setString(PROMPT + _input);
         _inputBlinkingTimeout = 0;
         _inputBlinking = false;
-        interactiveInput();
+        inputHint();
     } else if (event.type == sf::Event::KeyPressed) {
+        if (event.key.code == sf::Keyboard::Enter) {
+            if (_focusedItemFound)
+                _items[_focusedItemIndex].callback();
+        }
+
         if (event.key.control)
             _inputControl = true;
         else if (event.key.alt)
@@ -105,20 +112,6 @@ bool MenuScene::handleEvent(const sf::Event &event) {
             _inputAlt = false;
     }
     return true;
-}
-
-void MenuScene::interactiveInput() {
-    _menu[INTRO].setStyle(sf::Text::Regular);
-    _menu[GRAPH].setStyle(sf::Text::Regular);
-    _menu[AUTHOR].setStyle(sf::Text::Regular);
-
-    if (_input == "1") {
-        _menu[INTRO].setStyle(sf::Text::Underlined);
-    } else if (_input == "2") {
-        _menu[GRAPH].setStyle(sf::Text::Underlined);
-    } else if (_input == "3") {
-        _menu[AUTHOR].setStyle(sf::Text::Underlined);
-    }
 }
 
 void MenuScene::setupBorders(const sf::Vector2f &size,
@@ -166,23 +159,66 @@ bool MenuScene::setupMenu(const sf::Vector2f &size,
 
     _menu.fillItem(L"Выберите пункт меню из следующего списка:");
     _menu.fillItem(L"");
-    _menu.fillItem(L"1) Заставка");
-    _menu.fillItem(L"2) Графики уравнений");
-    _menu.fillItem(L"3) Сведения об авторе");
-    _menu.fillItem(L"");
-    _menu.fillItem(PROMPT);
 
-    _menu[SILLY].setString(L"(c) RETRO VIBES!!! awooo woof woof UwU");
-    _menu[SILLY].setFillColor(sf::Color(70, 70, 70));
+    addItem({ L"1) Заставка", []() {
+        Project0::getInstance()->postEvent(INTRO_STARTED);
+    }});
+    addItem({ L"2) Графики уравнений", []() {
+        // TODO: graphs scene
+    }});
+    addItem({ L"3) Сведения об авторе", []() {
+        // TODO: author info scene/dialog
+    }});
+
+    _menu.fillItem(L"");
+    std::size_t inputIndex = _menu.fillItem(PROMPT);
+    _inputText = &_menu[inputIndex];
+
+    const std::size_t silly = MENU_ITEM_COUNT - 1;
+    _menu[silly].setString(L"(c) RETRO VIBES!!! awooo woof woof UwU");
+    _menu[silly].setFillColor(sf::Color(70, 70, 70));
 
     sf::Vector2f menuSize = _menu.getSize();
     menuSize = _menu.setFixedSize(sf::Vector2f(
-                size.x - margin * 2.f - width * 4.f,
-                menuSize.y
+        size.x - margin * 2.f - width * 4.f,
+        menuSize.y
     ));
-
     _menu.setOrigin(menuSize / 2.f);
     _menu.setPosition(center);
-
     return true;
+}
+
+void MenuScene::inputHint() {
+    std::size_t found = 0;
+    for (auto it = _items.begin(); it != _items.end(); it++) {
+        bool same = true;
+        std::size_t i = 0;
+        while (i < _input.getSize() && i < it->title.getSize()) {
+            if (_input[i] != it->title[i]) {
+                same = false;
+                break;
+            }
+            i++;
+        }
+
+        sf::Text *item = &_menu[it->itemIndex];
+        if (i > 0 && same) {
+            item->setStyle(sf::Text::Underlined);
+            _focusedItemFound = found == 0;
+            if (_focusedItemFound)
+                _focusedItemIndex = it - _items.begin();
+            found++;
+        } else {
+            item->setStyle(sf::Text::Regular);
+        }
+    }
+
+    if (found == 0) {
+        _focusedItemFound = false;
+    }
+}
+
+void MenuScene::addItem(MenuItem item) {
+    item.itemIndex = _menu.fillItem(item.title);
+    _items.push_back(item);
 }

@@ -2,6 +2,9 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <functional>
+#include <vector>
+
 #include "fragrect.hpp"
 #include "menucontainer.h"
 #include "scene.h"
@@ -14,6 +17,12 @@
 #define MENU_ITEM_COUNT 15
 #define MENU_ITEM_FONT_SIZE 14
 #define MENU_ITEM_INDENT 2.f
+
+struct MenuItem {
+    sf::String title;
+    std::function<void()> callback;
+    std::size_t itemIndex;
+};
 
 class MenuScene : public Scene {
     const sf::String PROMPT = "> ";
@@ -28,6 +37,7 @@ class MenuScene : public Scene {
     sf::Font _itemFont;
 
     sf::String _input;
+    sf::Text *_inputText;
     bool _inputBlinking;
     bool _inputBlinkingSwitch;
     int _inputBlinkingTimeout;
@@ -35,13 +45,9 @@ class MenuScene : public Scene {
     bool _inputControl;
     bool _inputAlt;
 
-    enum MenuTextOptions {
-        INTRO   = 2,
-        GRAPH,
-        AUTHOR,
-        INPUT   = 6,
-        SILLY   = MENU_ITEM_COUNT - 1,
-    };
+    std::vector<MenuItem> _items;
+    std::size_t _focusedItemIndex;
+    bool _focusedItemFound;
 
 public:
     MenuScene(sf::RenderTarget *target);
@@ -51,7 +57,9 @@ public:
     bool handleEvent(const sf::Event &event);
 
 private:
-    void interactiveInput();
     void setupBorders(const sf::Vector2f &size, const sf::Vector2f &center);
     bool setupMenu(const sf::Vector2f &size, const sf::Vector2f &center);
+
+    void inputHint();
+    void addItem(MenuItem item);
 };

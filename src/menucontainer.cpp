@@ -42,7 +42,7 @@ const sf::Text &MenuContainer::operator[](std::size_t index) const {
     return _items[index];
 }
 
-void MenuContainer::addItem(const sf::String &title) {
+std::size_t MenuContainer::addItem(const sf::String &title) {
     sf::RectangleShape a;
     sf::Text item(title, _font, _characterSize);
     sf::Vector2f position(
@@ -50,14 +50,17 @@ void MenuContainer::addItem(const sf::String &title) {
     );
     item.setPosition(_position + position);
     _items.push_back(item);
+    return _items.size() - 1;
 }
 
-void MenuContainer::fillItem(const sf::String &title) {
+std::size_t MenuContainer::fillItem(const sf::String &title) {
     if (_current < _items.size()) {
         sf::Text item(title, _font, _characterSize);
         _items[_current].setString(title);
         _current++;
+        return _current-1;
     }
+    return -1;
 }
 
 std::size_t MenuContainer::getItemCount() const {
