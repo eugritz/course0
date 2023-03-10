@@ -19,8 +19,8 @@ MenuScene::MenuScene(sf::RenderTarget *target) : Scene(target) {
     _inputBlinkingTimeout = 0;
     _inputControl = false;
     _inputAlt = false;
-    _focusedItemIndex = 0;
-    _focusedItemFound = false;
+    _inputFocusedItem = 0;
+    _inputFocusedFound = false;
 
     const std::string vertexSource = RESOURCE(border_vert);
     _borderShader.loadFromMemory(vertexSource, sf::Shader::Vertex);
@@ -89,34 +89,15 @@ bool MenuScene::handleEvent(const sf::Event &event) {
     bool blocked = _inputControl || _inputAlt;
 
     if (!blocked && event.type == sf::Event::TextEntered) {
-        sf::String input = _inputText->getString();
-        if (event.text.unicode == 8) {
-            _input = _input.substring(0, _input.getSize() - 1);
-        } else if (event.text.unicode > 31) {
-            _input += event.text.unicode;
-        } else {
-            return true;
-        }
-
-        _inputText->setString(PROMPT + _input);
-        _inputBlinkingTimeout = 0;
-        _inputBlinking = false;
-        inputHint();
+        onTextEntered(event.text);
     } else if (event.type == sf::Event::KeyPressed) {
-        if (event.key.code == sf::Keyboard::Enter) {
-            if (_focusedItemFound)
-                _items[_focusedItemIndex].callback();
-        }
-
-        if (event.key.control)
-            _inputControl = true;
-        else if (event.key.alt)
-            _inputAlt = true;
+        onKeyPressed(event.key);
     } else if (event.type == sf::Event::KeyReleased) {
-        if (event.key.control)
-            _inputControl = false;
-        else if (event.key.alt)
-            _inputAlt = false;
+        onKeyReleased(event.key);
+    } else if (event.type == sf::Event::MouseMoved) {
+        onMouseMoved(event.mouseMove);
+    } else if (event.type == sf::Event::MouseButtonPressed) {
+        onMouseButtonPressed(event.mouseButton);
     }
     return true;
 }
@@ -195,33 +176,92 @@ bool MenuScene::setupMenu(const sf::Vector2f &size,
     return true;
 }
 
+void MenuScene::onTextEntered(const sf::Event::TextEvent &event) {
+    sf::String input = _inputText->getString();
+    if (event.unicode == 8) {
+        _input = _input.substring(0, _input.getSize() - 1);
+    } else if (event.unicode > 31) {
+        _input += event.unicode;
+    } else {
+        return;
+    }
+
+    _inputText->setString(PROMPT + _input);
+    _inputBlinkingTimeout = 0;
+    _inputBlinking = false;
+    inputHint();
+}
+
+void MenuScene::onKeyPressed(const sf::Event::KeyEvent &event) {
+    if (event.code == sf::Keyboard::Enter) {
+        if (_inputFocusedFound)
+            _items[_inputFocusedItem].callback();
+    }
+
+    if (event.control)
+        _inputControl = true;
+    else if (event.alt)
+        _inputAlt = true;
+}
+
+void MenuScene::onKeyReleased(const sf::Event::KeyEvent &event) {
+    if (event.control)
+        _inputControl = false;
+    else if (event.alt)
+        _inputAlt = false;
+}
+
+void MenuScene::onMouseMoved(const sf::Event::MouseMoveEvent &event) {
+    bool focused = false;
+    for (auto it = _items.begin(); it != _items.end(); it++) {
+        sf::Text *item = &_menu[it->itemIndex];
+        sf::Vector2f cursor(event.x, event.y);
+        sf::FloatRect bounds = item->getGlobalBounds();
+        if (!focused && bounds.contains(cursor)) {
+            item->setStyle(item->getStyle() | sf::Text::Bold);
+            _cursorFocusedItem = it - _items.begin();
+            focused = true;
+        } else {
+            item->setStyle(item->getStyle() & ~sf::Text::Bold);
+        }
+    }
+    _cursorFocusedFound = focused;
+}
+
+void MenuScene::onMouseButtonPressed(const sf::Event::MouseButtonEvent &event) {
+    if (event.button == sf::Mouse::Button::Left) {
+        if (_cursorFocusedFound)
+            _items[_cursorFocusedItem].callback();
+    }
+}
+
 void MenuScene::inputHint() {
     std::size_t found = 0;
     for (auto it = _items.begin(); it != _items.end(); it++) {
-        bool same = true;
+        bool startsWith = true;
         std::size_t i = 0;
         while (i < _input.getSize() && i < it->title.getSize()) {
             if (_input[i] != it->title[i]) {
-                same = false;
+                startsWith = false;
                 break;
             }
             i++;
         }
 
         sf::Text *item = &_menu[it->itemIndex];
-        if (i > 0 && same) {
-            item->setStyle(sf::Text::Underlined);
-            _focusedItemFound = found == 0;
-            if (_focusedItemFound)
-                _focusedItemIndex = it - _items.begin();
+        if (i > 0 && startsWith) {
+            item->setStyle(item->getStyle() | sf::Text::Underlined);
+            _inputFocusedFound = found == 0;
+            if (_inputFocusedFound)
+                _inputFocusedItem = it - _items.begin();
             found++;
         } else {
-            item->setStyle(sf::Text::Regular);
+            item->setStyle(item->getStyle() & ~sf::Text::Underlined);
         }
     }
 
     if (found == 0) {
-        _focusedItemFound = false;
+        _inputFocusedFound = false;
     }
 }
 

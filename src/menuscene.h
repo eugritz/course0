@@ -48,8 +48,10 @@ class MenuScene : public Scene {
     bool _inputAlt;
 
     std::vector<MenuItem> _items;
-    std::size_t _focusedItemIndex;
-    bool _focusedItemFound;
+    std::size_t _inputFocusedItem;
+    bool _inputFocusedFound;
+    std::size_t _cursorFocusedItem;
+    bool _cursorFocusedFound;
 
 public:
     MenuScene(sf::RenderTarget *target);
@@ -61,6 +63,12 @@ public:
 private:
     void setupBorders(const sf::Vector2f &size, const sf::Vector2f &center);
     bool setupMenu(const sf::Vector2f &size, const sf::Vector2f &center);
+
+    void onTextEntered(const sf::Event::TextEvent &event);
+    void onKeyPressed(const sf::Event::KeyEvent &event);
+    void onKeyReleased(const sf::Event::KeyEvent &event);
+    void onMouseMoved(const sf::Event::MouseMoveEvent &event);
+    void onMouseButtonPressed(const sf::Event::MouseButtonEvent &event);
 
     void inputHint();
     void addItem(MenuItem item);
