@@ -55,9 +55,10 @@ public:
     void stepRender();
     void stepFill();
     void render();
-    void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 
 private:
+    void draw(sf::RenderTarget &target, sf::RenderStates states) const;
+
     int load(unsigned nth, unsigned x, unsigned y);
     void push(unsigned nth);
     void scan(unsigned nth);
