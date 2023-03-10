@@ -32,7 +32,7 @@ MenuScene::MenuScene(sf::RenderTarget *target) : Scene(target) {
     _background.setPosition(center);
 
     setupBorders(size, center);
-    setupText(size, center);
+    setupMenu(size, center);
 }
 
 void MenuScene::update(sf::Time elapsed) {
@@ -40,7 +40,7 @@ void MenuScene::update(sf::Time elapsed) {
         _colorOffset = 0.f;
     if (_colorOffsetTimeout > MENU_COLOR_OFFSET_TIMEOUT) {
         _colorOffsetTimeout = 0;
-        _colorOffset += 0.0001f;
+        _colorOffset += MENU_COLOR_OFFSET_STEP;
         _borderShader.setUniform("off", _colorOffset);
     }
 
@@ -73,24 +73,26 @@ void MenuScene::draw(sf::RenderStates states) {
     _target->draw(_r3, &_borderShader);
     _target->draw(_r4, &_borderShader);
 
-    size_t menuOpts = sizeof(_menu) / sizeof(sf::Text);
-    for (int i = 0; i < menuOpts; i++) {
-        _target->draw(_menu[i]);
-    }
+    _target->draw(_menu);
 }
 
 bool MenuScene::handleEvent(const sf::Event &event) {
-    if (!_inputControl && !_inputAlt && event.type == sf::Event::TextEntered) {
-        sf::String input = _menu[3].getString();
+    bool blocked = _inputControl || _inputAlt;
+
+    if (!blocked && event.type == sf::Event::TextEntered) {
+        sf::String input = _menu[INPUT].getString();
         if (event.text.unicode == 8) {
             _input = _input.substring(0, _input.getSize() - 1);
-        } else {
+        } else if (event.text.unicode > 31) {
             _input += event.text.unicode;
+        } else {
+            return true;
         }
 
         _menu[INPUT].setString(PROMPT + _input);
         _inputBlinkingTimeout = 0;
         _inputBlinking = false;
+        interactiveInput();
     } else if (event.type == sf::Event::KeyPressed) {
         if (event.key.control)
             _inputControl = true;
@@ -103,6 +105,20 @@ bool MenuScene::handleEvent(const sf::Event &event) {
             _inputAlt = false;
     }
     return true;
+}
+
+void MenuScene::interactiveInput() {
+    _menu[INTRO].setStyle(sf::Text::Regular);
+    _menu[GRAPH].setStyle(sf::Text::Regular);
+    _menu[AUTHOR].setStyle(sf::Text::Regular);
+
+    if (_input == "1") {
+        _menu[INTRO].setStyle(sf::Text::Underlined);
+    } else if (_input == "2") {
+        _menu[GRAPH].setStyle(sf::Text::Underlined);
+    } else if (_input == "3") {
+        _menu[AUTHOR].setStyle(sf::Text::Underlined);
+    }
 }
 
 void MenuScene::setupBorders(const sf::Vector2f &size,
@@ -132,44 +148,41 @@ void MenuScene::setupBorders(const sf::Vector2f &size,
     _r4.setPosition(center.x - size.x / 2.f + margin, center.y);
 }
 
-void MenuScene::setupText(const sf::Vector2f &size,
+bool MenuScene::setupMenu(const sf::Vector2f &size,
                           const sf::Vector2f &center) {
     if (!_itemFont.loadFromFile("FiraMono-Regular.ttf")) {
         std::cerr << "ERROR: Couldn't load font \"FiraMono-Regular.ttf\"\n";
+        return false;
     }
+
     _itemFont.setSmooth(true);
     sf::Vector2f corner(
             center.x - size.x / 2.f + margin * 2.f + width * 2.f,
             center.y - size.y / 2.f + margin * 2.f + width * 2.f
     );
 
-    _menu[INTRO].setFont(_itemFont);
-    _menu[INTRO].setString(L"1) Заставка");
-    _menu[INTRO].setCharacterSize(14);
-    _menu[INTRO].setFillColor(sf::Color::White);
-    _menu[INTRO].setPosition(corner);
+    _menu.create(MENU_ITEM_COUNT, _itemFont, MENU_ITEM_FONT_SIZE);
+    _menu.setIndent(MENU_ITEM_INDENT);
 
-    _menu[GRAPH].setFont(_itemFont);
-    _menu[GRAPH].setString(L"2) Графики уравнений");
-    _menu[GRAPH].setCharacterSize(14);
-    _menu[GRAPH].setFillColor(sf::Color::White);
-    _menu[GRAPH].setPosition(corner + sf::Vector2f(0.f, 16.f));
+    _menu.fillItem(L"Выберите пункт меню из следующего списка:");
+    _menu.fillItem(L"");
+    _menu.fillItem(L"1) Заставка");
+    _menu.fillItem(L"2) Графики уравнений");
+    _menu.fillItem(L"3) Сведения об авторе");
+    _menu.fillItem(L"");
+    _menu.fillItem(PROMPT);
 
-    _menu[AUTHOR].setFont(_itemFont);
-    _menu[AUTHOR].setString(L"3) Сведения об авторе");
-    _menu[AUTHOR].setCharacterSize(14);
-    _menu[AUTHOR].setFillColor(sf::Color::White);
-    _menu[AUTHOR].setPosition(corner + sf::Vector2f(0.f, 32.f));
-
-    _menu[INPUT].setFont(_itemFont);
-    _menu[INPUT].setString(PROMPT);
-    _menu[INPUT].setCharacterSize(14);
-    _menu[INPUT].setFillColor(sf::Color::White);
-    _menu[INPUT].setPosition(corner + sf::Vector2f(0.f, 48.f));
-
-    _menu[SILLY].setFont(_itemFont);
-    _menu[SILLY].setString("(c) EPIC RETRO VIBES!!!\nwoof woof awoooo UwU");
-    _menu[SILLY].setCharacterSize(14);
+    _menu[SILLY].setString(L"(c) RETRO VIBES!!! awooo woof woof UwU");
     _menu[SILLY].setFillColor(sf::Color(70, 70, 70));
-    _menu[SILLY].setPosition(corner + sf::Vector2f(0.f, 192.f));
+
+    sf::Vector2f menuSize = _menu.getSize();
+    menuSize = _menu.setFixedSize(sf::Vector2f(
+                size.x - margin * 2.f - width * 4.f,
+                menuSize.y
+    ));
+
+    _menu.setOrigin(menuSize / 2.f);
+    _menu.setPosition(center);
+
+    return true;
 }
