@@ -43,7 +43,6 @@ const sf::Text &MenuContainer::operator[](std::size_t index) const {
 }
 
 std::size_t MenuContainer::addItem(const sf::String &title) {
-    sf::RectangleShape a;
     sf::Text item(title, _font, _characterSize);
     sf::Vector2f position(
             0, _items.size() * _characterSize + _items.size() * _indent
