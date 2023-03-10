@@ -151,7 +151,7 @@ bool MenuScene::setupMenu(const sf::Vector2f &size,
     addItem({ L"1) Заставка", []() {
         Project0::getInstance()->postEvent(INTRO_STARTED);
     }});
-    addItem({ L"2) Графики уравнений", []() {
+    addItem({ L"2) Графики функций", []() {
         // TODO: graphs scene
     }});
     addItem({ L"3) Сведения об авторе", []() {
