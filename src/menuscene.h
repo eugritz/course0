@@ -11,6 +11,7 @@
 
 #define MENU_BORDER_MARGIN 10.f
 #define MENU_BORDER_WIDTH 5.f
+#define MENU_CHAR_DRAWN_TIMEOUT 7000
 #define MENU_COLOR_OFFSET_STEP 0.001f
 #define MENU_COLOR_OFFSET_TIMEOUT 1000
 #define MENU_INPUT_BLINKING_TIMEOUT 500000
@@ -35,6 +36,7 @@ class MenuScene : public Scene {
 
     MenuContainer _menu;
     sf::Font _itemFont;
+    int _nextCharTimeout;
 
     sf::String _input;
     sf::Text *_inputText;

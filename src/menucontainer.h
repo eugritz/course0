@@ -5,11 +5,14 @@
 #include <vector>
 
 class MenuContainer : public sf::Drawable {
+    const sf::String CARRIAGE = L"▉"; // U+2589
+
     sf::Vector2f _position;
     sf::Vector2f _origin;
     sf::Vector2f _size;
     bool _isSizeFixed;
 
+    std::size_t _shown;
     std::vector<sf::Text> _items;
     std::size_t _current;
 
@@ -43,6 +46,8 @@ public:
 
     const sf::Vector2f &setFixedSize(const sf::Vector2f &size);
     void resetSize();
+
+    void update();
 
 private:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const;

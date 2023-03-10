@@ -31,6 +31,7 @@ void MenuContainer::reset() {
     _current = 0;
     _indent = 0.f;
     _isSizeFixed = false;
+    _shown = 0;
     _items.clear();
 }
 
@@ -108,9 +109,28 @@ void MenuContainer::resetSize() {
     _isSizeFixed = false;
 }
 
+void MenuContainer::update() {
+    _shown++;
+}
+
 void MenuContainer::draw(sf::RenderTarget &target,
                          sf::RenderStates states) const {
-    for (auto it : _items) {
-        target.draw(it);
+    std::size_t shown = 0;
+    for (auto it = _items.begin(); it != _items.end(); it++) {
+        sf::Text shadow(*it);
+        sf::String s = shadow.getString();
+        if (_shown - shown > 0) {
+            sf::String tmp = s.substring(0, _shown - shown);
+            if (_shown - shown <= s.getSize())
+                tmp += CARRIAGE;
+            shadow.setString(tmp);
+            target.draw(shadow);
+        }
+
+        if (_shown - shown > s.getSize()) {
+            shown += s.getSize();
+        } else {
+            break;
+        }
     }
 }

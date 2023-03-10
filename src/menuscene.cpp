@@ -13,6 +13,7 @@ const float width = MENU_BORDER_WIDTH;
 MenuScene::MenuScene(sf::RenderTarget *target) : Scene(target) {
     _colorOffsetTimeout = 0;
     _colorOffset = 0.f;
+    _nextCharTimeout = 0.f;
     _inputBlinking = false;
     _inputBlinkingSwitch = false;
     _inputBlinkingTimeout = 0;
@@ -38,6 +39,11 @@ MenuScene::MenuScene(sf::RenderTarget *target) : Scene(target) {
 }
 
 void MenuScene::update(sf::Time elapsed) {
+    if (_nextCharTimeout > MENU_CHAR_DRAWN_TIMEOUT) {
+        _nextCharTimeout = 0;
+        _menu.update();
+    }
+
     if (_colorOffset > 2.f * M_PI)
         _colorOffset = 0.f;
     if (_colorOffsetTimeout > MENU_COLOR_OFFSET_TIMEOUT) {
@@ -63,6 +69,7 @@ void MenuScene::update(sf::Time elapsed) {
     }
 
     _colorOffsetTimeout += elapsed.asMicroseconds();
+    _nextCharTimeout += elapsed.asMicroseconds();
     _inputBlinkingTimeout += elapsed.asMicroseconds();
 }
 
