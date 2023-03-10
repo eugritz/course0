@@ -7,23 +7,20 @@
 
 using namespace mandelbrot;
 
-Real stepX, stepY;
-const int iters = 500;
-
 sf::Color colorFromResult(unsigned int res);
 
 Mandelbrot::Mandelbrot() {
     init();
 }
 
-Mandelbrot::Mandelbrot(sf::Vector2u size, sf::Vector2<Real> origin,
-                       Real radius) {
+Mandelbrot::Mandelbrot(const sf::Vector2u &size,
+                       const sf::Vector2<Real> &origin, Real radius) {
     init();
     create(size, origin, radius);
 }
 
-Mandelbrot::Mandelbrot(sf::Vector2u size, sf::Vector2<Real> begin,
-                       sf::Vector2<Real> end) {
+Mandelbrot::Mandelbrot(const sf::Vector2u &size, const sf::Vector2<Real> &begin,
+                       const sf::Vector2<Real> &end) {
     init();
     create(size, begin, end);
 }
@@ -44,29 +41,30 @@ void Mandelbrot::init() {
     _data = nullptr;
 }
 
-void Mandelbrot::create(sf::Vector2u size, sf::Vector2<Real> origin,
-                        Real radius) {
+void Mandelbrot::create(const sf::Vector2u &size,
+                        const sf::Vector2<Real> &origin, Real radius) {
     _size = size;
     _begin.x = origin.x - radius;
     _begin.y = origin.y + radius;
     _end.x = origin.x + radius;
     _end.y = origin.y - radius;
 
-    stepX = (_end.x - _begin.x) / size.x;
-    stepY = (_end.y - _begin.y) / size.y;
+    _stepX = (_end.x - _begin.x) / size.x;
+    _stepY = (_end.y - _begin.y) / size.y;
 
     _image.create(_size.x, _size.y);
     reset();
 }
 
-void Mandelbrot::create(sf::Vector2u size, sf::Vector2<Real> begin,
-                        sf::Vector2<Real> end) {
+void Mandelbrot::create(const sf::Vector2u &size,
+                        const sf::Vector2<Real> &begin,
+                        const sf::Vector2<Real> &end) {
     _size = size;
     _begin = begin;
     _end = end;
 
-    stepX = (_end.x - _begin.x) / size.x;
-    stepY = (_end.y - _begin.y) / size.y;
+    _stepX = (_end.x - _begin.x) / size.x;
+    _stepY = (_end.y - _begin.y) / size.y;
 
     _image.create(_size.x, _size.y);
     reset();
@@ -146,11 +144,11 @@ void Mandelbrot::stepFill() {
 void Mandelbrot::render() {
     sf::Color color;
     int imageX = 0, imageY = 0;
-    for (Real currX = _begin.x; currX <= _end.x; currX += stepX, imageX++) {
+    for (Real currX = _begin.x; currX <= _end.x; currX += _stepX, imageX++) {
         imageY = 0;
         while (imageX >= _size.x)
             imageX--;
-        for (Real currY = _begin.y; currY <= _end.y; currY += stepX, imageY++) {
+        for (Real currY = _begin.y; currY <= _end.y; currY += _stepX, imageY++) {
             while (imageY >= _size.y)
                 imageY--;
 
@@ -213,7 +211,7 @@ void Mandelbrot::scan(unsigned nth) {
 int Mandelbrot::iterate(Real x, Real y) {
     Complex<Real> curr;
     int i = 0;
-    for (; i < iters; i++) {
+    for (; i < ITERS; i++) {
         if (curr.module_sqr() >= 4.0) break;
         Real re = curr.re * curr.re - curr.im * curr.im + x;
         Real im = curr.re * curr.im + curr.im * curr.re + y;
@@ -225,8 +223,8 @@ int Mandelbrot::iterate(Real x, Real y) {
 
 int Mandelbrot::iterate(unsigned nth, unsigned col, unsigned row) {
     Complex<Real> curr;
-    Real x = _begin.x + col * stepX;
-    Real y = _begin.y + row * stepY;
+    Real x = _begin.x + col * _stepX;
+    Real y = _begin.y + row * _stepY;
     return iterate(x, y);
 }
 
