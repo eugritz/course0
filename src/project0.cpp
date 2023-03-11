@@ -16,7 +16,10 @@ Project0 *Project0::getInstance() {
 
 void Project0::start() {
     if (_window.isOpen()) return;
-    _window.create(sf::VideoMode(WIDTH, HEIGHT), "Project0");
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 8;
+    _window.create(sf::VideoMode(WIDTH, HEIGHT), "Project0",
+            sf::Style::Default, settings);
     _scene = new IntroScene(&_window);
     gameLoop();
 }
