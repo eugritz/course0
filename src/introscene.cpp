@@ -73,7 +73,7 @@ bool IntroScene::handleEvent(const sf::Event &event) {
         }
     } else if (event.type == sf::Event::KeyReleased) {
         if (_finishing) {
-            Project0::getInstance()->postEvent(INTRO_FINISHED);
+            Project0::getInstance()->postEvent(MENU_OPEN);
             _finishing = false;
         }
     }

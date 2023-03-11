@@ -10,8 +10,8 @@
 class Scene;
 
 enum GameEvent {
-    INTRO_STARTED,
-    INTRO_FINISHED,
+    INTRO_OPEN,
+    MENU_OPEN,
 };
 
 class Project0 {

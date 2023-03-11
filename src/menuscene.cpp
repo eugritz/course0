@@ -149,7 +149,7 @@ bool MenuScene::setupMenu(const sf::Vector2f &size,
     _menu.fillItem(L"");
 
     addItem({ L"1) Заставка", []() {
-        Project0::getInstance()->postEvent(INTRO_STARTED);
+        Project0::getInstance()->postEvent(INTRO_OPEN);
     }});
     addItem({ L"2) Графики функций", []() {
         // TODO: graphs scene
