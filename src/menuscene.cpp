@@ -152,9 +152,18 @@ bool MenuScene::setupMenu(const sf::Vector2f &size,
         Project0::getInstance()->postEvent(INTRO_OPEN);
     }});
     addItem({ L"2) Графики функций", []() {
-        // TODO: graphs scene
+        Project0::getInstance()->postEvent(GRAPHS_OPEN);
     }});
-    addItem({ L"3) Сведения об авторе", []() {
+    addItem({ L"3) Таблица", []() {
+        // TODO: table of previous
+    }});
+    addItem({ L"4) Корни уравнения", []() {
+        // TODO: solutions ∈[a,b] for 2x³-3x²-4=0 (e=0.001)
+    }});
+    addItem({ L"5) Определенный интеграл", []() {
+        // TODO: find square of integral sqrt(x)*sin(x) on interval [a,b]
+    }});
+    addItem({ L"6) Сведения об авторе", []() {
         // TODO: author info scene/dialog
     }});
 

@@ -12,6 +12,7 @@ class Scene;
 enum GameEvent {
     INTRO_OPEN,
     MENU_OPEN,
+    GRAPHS_OPEN,
 };
 
 class Project0 {

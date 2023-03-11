@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "graphscene.h"
 #include "introscene.h"
 #include "menuscene.h"
 
@@ -58,6 +59,10 @@ void Project0::handleGameEvent(GameEvent event) {
         case MENU_OPEN:
             delete _scene;
             _scene = new MenuScene(&_window);
+            break;
+        case GRAPHS_OPEN:
+            delete _scene;
+            _scene = new GraphScene(&_window);
             break;
     };
 }
