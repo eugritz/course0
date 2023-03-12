@@ -42,6 +42,13 @@ private:
     void drawAxesLabels();
     void drawFunc(const sf::Color &color, std::function<float(float)> func);
 
+    void onKeyPressed(const sf::Event::KeyEvent &event);
+    void onKeyReleased(const sf::Event::KeyEvent &event);
+    void onMouseMoved(const sf::Event::MouseMoveEvent &event);
+    void onMouseButtonPressed(const sf::Event::MouseButtonEvent &event);
+    void onMouseButtonReleased(const sf::Event::MouseButtonEvent &event);
+    void onMouseWheelScrolled(const sf::Event::MouseWheelScrollEvent &event);
+
     void scale(float delta);
 
     sf::Vector2f absoluteCoords(float x, float y);

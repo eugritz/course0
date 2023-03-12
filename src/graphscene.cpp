@@ -9,8 +9,8 @@
 float clamp(float val, float min, float max);
 std::string to_string_rounded(float val);
 
-const sf::Color firstColor = sf::Color(190, 80, 60);
-const sf::Color secondColor = sf::Color(70, 70, 180);
+const sf::Color firstColor = sf::Color(210, 80, 60);
+const sf::Color secondColor = sf::Color(70, 70, 190);
 
 float first(float x) {
     return 1.f / tan(x);
@@ -254,51 +254,80 @@ void GraphScene::scale(float delta) {
 
 bool GraphScene::handleEvent(const sf::Event &event) {
     if (event.type == sf::Event::KeyPressed) {
-        if (event.key.code == sf::Keyboard::Enter ||
-            event.key.code == sf::Keyboard::Escape ||
-            event.key.code == sf::Keyboard::Space) {
-            _finishing = true;
-        } else if (event.key.code == sf::Keyboard::Left) {
-            _absOrigin.x += 10.f;
-        } else if (event.key.code == sf::Keyboard::Right) {
-            _absOrigin.x -= 10.f;
-        } else if (event.key.code == sf::Keyboard::Up) {
-            _absOrigin.y += 10.f;
-        } else if (event.key.code == sf::Keyboard::Down) {
-            _absOrigin.y -= 10.f;
-        } else if (event.key.code == sf::Keyboard::Add ||
-                (event.key.shift && event.key.code == sf::Keyboard::Equal)) {
-            scale(1.f);
-        } else if (event.key.code == sf::Keyboard::Subtract ||
-                event.key.code == sf::Keyboard::Hyphen) {
-            scale(-1.f);
-        }
+        onKeyPressed(event.key);
     } else if (event.type == sf::Event::KeyReleased) {
-        if (_finishing) {
-            Project0::getInstance()->postEvent(MENU_OPEN);
-            _finishing = false;
-        }
+        onKeyReleased(event.key);
     } else if (event.type == sf::Event::MouseMoved) {
-        if (_grab) {
-            float x = event.mouseMove.x, y = event.mouseMove.y;
-            _absOrigin.x += x - _cursorPosition.x;
-            _absOrigin.y += y - _cursorPosition.y;
-            _cursorPosition.x = x;
-            _cursorPosition.y = y;
-        }
+        onMouseMoved(event.mouseMove);
     } else if (event.type == sf::Event::MouseButtonPressed) {
-        if (event.mouseButton.button == sf::Mouse::Left) {
-            _cursorPosition.x = event.mouseButton.x;
-            _cursorPosition.y = event.mouseButton.y;
-            _grab = true;
-        }
+        onMouseButtonPressed(event.mouseButton);
     } else if (event.type == sf::Event::MouseButtonReleased) {
-        if (_grab && event.mouseButton.button == sf::Mouse::Left)
-            _grab = false;
+        onMouseButtonReleased(event.mouseButton);
     } else if (event.type == sf::Event::MouseWheelScrolled) {
-        scale(event.mouseWheelScroll.delta);
+        onMouseWheelScrolled(event.mouseWheelScroll);
     }
     return true;
+}
+
+void GraphScene::onKeyPressed(const sf::Event::KeyEvent &event) {
+    if (event.code == sf::Keyboard::Enter ||
+        event.code == sf::Keyboard::Escape ||
+        event.code == sf::Keyboard::Space) {
+        _finishing = true;
+    } else if (event.code == sf::Keyboard::Left) {
+        _absOrigin.x += 10.f;
+    } else if (event.code == sf::Keyboard::Right) {
+        _absOrigin.x -= 10.f;
+    } else if (event.code == sf::Keyboard::Up) {
+        _absOrigin.y += 10.f;
+    } else if (event.code == sf::Keyboard::Down) {
+        _absOrigin.y -= 10.f;
+    } else if (event.code == sf::Keyboard::Add ||
+            (event.shift && event.code == sf::Keyboard::Equal)) {
+        scale(1.f);
+    } else if (event.code == sf::Keyboard::Subtract ||
+            event.code == sf::Keyboard::Hyphen) {
+        scale(-1.f);
+    } else if (event.code == sf::Keyboard::Home) {
+        _absOrigin = _absCenter;
+    }
+}
+
+void GraphScene::onKeyReleased(const sf::Event::KeyEvent &event) {
+    if (_finishing) {
+        Project0::getInstance()->postEvent(MENU_OPEN);
+        _finishing = false;
+    }
+}
+
+void GraphScene::onMouseMoved(const sf::Event::MouseMoveEvent &event) {
+    if (_grab) {
+        float x = event.x, y = event.y;
+        _absOrigin.x += x - _cursorPosition.x;
+        _absOrigin.y += y - _cursorPosition.y;
+        _cursorPosition.x = x;
+        _cursorPosition.y = y;
+    }
+}
+
+void GraphScene::onMouseButtonPressed(
+        const sf::Event::MouseButtonEvent &event) {
+    if (event.button == sf::Mouse::Left) {
+        _cursorPosition.x = event.x;
+        _cursorPosition.y = event.y;
+        _grab = true;
+    }
+}
+
+void GraphScene::onMouseButtonReleased(
+        const sf::Event::MouseButtonEvent &event) {
+    if (_grab && event.button == sf::Mouse::Left)
+        _grab = false;
+}
+
+void GraphScene::onMouseWheelScrolled(
+        const sf::Event::MouseWheelScrollEvent &event) {
+    scale(event.delta);
 }
 
 sf::Vector2f GraphScene::absoluteCoords(float x, float y) {
