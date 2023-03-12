@@ -41,6 +41,8 @@ private:
     void drawAxesLabels();
     void drawFunc(const sf::Color &color, std::function<float(float)> func);
 
+    void scale(float delta);
+
     sf::Vector2f absoluteCoords(float x, float y);
     sf::Vector2f absoluteCoords(const sf::Vector2f &relative);
 };

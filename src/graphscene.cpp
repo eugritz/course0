@@ -6,8 +6,16 @@
 #include "line.hpp"
 #include "project0.h"
 
-const sf::Color first = sf::Color(190, 80, 60);
-const sf::Color second = sf::Color(70, 70, 180);
+const sf::Color firstColor = sf::Color(190, 80, 60);
+const sf::Color secondColor = sf::Color(70, 70, 180);
+
+float first(float x) {
+    return 1.f / tan(x);
+}
+
+float second(float x) {
+    return std::pow(2.f, x)*std::log10(x) - std::pow(3.f, x)*std::log10(x);
+}
 
 GraphScene::GraphScene(sf::RenderTarget *target) : Scene(target) {
     sf::Vector2u size = target->getSize();
@@ -33,19 +41,30 @@ void GraphScene::draw(sf::RenderStates states) {
     drawAxes();
     drawGrid();
 
-    drawFunc(first, [](float x) {
-        return 1.f / std::tan(x);
-    });
-
-    drawFunc(second, [](float x) {
-        return std::pow(2.f, x)*std::log10(x) - std::pow(3.f, x)*std::log10(x);
-    });
+    drawFunc(firstColor, first);
+    drawFunc(secondColor, second);
 
     drawAxesLabels();
+
+    sf::Text firstLabel("y=ctg(x)", _axisFont, 10);
+    firstLabel.setOutlineThickness(2.f);
+    firstLabel.setOutlineColor(sf::Color::White);
+    firstLabel.setFillColor(firstColor);
+    firstLabel.setPosition(absoluteCoords(0.6f, first(0.8f)));
+    firstLabel.setStyle(sf::Text::Bold);
+
+    sf::Text secondLabel("y=2^x*log(x)-3^x*log(x)", _axisFont, 10);
+    secondLabel.setOutlineThickness(2.f);
+    secondLabel.setOutlineColor(sf::Color::White);
+    secondLabel.setFillColor(secondColor);
+    secondLabel.setPosition(absoluteCoords(0.3f, -0.9));
+    secondLabel.setStyle(sf::Text::Bold);
+
+    _target->draw(firstLabel);
+    _target->draw(secondLabel);
 }
 
 void GraphScene::drawGrid() {
-    const float labelIndent = GRAPH_AXIS_VALUES_INDENT;
     const float step = _scale / 10.f;
     const sf::Color verticalColor = sf::Color(0, 0, 0, 30);
     const sf::Color horizontalColor = sf::Color(0, 0, 0, 40);
@@ -60,24 +79,32 @@ void GraphScene::drawGrid() {
         std::string label = std::to_string(rounded);
         if (label.find_first_of("123456789") == label.npos && label[0] == '-')
             label = label.substr(1);
-
         while (label.back() == '0')
             label.pop_back();
         while (label.back() == '.')
             label.pop_back();
 
-        if (!_smallGrid || nth % 2 == 1) {
-        sf::Text axisXText(label, _axisFont, GRAPH_AXIS_VALUES_FONT_SIZE);
-        axisXText.setOutlineThickness(2.f);
-        axisXText.setOutlineColor(sf::Color::White);
-        axisXText.setFillColor(sf::Color::Black);
+        if (_smallGrid && nth % 2 == 1 && rounded != 0.f) {
+            nth++;
+            continue;
+        }
 
-        sf::Vector2f axisXOrigin(axisXText.getLocalBounds().width / 2.f, 0);
-        posX.y += labelIndent;
-        axisXText.setOrigin(axisXOrigin);
-        axisXText.setPosition(posX);
+        sf::Text labelText(label, _axisFont, GRAPH_AXIS_VALUES_FONT_SIZE);
+        labelText.setOutlineThickness(2.f);
+        labelText.setOutlineColor(sf::Color::White);
+        labelText.setFillColor(sf::Color::Black);
 
-        posX.y -= labelIndent;
+        sf::FloatRect bounds = labelText.getLocalBounds();
+        labelText.setOrigin(bounds.width / 2.f, -GRAPH_AXIS_VALUES_INDENT);
+        labelText.setPosition(posX);
+        _target->draw(labelText);
+
+        if (rounded != 0.f) {
+            labelText.setOrigin(bounds.width, bounds.height / 2.f);
+            labelText.setPosition(posY);
+            _target->draw(labelText);
+        }
+
         posX.y -= _absCenter.y;
         posY.x -= _absCenter.x;
 
@@ -93,10 +120,8 @@ void GraphScene::drawGrid() {
         horizontal.setOutlineThickness(1.f);
         horizontal.setOutlineColor(bigShadow);
 
-            _target->draw(vertical);
-            _target->draw(horizontal);
-            _target->draw(axisXText);
-        }
+        _target->draw(vertical);
+        _target->draw(horizontal);
         nth++;
     }
 }
@@ -202,12 +227,23 @@ void GraphScene::drawFunc(const sf::Color &color,
     }
 }
 
+void GraphScene::scale(float delta) {
+    if (1.f <= _scale + delta && _scale + delta <= 10.f) {
+        _scale += delta;
+        _smallGrid = !_smallGrid;
+    }
+}
+
 bool GraphScene::handleEvent(const sf::Event &event) {
     if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::Enter ||
             event.key.code == sf::Keyboard::Escape ||
             event.key.code == sf::Keyboard::Space) {
             _finishing = true;
+        } else if (event.key.code == sf::Keyboard::Add) {
+            scale(-1.f);
+        } else if (event.key.code == sf::Keyboard::Subtract) {
+            scale(1.f);
         }
     } else if (event.type == sf::Event::KeyReleased) {
         if (_finishing) {
@@ -215,11 +251,7 @@ bool GraphScene::handleEvent(const sf::Event &event) {
             _finishing = false;
         }
     } else if (event.type == sf::Event::MouseWheelScrolled) {
-        float delta = event.mouseWheelScroll.delta;
-        if (1.f < _scale + delta && _scale + delta <= 10.f) {
-            _scale += delta;
-            _smallGrid = !_smallGrid;
-        }
+        scale(event.mouseWheelScroll.delta);
     }
     return true;
 }
