@@ -61,8 +61,7 @@ void GraphScene::draw(sf::RenderStates states) {
     secondLabel.setStyle(sf::Text::Bold);
 
     _target->draw(firstLabel);
-    _target->draw(secondLabel);
-}
+    _target->draw(secondLabel); }
 
 void GraphScene::drawGrid() {
     const float step = _scale / 10.f;
@@ -187,43 +186,55 @@ void GraphScene::drawFunc(const sf::Color &color,
     const float step = _scale / 100.f;
     const float end = _scale + 2.f * step;
 
-    sf::Vector2f lastPosition;
     FuncDirection direction = CONTINUOUS;
-    FuncDirection lastDirection = CONTINUOUS;
+    sf::Vector2f position = absoluteCoords(start, func(start));
+
+    bool jump = false;
     std::size_t dirLasted = 0;
+    FuncDirection funcDirection = CONTINUOUS;
 
-    for (float x = start; x < end; x += step) {
+    auto jumped = [&](const sf::Vector2f &pos, FuncDirection dir) {
+        bool switched = funcDirection != CONTINUOUS && dir != funcDirection;
+        bool spike = std::abs(pos.y - position.y) > GRAPH_SPIKE_DIFF;
+        return switched && spike;
+    };
+
+    for (float x = start + step; x < end; x += step) {
         float y = func(x);
-        sf::Vector2f position = absoluteCoords(x, y);
-        if (x == start) {
-            lastPosition = position;
-            continue;
-        }
+        sf::Vector2f nextPosition = absoluteCoords(x, y);
+        FuncDirection nextDirection;
+        nextDirection = position.y < nextPosition.y ? DESCENDING : ASCENDING;
 
-        FuncDirection currDirection;
-        currDirection = lastPosition.y < position.y ? DESCENDING : ASCENDING;
-        bool switched = direction != CONTINUOUS && currDirection != direction;
-        bool spike = std::abs(position.y - lastPosition.y) > GRAPH_SPIKE_DIFF;
-        if (switched && spike) {
-            dirLasted = 0;
-            direction = CONTINUOUS;
-            lastPosition = position;
-            continue;
-        }
-
-        if (lastDirection == currDirection)
+        jump = !jump && jumped(nextPosition, nextDirection);
+        if (direction == nextDirection)
             dirLasted++;
-        if (dirLasted > 10)
-            direction = currDirection;
+        if (!jump && dirLasted > 10)
+            funcDirection = nextDirection;
 
-        Line segment(lastPosition, position, GRAPH_AXIS_WIDTH);
+        Line segment(2.f);
+        if (jump) {
+            float localX = x - step + step / 100.f;
+            float localY = func(localX);
+            sf::Vector2f pos = absoluteCoords(localX, localY);
+            FuncDirection dir = position.y < pos.y ? DESCENDING : ASCENDING;
+            if (jumped(pos, dir)) {
+                position = nextPosition;
+                continue;
+            } else {
+                segment.setPoints(position, pos);
+                dirLasted = 0;
+                funcDirection = CONTINUOUS;
+            }
+        } else {
+            segment.setPoints(position, nextPosition);
+        }
         segment.setFillColor(color);
         segment.setOutlineColor(sf::Color(0, 0, 0, 10));
         segment.setOutlineThickness(1.f);
-
         _target->draw(segment);
-        lastPosition = position;
-        lastDirection = currDirection;
+
+        direction = nextDirection;
+        position = nextPosition;
     }
 }
 

@@ -10,7 +10,7 @@
 #define GRAPH_AXIS_VALUES_INDENT 5.f
 #define GRAPH_AXIS_VALUES_FONT_SIZE 10
 #define GRAPH_LINE_WIDTH 3.f
-#define GRAPH_SPIKE_DIFF 1000.f
+#define GRAPH_SPIKE_DIFF 300.f
 
 class GraphScene : public Scene {
     sf::Vector2f _absOrigin;

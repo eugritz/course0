@@ -11,10 +11,18 @@ class Line : public sf::Drawable, public sf::Transformable {
     float _width;
 
 public:
-    Line(sf::Vector2f start, sf::Vector2f end, float width = 1.f) {
+    Line(float width = 1.f) {
+        _width = width;
+    }
+
+    Line(const sf::Vector2f &start, const sf::Vector2f &end,
+            float width = 1.f) {
+        setPoints(start, end);
+    }
+
+    void setPoints(const sf::Vector2f &start, const sf::Vector2f &end) {
         _start = start;
         _end = end;
-        _width = width;
 
         _rect.setSize(getSize());
         _rect.setOrigin(0, _width / 2.f);
