@@ -241,7 +241,7 @@ void MenuScene::onMouseMoved(const sf::Event::MouseMoveEvent &event) {
 }
 
 void MenuScene::onMouseButtonPressed(const sf::Event::MouseButtonEvent &event) {
-    if (event.button == sf::Mouse::Button::Left) {
+    if (event.button == sf::Mouse::Left) {
         if (_cursorFocusedFound)
             _items[_cursorFocusedItem].callback();
     }

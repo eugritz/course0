@@ -28,6 +28,7 @@ GraphScene::GraphScene(sf::RenderTarget *target) : Scene(target) {
     _absCenter.y = size.y / 2.f;
     _absOrigin = _absCenter;
     _finishing = false;
+    _grab = false;
     _scale = 10.f;
 
     if (!_axisFont.loadFromFile("FiraMono-Regular.ttf")) {
@@ -277,8 +278,25 @@ bool GraphScene::handleEvent(const sf::Event &event) {
             Project0::getInstance()->postEvent(MENU_OPEN);
             _finishing = false;
         }
+    } else if (event.type == sf::Event::MouseMoved) {
+        if (_grab) {
+            float x = event.mouseMove.x, y = event.mouseMove.y;
+            _absOrigin.x += x - _cursorPosition.x;
+            _absOrigin.y += y - _cursorPosition.y;
+            _cursorPosition.x = x;
+            _cursorPosition.y = y;
+        }
+    } else if (event.type == sf::Event::MouseButtonPressed) {
+        if (event.mouseButton.button == sf::Mouse::Left) {
+            _cursorPosition.x = event.mouseButton.x;
+            _cursorPosition.y = event.mouseButton.y;
+            _grab = true;
+        }
+    } else if (event.type == sf::Event::MouseButtonReleased) {
+        if (_grab && event.mouseButton.button == sf::Mouse::Left)
+            _grab = false;
     } else if (event.type == sf::Event::MouseWheelScrolled) {
-        scale(-event.mouseWheelScroll.delta);
+        scale(event.mouseWheelScroll.delta);
     }
     return true;
 }
@@ -317,5 +335,5 @@ std::string to_string_rounded(float val) {
         s.pop_back();
     while (s.back() == '.')
         s.pop_back();
-    return s;
+    return s.substr(0, 4);
 }
