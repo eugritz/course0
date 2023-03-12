@@ -17,6 +17,7 @@ class GraphScene : public Scene {
     sf::Vector2f _absCenter;
     sf::Vector2f _size;
     float _scale;
+
     sf::Vector2f _cursorPosition;
     bool _finishing;
     bool _grab;

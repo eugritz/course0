@@ -7,7 +7,7 @@
 #include "project0.h"
 
 float clamp(float val, float min, float max);
-std::string to_string_rounded(float val);
+std::string to_string_rounded(float val, std::size_t precision);
 
 const sf::Color firstColor = sf::Color(210, 80, 60);
 const sf::Color secondColor = sf::Color(70, 70, 190);
@@ -79,8 +79,8 @@ void GraphScene::drawGrid() {
 
         float roundedX = std::round(relativeCoords(x, 0).x * 100.f) / 100.f;
         float roundedY = std::round(relativeCoords(0, y).y * 100.f) / 100.f;
-        std::string labelX = to_string_rounded(roundedX);
-        std::string labelY = to_string_rounded(roundedY);
+        std::string labelX = to_string_rounded(roundedX, 2);
+        std::string labelY = to_string_rounded(roundedY, 2);
 
         sf::Text labelText(labelX, _axisFont, GRAPH_AXIS_VALUES_FONT_SIZE);
         labelText.setOutlineThickness(2.f);
@@ -342,7 +342,7 @@ sf::Vector2f GraphScene::absoluteCoords(const sf::Vector2f &relative) {
 
 sf::Vector2f GraphScene::relativeCoords(float x, float y) {
     sf::Vector2f position((x - _absOrigin.x) * _scale / _absCenter.x,
-            (y - _absOrigin.y) * _scale / _absCenter.y);
+            -(y - _absOrigin.y) * _scale / _absCenter.y);
     return position;
 }
 
@@ -356,13 +356,17 @@ float clamp(float val, float min, float max) {
     else return val;
 }
 
-std::string to_string_rounded(float val) {
+std::string to_string_rounded(float val, std::size_t precision) {
     std::string s = std::to_string(val);
     if (s.find_first_of("123456789") == s.npos && s[0] == '-')
         s = s.substr(1);
-    while (s.back() == '0')
-        s.pop_back();
-    while (s.back() == '.')
-        s.pop_back();
-    return s.substr(0, 4);
+    std::size_t point = s.find('.');
+    if (point != s.npos) {
+        while (s.back() == '0')
+            s.pop_back();
+        while (s.back() == '.')
+            s.pop_back();
+    }
+    std::size_t n = point + precision;
+    return s.substr(0, n + 1);
 }
