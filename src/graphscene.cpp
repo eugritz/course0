@@ -6,8 +6,8 @@
 #include "line.hpp"
 #include "project0.h"
 
-const sf::Color first = sf::Color(180, 20, 20);
-const sf::Color second = sf::Color(40, 40, 160);
+const sf::Color first = sf::Color(190, 80, 60);
+const sf::Color second = sf::Color(70, 70, 180);
 
 GraphScene::GraphScene(sf::RenderTarget *target) : Scene(target) {
     sf::Vector2u size = target->getSize();
@@ -16,6 +16,7 @@ GraphScene::GraphScene(sf::RenderTarget *target) : Scene(target) {
     _absCenter.x = size.x / 2.f;
     _absCenter.y = size.y / 2.f;
     _absOrigin = _absCenter;
+    _smallGrid = false;
     _finishing = false;
 
     if (!_axisFont.loadFromFile("FiraMono-Regular.ttf")) {
@@ -29,8 +30,8 @@ void GraphScene::update(sf::Time elapsed) { }
 
 void GraphScene::draw(sf::RenderStates states) {
     _target->clear(sf::Color::White);
-    drawGrid();
     drawAxes();
+    drawGrid();
 
     drawFunc(first, [](float x) {
         return 1.f / std::tan(x);
@@ -50,25 +51,31 @@ void GraphScene::drawGrid() {
     const sf::Color horizontalColor = sf::Color(0, 0, 0, 40);
     const sf::Color bigShadow = sf::Color(0, 0, 0, 5);
 
+    std::size_t nth = 0;
     for (float x = -_scale + step; x < _scale; x += step) {
         sf::Vector2f posX = absoluteCoords(x, 0),
             posY = absoluteCoords(0, x);
 
-        std::string label = std::to_string(x);
+        float rounded = std::round(x * 100.f) / 100.f;
+        std::string label = std::to_string(rounded);
+        if (label.find_first_of("123456789") == label.npos && label[0] == '-')
+            label = label.substr(1);
+
         while (label.back() == '0')
             label.pop_back();
         while (label.back() == '.')
             label.pop_back();
 
-        sf::Text axisXLabel(label, _axisFont, GRAPH_AXIS_VALUES_FONT_SIZE);
-        axisXLabel.setOutlineThickness(2.f);
-        axisXLabel.setOutlineColor(sf::Color::White);
-        axisXLabel.setFillColor(sf::Color::Black);
+        if (!_smallGrid || nth % 2 == 1) {
+        sf::Text axisXText(label, _axisFont, GRAPH_AXIS_VALUES_FONT_SIZE);
+        axisXText.setOutlineThickness(2.f);
+        axisXText.setOutlineColor(sf::Color::White);
+        axisXText.setFillColor(sf::Color::Black);
 
-        sf::Vector2f labelOrigin(axisXLabel.getLocalBounds().width / 2.f, 0);
+        sf::Vector2f axisXOrigin(axisXText.getLocalBounds().width / 2.f, 0);
         posX.y += labelIndent;
-        axisXLabel.setOrigin(labelOrigin);
-        axisXLabel.setPosition(posX);
+        axisXText.setOrigin(axisXOrigin);
+        axisXText.setPosition(posX);
 
         posX.y -= labelIndent;
         posX.y -= _absCenter.y;
@@ -86,9 +93,11 @@ void GraphScene::drawGrid() {
         horizontal.setOutlineThickness(1.f);
         horizontal.setOutlineColor(bigShadow);
 
-        _target->draw(vertical);
-        _target->draw(horizontal);
-        _target->draw(axisXLabel);
+            _target->draw(vertical);
+            _target->draw(horizontal);
+            _target->draw(axisXText);
+        }
+        nth++;
     }
 }
 
@@ -118,10 +127,19 @@ void GraphScene::drawAxesLabels() {
     sf::Text textX("x", _axisFont, 14), textY("y", _axisFont, 12);
     textX.setPosition(absoluteCoords(_scale, 0) + sf::Vector2f(-12.f, 5.f));
     textY.setPosition(absoluteCoords(0, _scale) + sf::Vector2f(10.f, 0.f));
-    textX.setStyle(sf::Text::Bold);
-    textY.setStyle(sf::Text::Bold);
+
+    textX.setOutlineThickness(2.f);
+    textY.setOutlineThickness(2.f);
+
+    textX.setOutlineColor(sf::Color::White);
+    textY.setOutlineColor(sf::Color::White);
+
     textX.setFillColor(sf::Color::Black);
     textY.setFillColor(sf::Color::Black);
+
+    textX.setStyle(sf::Text::Bold);
+    textY.setStyle(sf::Text::Bold);
+
     _target->draw(textX);
     _target->draw(textY);
 
@@ -140,17 +158,19 @@ void GraphScene::drawAxesLabels() {
 
 void GraphScene::drawFunc(const sf::Color &color,
                           std::function<float(float)> func) {
-    sf::Vector2f lastPosition;
-    float step = _scale / 100.f;
+    const float start = -_scale - 1.f;
+    const float step = _scale / 100.f;
+    const float end = _scale + 2.f * step;
 
+    sf::Vector2f lastPosition;
     FuncDirection direction = CONTINUOUS;
     FuncDirection lastDirection = CONTINUOUS;
     std::size_t dirLasted = 0;
 
-    for (float x = -_scale - 1.f; x < _scale + 2.f * step; x += step) {
+    for (float x = start; x < end; x += step) {
         float y = func(x);
         sf::Vector2f position = absoluteCoords(x, y);
-        if (x == -_scale) {
+        if (x == start) {
             lastPosition = position;
             continue;
         }
@@ -158,7 +178,7 @@ void GraphScene::drawFunc(const sf::Color &color,
         FuncDirection currDirection;
         currDirection = lastPosition.y < position.y ? DESCENDING : ASCENDING;
         bool switched = direction != CONTINUOUS && currDirection != direction;
-        bool spike = std::abs(position.y - lastPosition.y) > 1000.f;
+        bool spike = std::abs(position.y - lastPosition.y) > GRAPH_SPIKE_DIFF;
         if (switched && spike) {
             dirLasted = 0;
             direction = CONTINUOUS;
@@ -195,7 +215,11 @@ bool GraphScene::handleEvent(const sf::Event &event) {
             _finishing = false;
         }
     } else if (event.type == sf::Event::MouseWheelScrolled) {
-        _scale += event.mouseWheelScroll.delta;
+        float delta = event.mouseWheelScroll.delta;
+        if (1.f < _scale + delta && _scale + delta <= 10.f) {
+            _scale += delta;
+            _smallGrid = !_smallGrid;
+        }
     }
     return true;
 }

@@ -8,18 +8,16 @@
 
 #define GRAPH_AXIS_WIDTH 2.f
 #define GRAPH_AXIS_VALUES_INDENT 5.f
-#define GRAPH_AXIS_VALUES_FONT_SIZE 12
+#define GRAPH_AXIS_VALUES_FONT_SIZE 10
 #define GRAPH_LINE_WIDTH 3.f
-
-// №16, a=2, b=4, n=12,
-// F1(x) = powf(2.f, x)*log10f(x) - powf(3.f, x)*log10f(x)
-// F2(x) = 1.f/tanf(x)
+#define GRAPH_SPIKE_DIFF 1000.f
 
 class GraphScene : public Scene {
     sf::Vector2f _absOrigin;
     sf::Vector2f _absCenter;
     sf::Vector2f _size;
     float _scale;
+    bool _smallGrid;
     bool _finishing;
 
     sf::Font _axisFont;

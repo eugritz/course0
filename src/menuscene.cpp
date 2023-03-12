@@ -155,7 +155,10 @@ bool MenuScene::setupMenu(const sf::Vector2f &size,
         Project0::getInstance()->postEvent(GRAPHS_OPEN);
     }});
     addItem({ L"3) Таблица", []() {
-        // TODO: table of previous
+        // TODO: table of functions in x∈[2,4], n=12,
+        // F1(x) = powf(2.f, x)*log10f(x) - powf(3.f, x)*log10f(x)
+        // F2(x) = 1.f/tanf(x)
+
     }});
     addItem({ L"4) Корни уравнения", []() {
         // TODO: solutions ∈[a,b] for 2x³-3x²-4=0 (e=0.001)
