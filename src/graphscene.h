@@ -17,7 +17,6 @@ class GraphScene : public Scene {
     sf::Vector2f _absCenter;
     sf::Vector2f _size;
     float _scale;
-    bool _smallGrid;
     bool _finishing;
 
     sf::Font _axisFont;
@@ -45,4 +44,6 @@ private:
 
     sf::Vector2f absoluteCoords(float x, float y);
     sf::Vector2f absoluteCoords(const sf::Vector2f &relative);
+    sf::Vector2f relativeCoords(float x, float y);
+    sf::Vector2f relativeCoords(const sf::Vector2f &absolute);
 };
