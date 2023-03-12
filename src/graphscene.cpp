@@ -228,8 +228,8 @@ void GraphScene::drawFunc(const sf::Color &color,
 }
 
 void GraphScene::scale(float delta) {
-    if (1.f <= _scale + delta && _scale + delta <= 10.f) {
-        _scale += delta;
+    if (1.f <= _scale - delta && _scale - delta <= 10.f) {
+        _scale -= delta;
         _smallGrid = !_smallGrid;
     }
 }
@@ -240,10 +240,12 @@ bool GraphScene::handleEvent(const sf::Event &event) {
             event.key.code == sf::Keyboard::Escape ||
             event.key.code == sf::Keyboard::Space) {
             _finishing = true;
-        } else if (event.key.code == sf::Keyboard::Add) {
-            scale(-1.f);
-        } else if (event.key.code == sf::Keyboard::Subtract) {
+        } else if (event.key.code == sf::Keyboard::Add ||
+                (event.key.shift && event.key.code == sf::Keyboard::Equal)) {
             scale(1.f);
+        } else if (event.key.code == sf::Keyboard::Subtract ||
+                event.key.code == sf::Keyboard::Hyphen) {
+            scale(-1.f);
         }
     } else if (event.type == sf::Event::KeyReleased) {
         if (_finishing) {
@@ -251,7 +253,7 @@ bool GraphScene::handleEvent(const sf::Event &event) {
             _finishing = false;
         }
     } else if (event.type == sf::Event::MouseWheelScrolled) {
-        scale(event.mouseWheelScroll.delta);
+        scale(-event.mouseWheelScroll.delta);
     }
     return true;
 }
