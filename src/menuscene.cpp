@@ -38,70 +38,6 @@ MenuScene::MenuScene(sf::RenderTarget *target) : Scene(target) {
     setupMenu(size, center);
 }
 
-void MenuScene::update(sf::Time elapsed) {
-    if (_nextCharTimeout > MENU_CHAR_DRAWN_TIMEOUT) {
-        _nextCharTimeout = 0;
-        _menu.update();
-    }
-
-    if (_colorOffset > 2.f * M_PI)
-        _colorOffset = 0.f;
-    if (_colorOffsetTimeout > MENU_COLOR_OFFSET_TIMEOUT) {
-        _colorOffsetTimeout = 0;
-        _colorOffset += MENU_COLOR_OFFSET_STEP;
-        _borderShader.setUniform("off", _colorOffset);
-    }
-
-    if (_inputBlinking && _inputBlinkingSwitch) {
-        sf::String input = _inputText->getString();
-        _inputText->setString(input + "_");
-        _inputBlinkingSwitch = false;
-    } else if (!_inputBlinking && _inputBlinkingSwitch) {
-        sf::String input = _inputText->getString();
-        _inputText->setString(input.substring(0, input.getSize() - 1));
-        _inputBlinkingSwitch = false;
-    }
-
-    if (_inputBlinkingTimeout > MENU_INPUT_BLINKING_TIMEOUT) {
-        _inputBlinkingTimeout = 0;
-        _inputBlinking = !_inputBlinking;
-        _inputBlinkingSwitch = true;
-    }
-
-    _colorOffsetTimeout += elapsed.asMicroseconds();
-    _nextCharTimeout += elapsed.asMicroseconds();
-    _inputBlinkingTimeout += elapsed.asMicroseconds();
-}
-
-void MenuScene::draw(sf::RenderStates states) {
-    _target->clear(sf::Color(6, 12, 8));
-    _target->draw(_background);
-
-    _target->draw(_r1, &_borderShader);
-    _target->draw(_r2, &_borderShader);
-    _target->draw(_r3, &_borderShader);
-    _target->draw(_r4, &_borderShader);
-
-    _target->draw(_menu);
-}
-
-bool MenuScene::handleEvent(const sf::Event &event) {
-    bool blocked = _inputControl || _inputAlt;
-
-    if (!blocked && event.type == sf::Event::TextEntered) {
-        onTextEntered(event.text);
-    } else if (event.type == sf::Event::KeyPressed) {
-        onKeyPressed(event.key);
-    } else if (event.type == sf::Event::KeyReleased) {
-        onKeyReleased(event.key);
-    } else if (event.type == sf::Event::MouseMoved) {
-        onMouseMoved(event.mouseMove);
-    } else if (event.type == sf::Event::MouseButtonPressed) {
-        onMouseButtonPressed(event.mouseButton);
-    }
-    return true;
-}
-
 void MenuScene::setupBorders(const sf::Vector2f &size,
                              const sf::Vector2f &center) {
     _r1.setSize(sf::Vector2f(size.x - 2.f * margin, width));
@@ -185,6 +121,70 @@ bool MenuScene::setupMenu(const sf::Vector2f &size,
     ));
     _menu.setOrigin(menuSize / 2.f);
     _menu.setPosition(center);
+    return true;
+}
+
+void MenuScene::update(sf::Time elapsed) {
+    if (_nextCharTimeout > MENU_CHAR_DRAWN_TIMEOUT) {
+        _nextCharTimeout = 0;
+        _menu.update();
+    }
+
+    if (_colorOffset > 2.f * M_PI)
+        _colorOffset = 0.f;
+    if (_colorOffsetTimeout > MENU_COLOR_OFFSET_TIMEOUT) {
+        _colorOffsetTimeout = 0;
+        _colorOffset += MENU_COLOR_OFFSET_STEP;
+        _borderShader.setUniform("off", _colorOffset);
+    }
+
+    if (_inputBlinking && _inputBlinkingSwitch) {
+        sf::String input = _inputText->getString();
+        _inputText->setString(input + "_");
+        _inputBlinkingSwitch = false;
+    } else if (!_inputBlinking && _inputBlinkingSwitch) {
+        sf::String input = _inputText->getString();
+        _inputText->setString(input.substring(0, input.getSize() - 1));
+        _inputBlinkingSwitch = false;
+    }
+
+    if (_inputBlinkingTimeout > MENU_INPUT_BLINKING_TIMEOUT) {
+        _inputBlinkingTimeout = 0;
+        _inputBlinking = !_inputBlinking;
+        _inputBlinkingSwitch = true;
+    }
+
+    _colorOffsetTimeout += elapsed.asMicroseconds();
+    _nextCharTimeout += elapsed.asMicroseconds();
+    _inputBlinkingTimeout += elapsed.asMicroseconds();
+}
+
+void MenuScene::draw(sf::RenderStates states) {
+    _target->clear(sf::Color(6, 12, 8));
+    _target->draw(_background);
+
+    _target->draw(_r1, &_borderShader);
+    _target->draw(_r2, &_borderShader);
+    _target->draw(_r3, &_borderShader);
+    _target->draw(_r4, &_borderShader);
+
+    _target->draw(_menu);
+}
+
+bool MenuScene::handleEvent(const sf::Event &event) {
+    bool blocked = _inputControl || _inputAlt;
+
+    if (!blocked && event.type == sf::Event::TextEntered) {
+        onTextEntered(event.text);
+    } else if (event.type == sf::Event::KeyPressed) {
+        onKeyPressed(event.key);
+    } else if (event.type == sf::Event::KeyReleased) {
+        onKeyReleased(event.key);
+    } else if (event.type == sf::Event::MouseMoved) {
+        onMouseMoved(event.mouseMove);
+    } else if (event.type == sf::Event::MouseButtonPressed) {
+        onMouseButtonPressed(event.mouseButton);
+    }
     return true;
 }
 

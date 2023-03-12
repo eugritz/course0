@@ -29,7 +29,7 @@ GraphScene::GraphScene(sf::RenderTarget *target) : Scene(target) {
     _absOrigin = _absCenter;
     _finishing = false;
     _grab = false;
-    _scale = 10.f;
+    _scale = GRAPH_SCALE_START;
 
     if (!_axisFont.loadFromFile("FiraMono-Regular.ttf")) {
         std::cerr << "ERROR: Couldn't load font \"FiraMono-Regular.ttf\"\n";
@@ -76,14 +76,13 @@ void GraphScene::drawGrid() {
     float remY = std::remainder(_absOrigin.y, step);
     for (float x = remX, y = remY; x < _size.x; x += step, y += step) {
         sf::Vector2f posX(x, 0.f), posY(0, y);
-
         float roundedX = std::round(relativeCoords(x, 0).x * 100.f) / 100.f;
         float roundedY = std::round(relativeCoords(0, y).y * 100.f) / 100.f;
         std::string labelX = to_string_rounded(roundedX, 2);
         std::string labelY = to_string_rounded(roundedY, 2);
 
         sf::Text labelText(labelX, _axisFont, GRAPH_AXIS_VALUES_FONT_SIZE);
-        labelText.setOutlineThickness(2.f);
+        labelText.setOutlineThickness(GRAPH_LABEL_THICKNESS);
         labelText.setOutlineColor(sf::Color::White);
         labelText.setFillColor(sf::Color::Black);
 
@@ -121,7 +120,6 @@ void GraphScene::drawGrid() {
 
 void GraphScene::drawAxes() {
     const sf::Color shadow = sf::Color(0, 0, 0, 40);
-
     sf::RectangleShape axisX(sf::Vector2f(_size.x, GRAPH_AXIS_WIDTH)),
         axisY(sf::Vector2f(GRAPH_AXIS_WIDTH, _size.y));
 
@@ -142,7 +140,8 @@ void GraphScene::drawAxes() {
 }
 
 void GraphScene::drawAxesLabels() {
-    sf::Text textX("x", _axisFont, 14), textY("y", _axisFont, 14);
+    sf::Text textX("x", _axisFont, GRAPH_AXIS_LABEL_FONT_SIZE),
+        textY("y", _axisFont, GRAPH_AXIS_LABEL_FONT_SIZE);
     sf::FloatRect boundsX = textX.getLocalBounds();
     sf::FloatRect boundsY = textY.getLocalBounds();
 
@@ -151,8 +150,8 @@ void GraphScene::drawAxesLabels() {
     textY.setPosition(clamp(_absOrigin.x + 10.f,
                 10.f, _size.x - 3.f * boundsY.width), 2.f);
 
-    textX.setOutlineThickness(2.f);
-    textY.setOutlineThickness(2.f);
+    textX.setOutlineThickness(GRAPH_LABEL_THICKNESS);
+    textY.setOutlineThickness(GRAPH_LABEL_THICKNESS);
     textX.setOutlineColor(sf::Color::White);
     textY.setOutlineColor(sf::Color::White);
     textX.setFillColor(sf::Color::Black);
@@ -163,7 +162,7 @@ void GraphScene::drawAxesLabels() {
     _target->draw(textX);
     _target->draw(textY);
 
-    const float radius = 10.f;
+    const float radius = GRAPH_AXIS_ARROW_RADIUS;
     sf::CircleShape arrow(radius, 3);
     arrow.setOrigin(radius, 0);
     arrow.setPosition(clamp(_absOrigin.x, 0.f, _size.x), 0);
@@ -179,7 +178,7 @@ void GraphScene::drawAxesLabels() {
 void GraphScene::drawFunc(const sf::Color &color,
                           std::function<float(float)> func) {
     const float step = _scale / 1000.f;
-    const float tinyStep = step / 100.f;
+    const float tinyStep = step / 10.f;
 
     const sf::FloatRect visibleArea(0.f, 0.f, _size.x, _size.y);
     const float start = relativeCoords(0, 0).x - _scale / 10.f;
@@ -210,7 +209,7 @@ void GraphScene::drawFunc(const sf::Color &color,
         if (!jump && dirLasted > _scale)
             funcDirection = nextDirection;
 
-        Line segment(2.f);
+        Line segment(GRAPH_WIDTH);
         if (jump) {
             sf::Vector2f pos;
             float precisionStep = tinyStep;
@@ -240,15 +239,6 @@ void GraphScene::drawFunc(const sf::Color &color,
 
         direction = nextDirection;
         position = nextPosition;
-    }
-}
-
-void GraphScene::scale(float delta) {
-    if (0.f <= _scale - delta && _scale - delta <= 20.f) {
-        if (_scale <= 1.f) {
-            _scale /= std::pow(2.f, delta);
-        } else
-            _scale -= delta;
     }
 }
 
@@ -290,6 +280,7 @@ void GraphScene::onKeyPressed(const sf::Event::KeyEvent &event) {
         scale(-1.f);
     } else if (event.code == sf::Keyboard::Home) {
         _absOrigin = _absCenter;
+        _scale = GRAPH_SCALE_START;
     }
 }
 
@@ -330,6 +321,18 @@ void GraphScene::onMouseWheelScrolled(
     scale(event.delta);
 }
 
+void GraphScene::scale(float delta) {
+    const float min = GRAPH_SCALE_MIN;
+    const float max = GRAPH_SCALE_MAX;
+    if (min <= _scale - delta && _scale - delta <= max) {
+        if (_scale <= 1.f) {
+            _scale /= std::pow(2.f, delta);
+        } else {
+            _scale -= delta;
+        }
+    }
+}
+
 sf::Vector2f GraphScene::absoluteCoords(float x, float y) {
     sf::Vector2f position(_absOrigin.x + _absCenter.x * x / _scale,
             _absOrigin.y - _absCenter.y * y / _scale);
@@ -367,6 +370,5 @@ std::string to_string_rounded(float val, std::size_t precision) {
         while (s.back() == '.')
             s.pop_back();
     }
-    std::size_t n = point + precision;
-    return s.substr(0, n + 1);
+    return s.substr(0, point + precision + 1);
 }
