@@ -4,7 +4,7 @@
 
 #include <vector>
 
-class MenuContainer : public sf::Drawable {
+class MenuContainer : public sf::Drawable, public sf::Transformable {
     const sf::String CARRIAGE = L"▉"; // U+2589
 
     sf::Vector2f _position;
@@ -36,15 +36,11 @@ public:
 
     std::size_t addItem(const sf::String &title);
     std::size_t fillItem(const sf::String &title);
-
     std::size_t getItemCount() const;
-    sf::Vector2f getSize() const;
 
-    void setPosition(const sf::Vector2f &position);
-    void setOrigin(const sf::Vector2f &origin);
     void setIndent(float indent);
-
     const sf::Vector2f &setFixedSize(const sf::Vector2f &size);
+    sf::Vector2f getSize() const;
     void resetSize();
 
     void update();

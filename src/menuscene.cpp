@@ -228,7 +228,10 @@ void MenuScene::onMouseMoved(const sf::Event::MouseMoveEvent &event) {
     for (auto it = _items.begin(); it != _items.end(); it++) {
         sf::Text *item = &_menu[it->itemIndex];
         sf::Vector2f cursor(event.x, event.y);
-        sf::FloatRect bounds = item->getGlobalBounds();
+        sf::FloatRect bounds = _menu.getTransform().transformRect(
+            item->getGlobalBounds()
+        );
+
         if (!focused && bounds.contains(cursor)) {
             item->setStyle(item->getStyle() | sf::Text::Bold);
             _cursorFocusedItem = it - _items.begin();

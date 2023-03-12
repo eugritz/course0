@@ -67,30 +67,6 @@ std::size_t MenuContainer::getItemCount() const {
     return _items.size();
 }
 
-sf::Vector2f MenuContainer::getSize() const {
-    if (_isSizeFixed)
-        return _size;
-    sf::Vector2f size;
-    for (auto it : _items) {
-        if (it.getLocalBounds().width > size.x)
-            size.x = it.getLocalBounds().width;
-    }
-    size.y = _items.size() * _characterSize + _items.size() * _indent;
-    return size;
-}
-
-void MenuContainer::setPosition(const sf::Vector2f &position) {
-    _position = position;
-    for (int i = 0; i < _items.size(); i++) {
-        sf::Vector2f position(0, i * _characterSize + i * _indent);
-        _items[i].setPosition(_position - _origin + position);
-    }
-}
-
-void MenuContainer::setOrigin(const sf::Vector2f &origin) {
-    _origin = origin;
-}
-
 void MenuContainer::setIndent(float indent) {
     _indent = indent;
     for (int i = 0; i < _items.size(); i++) {
@@ -105,6 +81,18 @@ const sf::Vector2f &MenuContainer::setFixedSize(const sf::Vector2f &size) {
     return size;
 }
 
+sf::Vector2f MenuContainer::getSize() const {
+    if (_isSizeFixed)
+        return _size;
+    sf::Vector2f size;
+    for (auto it : _items) {
+        if (it.getLocalBounds().width > size.x)
+            size.x = it.getLocalBounds().width;
+    }
+    size.y = _items.size() * _characterSize + _items.size() * _indent;
+    return size;
+}
+
 void MenuContainer::resetSize() {
     _isSizeFixed = false;
 }
@@ -116,6 +104,7 @@ void MenuContainer::update() {
 void MenuContainer::draw(sf::RenderTarget &target,
                          sf::RenderStates states) const {
     std::size_t shown = 0;
+    states.transform *= getTransform();
     for (auto it = _items.begin(); it != _items.end(); it++) {
         sf::Text shadow(*it);
         sf::String s = shadow.getString();
@@ -124,7 +113,7 @@ void MenuContainer::draw(sf::RenderTarget &target,
             if (_shown - shown <= s.getSize())
                 tmp += CARRIAGE;
             shadow.setString(tmp);
-            target.draw(shadow);
+            target.draw(shadow, states);
         }
 
         if (_shown - shown > s.getSize()) {
