@@ -31,7 +31,8 @@ void MenuContainer::reset() {
     _current = 0;
     _indent = 0.f;
     _isSizeFixed = false;
-    _shown = 0;
+    _charactersShown = 0;
+    _finishAnimation = false;
     _items.clear();
 }
 
@@ -76,6 +77,14 @@ std::size_t MenuContainer::getItemCount() const {
     return _items.size();
 }
 
+std::size_t MenuContainer::getTotalLength() const {
+    std::size_t charCount = 0;
+    for (auto it = _items.begin(); it != _items.end(); it++) {
+        charCount += it->getString().getSize();
+    }
+    return charCount;
+}
+
 void MenuContainer::setIndent(float indent) {
     _indent = indent;
     for (int i = 0; i < _items.size(); i++) {
@@ -106,8 +115,12 @@ void MenuContainer::resetSize() {
     _isSizeFixed = false;
 }
 
+void MenuContainer::setAnimationFinished(bool state) {
+    _finishAnimation = state;
+}
+
 void MenuContainer::update() {
-    _shown++;
+    _charactersShown++;
 }
 
 void MenuContainer::draw(sf::RenderTarget &target,
@@ -117,17 +130,19 @@ void MenuContainer::draw(sf::RenderTarget &target,
     for (auto it = _items.begin(); it != _items.end(); it++) {
         sf::Text shadow(*it);
         sf::String s = shadow.getString();
-        if (_shown - shown > 0) {
-            sf::String tmp = s.substring(0, _shown - shown);
-            if (_shown - shown <= s.getSize())
+        if (_finishAnimation) {
+            target.draw(shadow, states);
+        } else if (_charactersShown - shown > 0) {
+            sf::String tmp = s.substring(0, _charactersShown - shown);
+            if (_charactersShown - shown <= s.getSize())
                 tmp += CARRIAGE;
             shadow.setString(tmp);
             target.draw(shadow, states);
         }
 
-        if (_shown - shown > s.getSize()) {
+        if (_charactersShown - shown > s.getSize()) {
             shown += s.getSize();
-        } else {
+        } else if (!_finishAnimation) {
             break;
         }
     }

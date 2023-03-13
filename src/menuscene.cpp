@@ -13,7 +13,8 @@ const float width = MENU_BORDER_WIDTH;
 MenuScene::MenuScene(sf::RenderTarget *target) : Scene(target) {
     _colorOffsetTimeout = 0;
     _colorOffset = 0.f;
-    _nextCharTimeout = 0.f;
+    _nextCharTimeout = 0;
+    _loadingDuration = 0;
 }
 
 void MenuScene::setup(std::size_t cols, std::size_t rows) {
@@ -89,9 +90,16 @@ bool MenuScene::setupMenu(float menuWidth, std::size_t rows,
 }
 
 void MenuScene::update(sf::Time elapsed) {
-    if (_nextCharTimeout > MENU_CHAR_DRAWN_TIMEOUT) {
+    int timeout = MENU_LOADING_DURATION / _menu.getTotalLength();
+    if (_loadingDuration < MENU_LOADING_DURATION &&
+            _nextCharTimeout > timeout) {
+        _loadingDuration += timeout;
         _nextCharTimeout = 0;
         _menu.update();
+    }
+    if (!_loadingFinished && _loadingDuration >= MENU_LOADING_DURATION) {
+        _menu.setAnimationFinished(true);
+        _loadingFinished = true;
     }
 
     if (_colorOffset > 2.f * M_PI)
@@ -101,7 +109,6 @@ void MenuScene::update(sf::Time elapsed) {
         _colorOffset += MENU_COLOR_OFFSET_STEP;
         _borderShader.setUniform("off", _colorOffset);
     }
-
 
     _colorOffsetTimeout += elapsed.asMicroseconds();
     _nextCharTimeout += elapsed.asMicroseconds();

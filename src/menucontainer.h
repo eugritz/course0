@@ -13,7 +13,9 @@ class MenuContainer : public sf::Drawable, public sf::Transformable {
     sf::Vector2f _size;
     bool _isSizeFixed;
 
-    std::size_t _shown;
+    std::size_t _charactersShown;
+    bool _finishAnimation;
+
     std::vector<sf::Text> _items;
     std::size_t _current;
 
@@ -39,12 +41,15 @@ public:
     std::size_t fillItem(const sf::String &title);
     std::size_t fillFromStream(std::wstringstream &stream);
     std::size_t getItemCount() const;
+    std::size_t getTotalLength() const;
 
     void setIndent(float indent);
     const sf::Vector2f &setFixedSize(const sf::Vector2f &size);
     sf::Vector2f getSize() const;
     void resetSize();
 
+    void setAnimationFinished(bool state);
+    bool isAnimationFinished() const;
     void update();
 
 private:

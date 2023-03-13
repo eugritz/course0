@@ -16,6 +16,7 @@
 #define MENU_COLOR_OFFSET_TIMEOUT 1000
 #define MENU_ITEM_FONT_SIZE 14
 #define MENU_ITEM_INDENT 2.f
+#define MENU_LOADING_DURATION 1500000
 
 class MenuScene : public Scene {
     sf::RectangleShape _background;
@@ -26,6 +27,8 @@ class MenuScene : public Scene {
     float _colorOffset;
 
     int _nextCharTimeout;
+    int _loadingDuration;
+    bool _loadingFinished;
 
 public:
     MenuScene(sf::RenderTarget *target);
