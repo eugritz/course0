@@ -28,10 +28,7 @@ void MainMenu::setupMenu() {
         Project0::getInstance()->postEvent(GRAPHS_OPEN);
     }});
     addItem({ L"3) Таблица", []() {
-        // TODO: table of functions in x∈[2,4], n=12,
-        // F1(x) = powf(2.f, x)*log10f(x) - powf(3.f, x)*log10f(x)
-        // F2(x) = 1.f/tanf(x)
-
+        Project0::getInstance()->postEvent(TABLE_OPEN);
     }});
     addItem({ L"4) Корни уравнения", []() {
         // TODO: solutions ∈[a,b] for 2x³-3x²-4=0 (e=0.001)
@@ -47,7 +44,7 @@ void MainMenu::setupMenu() {
     std::size_t inputIndex = _menu.fillItem(PROMPT);
     _inputText = &_menu[inputIndex];
 
-    const std::size_t silly = MENU_ITEM_COUNT - 1;
+    const std::size_t silly = MAIN_MENU_ITEM_COUNT - 1;
     _menu[silly].setString(L"(c) RETRO VIBES!!! awooo woof woof UwU");
     _menu[silly].setFillColor(sf::Color(70, 70, 70));
 }
@@ -65,7 +62,7 @@ void MainMenu::update(sf::Time elapsed) {
         _inputBlinkingSwitch = false;
     }
 
-    if (_inputBlinkingTimeout > MENU_INPUT_BLINKING_TIMEOUT) {
+    if (_inputBlinkingTimeout > MAIN_MENU_INPUT_BLINKING_TIMEOUT) {
         _inputBlinkingTimeout = 0;
         _inputBlinking = !_inputBlinking;
         _inputBlinkingSwitch = true;

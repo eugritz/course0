@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <sstream>
 #include <vector>
 
 class MenuContainer : public sf::Drawable, public sf::Transformable {
@@ -36,6 +37,7 @@ public:
 
     std::size_t addItem(const sf::String &title);
     std::size_t fillItem(const sf::String &title);
+    std::size_t fillFromStream(std::wstringstream &stream);
     std::size_t getItemCount() const;
 
     void setIndent(float indent);

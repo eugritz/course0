@@ -13,6 +13,7 @@ enum GameEvent {
     INTRO_OPEN,
     MENU_OPEN,
     GRAPHS_OPEN,
+    TABLE_OPEN,
 };
 
 class Project0 {

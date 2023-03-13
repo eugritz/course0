@@ -5,6 +5,7 @@
 #include "graphscene.h"
 #include "introscene.h"
 #include "mainmenu.h"
+#include "tablemenu.h"
 
 Project0 *Project0::_instance;
 
@@ -66,6 +67,10 @@ void Project0::handleGameEvent(GameEvent event) {
         case GRAPHS_OPEN:
             delete _scene;
             _scene = new GraphScene(&_window);
+            break;
+        case TABLE_OPEN:
+            delete _scene;
+            _scene = new TableMenu(&_window);
             break;
     };
 }

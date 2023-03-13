@@ -55,12 +55,21 @@ std::size_t MenuContainer::addItem(const sf::String &title) {
 
 std::size_t MenuContainer::fillItem(const sf::String &title) {
     if (_current < _items.size()) {
-        sf::Text item(title, _font, _characterSize);
         _items[_current].setString(title);
         _current++;
-        return _current-1;
+        return _current - 1;
     }
     return -1;
+}
+
+std::size_t MenuContainer::fillFromStream(std::wstringstream &stream) {
+    std::wstring line;
+    bool inBounds = _current < _items.size();
+    while (inBounds && std::getline(stream, line)) {
+        fillItem(line);
+        inBounds = _current < _items.size();
+    }
+    return inBounds;
 }
 
 std::size_t MenuContainer::getItemCount() const {
