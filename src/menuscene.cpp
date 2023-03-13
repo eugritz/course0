@@ -74,6 +74,9 @@ bool MenuScene::setupMenu(float menuWidth, std::size_t rows,
                           const sf::Vector2f &center) {
     _menu.create(rows, _itemFont, MENU_ITEM_FONT_SIZE);
     _menu.setIndent(MENU_ITEM_INDENT);
+    menuWidth = std::floor(menuWidth);
+    if ((long)menuWidth % 2 != 0)
+        menuWidth = std::floor(menuWidth - 1.f);
 
     sf::Vector2f menuSize = _menu.getSize();
     menuSize = _menu.setFixedSize(sf::Vector2f(
