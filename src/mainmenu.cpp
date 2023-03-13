@@ -76,6 +76,9 @@ void MainMenu::draw(sf::RenderStates states) {
 }
 
 bool MainMenu::handleEvent(const sf::Event &event) {
+    if (!MenuScene::handleEvent(event))
+        return true;
+
     bool blocked = _inputControl || _inputAlt;
 
     if (!blocked && event.type == sf::Event::TextEntered) {

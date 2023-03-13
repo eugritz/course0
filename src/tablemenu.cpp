@@ -75,6 +75,9 @@ void TableMenu::draw(sf::RenderStates states) {
 }
 
 bool TableMenu::handleEvent(const sf::Event &event) {
+    if (!MenuScene::handleEvent(event))
+        return true;
+
     if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::Enter ||
             event.key.code == sf::Keyboard::Escape ||

@@ -28,7 +28,6 @@ class MenuScene : public Scene {
 
     int _nextCharTimeout;
     int _loadingDuration;
-    bool _loadingFinished;
 
 public:
     MenuScene(sf::RenderTarget *target);
@@ -40,6 +39,7 @@ public:
 protected:
     MenuContainer _menu;
     sf::Font _itemFont;
+    bool _loadingFinished;
 
     void setup(std::size_t cols, std::size_t rows);
 

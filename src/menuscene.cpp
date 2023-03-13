@@ -15,6 +15,7 @@ MenuScene::MenuScene(sf::RenderTarget *target) : Scene(target) {
     _colorOffset = 0.f;
     _nextCharTimeout = 0;
     _loadingDuration = 0;
+    _loadingFinished = false;
 }
 
 void MenuScene::setup(std::size_t cols, std::size_t rows) {
@@ -90,14 +91,19 @@ bool MenuScene::setupMenu(float menuWidth, std::size_t rows,
 }
 
 void MenuScene::update(sf::Time elapsed) {
-    int timeout = MENU_LOADING_DURATION / _menu.getTotalLength();
-    if (_loadingDuration < MENU_LOADING_DURATION &&
-            _nextCharTimeout > timeout) {
-        _loadingDuration += timeout;
-        _nextCharTimeout = 0;
-        _menu.update();
+    std::size_t totalLength = _menu.getTotalLength();
+    if (totalLength != 0) {
+        int timeout = MENU_LOADING_DURATION / _menu.getTotalLength();
+        if (_loadingDuration < MENU_LOADING_DURATION &&
+                _nextCharTimeout > timeout) {
+            _loadingDuration += timeout;
+            _nextCharTimeout = 0;
+            _menu.update();
+        }
     }
-    if (!_loadingFinished && _loadingDuration >= MENU_LOADING_DURATION) {
+
+    if ((!_loadingFinished && _loadingDuration >= MENU_LOADING_DURATION) ||
+            totalLength == 0) {
         _menu.setAnimationFinished(true);
         _loadingFinished = true;
     }
@@ -127,5 +133,12 @@ void MenuScene::draw(sf::RenderStates states) {
 }
 
 bool MenuScene::handleEvent(const sf::Event &event) {
+    if (event.type == sf::Event::KeyPressed) {
+        if (!_loadingFinished) {
+            _menu.setAnimationFinished(true);
+            _loadingFinished = true;
+            return false;
+        }
+    }
     return true;
 }
