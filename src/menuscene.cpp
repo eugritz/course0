@@ -14,28 +14,33 @@ MenuScene::MenuScene(sf::RenderTarget *target) : Scene(target) {
     _colorOffsetTimeout = 0;
     _colorOffset = 0.f;
     _nextCharTimeout = 0.f;
-    _inputBlinking = false;
-    _inputBlinkingSwitch = false;
-    _inputBlinkingTimeout = 0;
-    _inputControl = false;
-    _inputAlt = false;
-    _inputFocusedItem = 0;
-    _inputFocusedFound = false;
+}
 
+void MenuScene::setup(std::size_t cols, std::size_t rows) {
     const std::string vertexSource = RESOURCE(border_vert);
     _borderShader.loadFromMemory(vertexSource, sf::Shader::Vertex);
     _borderShader.setUniform("off", _colorOffset);
 
-    sf::Vector2f size(400.f, 280.f);
+    if (!_itemFont.loadFromFile("FiraMono-Regular.ttf")) {
+        std::cerr << "ERROR: Couldn't load font \"FiraMono-Regular.ttf\"\n";
+        return;
+    }
+    _itemFont.setSmooth(true);
+
+    float characterWidth = _itemFont.getGlyph('A',
+            MENU_ITEM_FONT_SIZE, false, 0).bounds.width;
+    float menuWidth = characterWidth * cols;
+
     sf::Vector2f center(_target->getSize().x / 2.f,
                         _target->getSize().y / 2.f);
+    setupMenu(menuWidth, rows, center);
+    sf::Vector2f size(menuWidth, _menu.getSize().y + margin * 4.f);
+    setupBorders(size, center);
+
     _background.setFillColor(sf::Color::Black);
     _background.setSize(size);
     _background.setOrigin(size / 2.f);
     _background.setPosition(center);
-
-    setupBorders(size, center);
-    setupMenu(size, center);
 }
 
 void MenuScene::setupBorders(const sf::Vector2f &size,
@@ -65,58 +70,14 @@ void MenuScene::setupBorders(const sf::Vector2f &size,
     _r4.setPosition(center.x - size.x / 2.f + margin, center.y);
 }
 
-bool MenuScene::setupMenu(const sf::Vector2f &size,
+bool MenuScene::setupMenu(float menuWidth, std::size_t rows,
                           const sf::Vector2f &center) {
-    if (!_itemFont.loadFromFile("FiraMono-Regular.ttf")) {
-        std::cerr << "ERROR: Couldn't load font \"FiraMono-Regular.ttf\"\n";
-        return false;
-    }
-
-    _itemFont.setSmooth(true);
-    sf::Vector2f corner(
-            center.x - size.x / 2.f + margin * 2.f + width * 2.f,
-            center.y - size.y / 2.f + margin * 2.f + width * 2.f
-    );
-
-    _menu.create(MENU_ITEM_COUNT, _itemFont, MENU_ITEM_FONT_SIZE);
+    _menu.create(rows, _itemFont, MENU_ITEM_FONT_SIZE);
     _menu.setIndent(MENU_ITEM_INDENT);
-
-    _menu.fillItem(L"Выберите пункт меню из следующего списка:");
-    _menu.fillItem(L"");
-
-    addItem({ L"1) Заставка", []() {
-        Project0::getInstance()->postEvent(INTRO_OPEN);
-    }});
-    addItem({ L"2) Графики функций", []() {
-        Project0::getInstance()->postEvent(GRAPHS_OPEN);
-    }});
-    addItem({ L"3) Таблица", []() {
-        // TODO: table of functions in x∈[2,4], n=12,
-        // F1(x) = powf(2.f, x)*log10f(x) - powf(3.f, x)*log10f(x)
-        // F2(x) = 1.f/tanf(x)
-
-    }});
-    addItem({ L"4) Корни уравнения", []() {
-        // TODO: solutions ∈[a,b] for 2x³-3x²-4=0 (e=0.001)
-    }});
-    addItem({ L"5) Определенный интеграл", []() {
-        // TODO: find square of integral sqrt(x)*sin(x) on interval [a,b]
-    }});
-    addItem({ L"6) Сведения об авторе", []() {
-        // TODO: author info scene/dialog
-    }});
-
-    _menu.fillItem(L"");
-    std::size_t inputIndex = _menu.fillItem(PROMPT);
-    _inputText = &_menu[inputIndex];
-
-    const std::size_t silly = MENU_ITEM_COUNT - 1;
-    _menu[silly].setString(L"(c) RETRO VIBES!!! awooo woof woof UwU");
-    _menu[silly].setFillColor(sf::Color(70, 70, 70));
 
     sf::Vector2f menuSize = _menu.getSize();
     menuSize = _menu.setFixedSize(sf::Vector2f(
-        size.x - margin * 2.f - width * 4.f,
+        menuWidth - margin * 2.f - width * 4.f,
         menuSize.y
     ));
     _menu.setOrigin(menuSize / 2.f);
@@ -138,25 +99,9 @@ void MenuScene::update(sf::Time elapsed) {
         _borderShader.setUniform("off", _colorOffset);
     }
 
-    if (_inputBlinking && _inputBlinkingSwitch) {
-        sf::String input = _inputText->getString();
-        _inputText->setString(input + "_");
-        _inputBlinkingSwitch = false;
-    } else if (!_inputBlinking && _inputBlinkingSwitch) {
-        sf::String input = _inputText->getString();
-        _inputText->setString(input.substring(0, input.getSize() - 1));
-        _inputBlinkingSwitch = false;
-    }
-
-    if (_inputBlinkingTimeout > MENU_INPUT_BLINKING_TIMEOUT) {
-        _inputBlinkingTimeout = 0;
-        _inputBlinking = !_inputBlinking;
-        _inputBlinkingSwitch = true;
-    }
 
     _colorOffsetTimeout += elapsed.asMicroseconds();
     _nextCharTimeout += elapsed.asMicroseconds();
-    _inputBlinkingTimeout += elapsed.asMicroseconds();
 }
 
 void MenuScene::draw(sf::RenderStates states) {
@@ -172,115 +117,5 @@ void MenuScene::draw(sf::RenderStates states) {
 }
 
 bool MenuScene::handleEvent(const sf::Event &event) {
-    bool blocked = _inputControl || _inputAlt;
-
-    if (!blocked && event.type == sf::Event::TextEntered) {
-        onTextEntered(event.text);
-    } else if (event.type == sf::Event::KeyPressed) {
-        onKeyPressed(event.key);
-    } else if (event.type == sf::Event::KeyReleased) {
-        onKeyReleased(event.key);
-    } else if (event.type == sf::Event::MouseMoved) {
-        onMouseMoved(event.mouseMove);
-    } else if (event.type == sf::Event::MouseButtonPressed) {
-        onMouseButtonPressed(event.mouseButton);
-    }
     return true;
-}
-
-void MenuScene::onTextEntered(const sf::Event::TextEvent &event) {
-    sf::String input = _inputText->getString();
-    if (event.unicode == 8) {
-        _input = _input.substring(0, _input.getSize() - 1);
-    } else if (event.unicode > 31) {
-        _input += event.unicode;
-    } else {
-        return;
-    }
-
-    _inputText->setString(PROMPT + _input);
-    _inputBlinkingTimeout = 0;
-    _inputBlinking = false;
-    inputHint();
-}
-
-void MenuScene::onKeyPressed(const sf::Event::KeyEvent &event) {
-    if (event.code == sf::Keyboard::Enter) {
-        if (_inputFocusedFound)
-            _items[_inputFocusedItem].callback();
-    }
-
-    if (event.control)
-        _inputControl = true;
-    else if (event.alt)
-        _inputAlt = true;
-}
-
-void MenuScene::onKeyReleased(const sf::Event::KeyEvent &event) {
-    if (event.control)
-        _inputControl = false;
-    else if (event.alt)
-        _inputAlt = false;
-}
-
-void MenuScene::onMouseMoved(const sf::Event::MouseMoveEvent &event) {
-    bool focused = false;
-    for (auto it = _items.begin(); it != _items.end(); it++) {
-        sf::Text *item = &_menu[it->itemIndex];
-        sf::Vector2f cursor(event.x, event.y);
-        sf::FloatRect bounds = _menu.getTransform().transformRect(
-            item->getGlobalBounds()
-        );
-
-        if (!focused && bounds.contains(cursor)) {
-            item->setStyle(item->getStyle() | sf::Text::Bold);
-            _cursorFocusedItem = it - _items.begin();
-            focused = true;
-        } else {
-            item->setStyle(item->getStyle() & ~sf::Text::Bold);
-        }
-    }
-    _cursorFocusedFound = focused;
-}
-
-void MenuScene::onMouseButtonPressed(const sf::Event::MouseButtonEvent &event) {
-    if (event.button == sf::Mouse::Left) {
-        if (_cursorFocusedFound)
-            _items[_cursorFocusedItem].callback();
-    }
-}
-
-void MenuScene::inputHint() {
-    std::size_t found = 0;
-    for (auto it = _items.begin(); it != _items.end(); it++) {
-        bool startsWith = true;
-        std::size_t i = 0;
-        while (i < _input.getSize() && i < it->title.getSize()) {
-            if (_input[i] != it->title[i]) {
-                startsWith = false;
-                break;
-            }
-            i++;
-        }
-
-        sf::Text *item = &_menu[it->itemIndex];
-        if (i > 0 && startsWith) {
-            item->setStyle(item->getStyle() | sf::Text::Underlined);
-            _inputFocusedFound = found == 0;
-            if (_inputFocusedFound)
-                _inputFocusedItem = it - _items.begin();
-            found++;
-        } else {
-            item->setStyle(item->getStyle() & ~sf::Text::Underlined);
-        }
-    }
-
-    if (found == 0) {
-        _inputFocusedFound = false;
-    }
-}
-
-void MenuScene::addItem(MenuItem item) {
-    item.itemIndex = _menu.fillItem(item.title);
-    _items.push_back(item);
 }
