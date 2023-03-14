@@ -10,6 +10,9 @@
 const int width = TABLE_MENU_ITEM_LENGTH;
 const int height = TABLE_MENU_ITEM_COUNT;
 
+const float begin = 2.f, end = 4.f;
+const std::size_t iters = 12;
+
 TableMenu::TableMenu(sf::RenderTarget *target) : MenuScene(target) {
     _finishing = false;
     setup(width, height);
@@ -19,7 +22,7 @@ TableMenu::TableMenu(sf::RenderTarget *target) : MenuScene(target) {
 void TableMenu::setupMenu() {
     const int cols = 4;
     const int cellWidth = width / 4 - 3;
-    const float step = (4.f - 2.f) / 11.f;
+    const float step = (end - begin) / (iters - 1);
 
     const std::wstring f1 = L"F1(x) = 2^x*log(x) - 3^x*log(x)";
     const std::wstring f2 = L"F2(x) = ctg(x)";

@@ -142,23 +142,22 @@ void Mandelbrot::stepFill() {
 }
 
 void Mandelbrot::render() {
-    sf::Color color;
     int imageX = 0, imageY = 0;
     for (Real currX = _begin.x; currX <= _end.x; currX += _stepX, imageX++) {
         imageY = 0;
         while (imageX >= _size.x)
             imageX--;
-        for (Real currY = _begin.y; currY <= _end.y; currY += _stepX, imageY++) {
+        for (Real currY = _begin.y; currY >= _end.y; currY += _stepY, imageY++) {
             while (imageY >= _size.y)
                 imageY--;
 
-            Complex<Real> curr;
             int iter = iterate(currX, currY);
             _image.setPixel(imageX, imageY, colorFromResult(iter));
         }
     }
 
     _rendered = true;
+    _filled = true;
 }
 
 void Mandelbrot::draw(sf::RenderTarget &target, sf::RenderStates states) const {

@@ -70,6 +70,10 @@ bool IntroScene::handleEvent(const sf::Event &event) {
             event.key.code == sf::Keyboard::Escape ||
             event.key.code == sf::Keyboard::Space) {
             _finishing = true;
+        } else if (event.key.code < sf::Keyboard::LControl ||
+                event.key.code > sf::Keyboard::RSystem) {
+            if (!_mandel.isRendered())
+                _mandel.render();
         }
     } else if (event.type == sf::Event::KeyReleased) {
         if (_finishing) {
