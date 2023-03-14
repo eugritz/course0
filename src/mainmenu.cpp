@@ -37,7 +37,7 @@ void MainMenu::setupMenu() {
         Project0::getInstance()->postEvent(INTEGRAL_OPEN);
     }});
     addItem({ L"6) Сведения об авторе", []() {
-        // TODO: author info scene/dialog
+        Project0::getInstance()->postEvent(AUTHOR_OPEN);
     }});
 
     _menu.fillItem(L"");

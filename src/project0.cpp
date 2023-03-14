@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "authormenu.h"
 #include "graphscene.h"
 #include "integralmenu.h"
 #include "introscene.h"
@@ -81,6 +82,10 @@ void Project0::handleGameEvent(GameEvent event) {
         case INTEGRAL_OPEN:
             delete _scene;
             _scene = new IntegralMenu(&_window);
+            break;
+        case AUTHOR_OPEN:
+            delete _scene;
+            _scene = new AuthorMenu(&_window);
             break;
     };
 }

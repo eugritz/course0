@@ -16,6 +16,7 @@ enum GameEvent {
     TABLE_OPEN,
     SOLUTION_OPEN,
     INTEGRAL_OPEN,
+    AUTHOR_OPEN,
 };
 
 class Project0 {
