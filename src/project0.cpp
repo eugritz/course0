@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "graphscene.h"
+#include "integralmenu.h"
 #include "introscene.h"
 #include "mainmenu.h"
 #include "solutionmenu.h"
@@ -73,9 +74,13 @@ void Project0::handleGameEvent(GameEvent event) {
             delete _scene;
             _scene = new TableMenu(&_window);
             break;
-        case SOLUTIONS_OPEN:
+        case SOLUTION_OPEN:
             delete _scene;
             _scene = new SolutionMenu(&_window);
+            break;
+        case INTEGRAL_OPEN:
+            delete _scene;
+            _scene = new IntegralMenu(&_window);
             break;
     };
 }

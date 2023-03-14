@@ -14,7 +14,8 @@ enum GameEvent {
     MENU_OPEN,
     GRAPHS_OPEN,
     TABLE_OPEN,
-    SOLUTIONS_OPEN,
+    SOLUTION_OPEN,
+    INTEGRAL_OPEN,
 };
 
 class Project0 {

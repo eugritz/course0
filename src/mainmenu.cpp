@@ -31,10 +31,10 @@ void MainMenu::setupMenu() {
         Project0::getInstance()->postEvent(TABLE_OPEN);
     }});
     addItem({ L"4) Корни уравнения", []() {
-        Project0::getInstance()->postEvent(SOLUTIONS_OPEN);
+        Project0::getInstance()->postEvent(SOLUTION_OPEN);
     }});
     addItem({ L"5) Определенный интеграл", []() {
-        // TODO: find square of integral sqrt(x)*sin(x) on interval [a,b]
+        Project0::getInstance()->postEvent(INTEGRAL_OPEN);
     }});
     addItem({ L"6) Сведения об авторе", []() {
         // TODO: author info scene/dialog
