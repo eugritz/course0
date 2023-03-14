@@ -31,7 +31,7 @@ void MainMenu::setupMenu() {
         Project0::getInstance()->postEvent(TABLE_OPEN);
     }});
     addItem({ L"4) Корни уравнения", []() {
-        // TODO: solutions ∈[a,b] for 2x³-3x²-4=0 (e=0.001)
+        Project0::getInstance()->postEvent(SOLUTIONS_OPEN);
     }});
     addItem({ L"5) Определенный интеграл", []() {
         // TODO: find square of integral sqrt(x)*sin(x) on interval [a,b]
