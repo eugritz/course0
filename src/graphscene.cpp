@@ -203,7 +203,7 @@ void GraphScene::drawFunc(const sf::Color &color,
         FuncDirection nextDirection;
         nextDirection = position.y < nextPosition.y ? DESCENDING : ASCENDING;
 
-        jump = !jump && jumped(nextPosition, nextDirection);
+        jump = jumped(nextPosition, nextDirection);
         if (direction == nextDirection)
             dirLasted++;
         if (!jump && dirLasted > _scale)
@@ -221,14 +221,15 @@ void GraphScene::drawFunc(const sf::Color &color,
                 FuncDirection dir = position.y < pos.y ? DESCENDING : ASCENDING;
                 if (jumped(pos, dir)) {
                     precisionStep /= 100.f;
+                    funcDirection = CONTINUOUS;
                     continue;
                 } else {
                     segment.setPoints(position, pos);
                     lastX += precisionStep;
+                    funcDirection = dir;
                 }
             } while (visibleArea.contains(pos));
             dirLasted = 0;
-            funcDirection = CONTINUOUS;
         } else {
             segment.setPoints(position, nextPosition);
         }
