@@ -74,7 +74,7 @@ void TableMenu::setupTable() {
         float f2 = 1.f / std::tan(x);
         table[0][n - 1] = f1;
         table[1][n - 1] = f2;
-        if (f1 > table[0][f1Min]) f1Max = n-1;
+        if (f1 > table[0][f1Max]) f1Max = n-1;
         if (f2 > table[1][f2Max]) f2Max = n-1;
         if (f1 < table[0][f1Min]) f1Min = n-1;
         if (f2 < table[1][f2Min]) f2Min = n-1;
