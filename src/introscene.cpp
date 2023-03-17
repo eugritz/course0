@@ -6,6 +6,7 @@
 
 IntroScene::IntroScene(sf::RenderTarget *target) : Scene(target) {
     _zoomPoint = ZOOM_START;
+    _fillTime = 0;
     _frameBlinkTime = 0;
     _frameBlinkCount = 0;
     _frameShow = false;
@@ -72,8 +73,9 @@ bool IntroScene::handleEvent(const sf::Event &event) {
             _finishing = true;
         } else if (event.key.code < sf::Keyboard::LControl ||
                 event.key.code > sf::Keyboard::RSystem) {
-            if (!_mandel.isRendered())
-                _mandel.render();
+            _mandel.reset();
+            while (!_mandel.isRendered())
+                _mandel.stepRender();
         }
     } else if (event.type == sf::Event::KeyReleased) {
         if (_finishing) {
