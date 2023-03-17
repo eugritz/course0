@@ -27,13 +27,9 @@ void SolutionMenu::setupMenu() {
     _menu[2].setStyle(sf::Text::Underlined);
     _menu[5].setStyle(sf::Text::Bold);
 
-    secantMethodMenu();
+    chordsMethodMenu();
     _menu[7].setStyle(sf::Text::Underlined);
     _menu[10].setStyle(sf::Text::Bold);
-
-    chordsMethodMenu();
-    _menu[12].setStyle(sf::Text::Underlined);
-    _menu[15].setStyle(sf::Text::Bold);
 }
 
 void SolutionMenu::bisectMethodMenu() {
@@ -49,20 +45,6 @@ void SolutionMenu::bisectMethodMenu() {
     ss << std::endl;
     _menu.fillFromStream(ss);
 }
-
-void SolutionMenu::secantMethodMenu() {
-    const float a = -1, b = 4;
-    const float e = 0.001;
-    float solution = secant(a, b, e, func1);
-
-    std::wstringstream ss;
-    ss << L"Метод секущих:" << std::endl;
-    ss << L"— Интервал: [" << a << ", " << b << "]" << std::endl; 
-    ss << L"— Точность: e=" << e << std::endl;
-    ss << L"Корень уравнения: " << solution << std::endl;
-    ss << std::endl;
-    _menu.fillFromStream(ss);
-} 
 
 void SolutionMenu::chordsMethodMenu() {
     const float a = -1, b = 4;
@@ -109,14 +91,6 @@ float SolutionMenu::bisect(float a, float b, float e,
     return (sign(func(a)) != sign(func(m)))
         ? bisect(a, m, e, func)
         : bisect(m, b, e, func);
-}
-
-float SolutionMenu::secant(float x0, float x1, float e,
-                           std::function<float(float)> func) {
-    if (std::abs(x1 - x0) < e)
-        return x1;
-    float x2 = x1 - (x1 - x0) / (func(x1) - func(x0)) * func(x1);
-    return secant(x1, x2, e, func);
 }
 
 float SolutionMenu::chords(float x0, float x1, float e,

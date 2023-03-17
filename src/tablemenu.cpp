@@ -3,12 +3,15 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <sstream>
 
 #include "project0.h"
 
 const int width = TABLE_MENU_ITEM_LENGTH;
 const int height = TABLE_MENU_ITEM_COUNT;
+const sf::Color maxColor = sf::Color::Red;
+const sf::Color minColor = sf::Color(80, 80, 255);
 
 const float begin = 2.f, end = 4.f;
 const std::size_t iters = 12;
@@ -20,6 +23,14 @@ TableMenu::TableMenu(sf::RenderTarget *target) : MenuScene(target) {
 }
 
 void TableMenu::setupMenu() {
+    setupTable();
+
+    _menu.fillItem(L"");
+    _menu.fillItem(L" + максимальное");
+    _menu.fillItem(L" - минимальное");
+}
+
+void TableMenu::setupTable() {
     const int cols = 4;
     const int cellWidth = width / 4 - 3;
     const float step = (end - begin) / (iters - 1);
@@ -53,9 +64,20 @@ void TableMenu::setupMenu() {
     ss << L"─┤" << std::endl;
 
     float x = 2.f;
-    for (std::size_t n = 1; n <= 12; n++, x += step) {
+    std::size_t f1Min = 0;
+    std::size_t f2Min = 0;
+    std::size_t f1Max = 0;
+    std::size_t f2Max = 0;
+    float table[2][iters];
+    for (std::size_t n = 1; n <= iters; n++, x += step) {
         float f1 = std::pow(2, x)*std::log10(x) - std::pow(3, x)*std::log10(x);
         float f2 = 1.f / std::tan(x);
+        table[0][n - 1] = f1;
+        table[1][n - 1] = f2;
+        if (f1 > table[0][f1Min]) f1Max = n-1;
+        if (f2 > table[1][f2Max]) f2Max = n-1;
+        if (f1 < table[0][f1Min]) f1Min = n-1;
+        if (f2 < table[1][f2Min]) f2Min = n-1;
 
         ss << std::right;
         ss << L"│ " << std::setw(cellWidth) << n;
@@ -71,6 +93,22 @@ void TableMenu::setupMenu() {
     ss << L"─┘" << std::endl;
 
     _menu.fillFromStream(ss);
+
+    sf::String text = _menu[6+f1Min].getString();
+    text[25] = '-';
+    _menu[6+f1Min].setString(text);
+
+    text = _menu[6+f2Min].getString();
+    text[37] = '-';
+    _menu[6+f2Min].setString(text);
+
+    text = _menu[6+f1Max].getString();
+    text[25] = '+';
+    _menu[6+f1Max].setString(text);
+
+    text = _menu[6+f2Max].getString();
+    text[37] = '+';
+    _menu[6+f2Max].setString(text);
 }
 
 void TableMenu::draw(sf::RenderStates states) {

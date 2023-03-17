@@ -28,15 +28,11 @@ void IntegralMenu::setupMenu() {
     trapezoidMethodMenu();
     _menu[7].setStyle(sf::Text::Underlined);
     _menu[10].setStyle(sf::Text::Bold);
-
-    simpsonMethodMenu();
-    _menu[12].setStyle(sf::Text::Underlined);
-    _menu[15].setStyle(sf::Text::Bold);
 }
 
 void IntegralMenu::rectanglesMethodMenu() {
     const float a = -1, b = 3;
-    const int n = 50;
+    const int n = 100;
     float solution = rectangle(a, b, n, func2);
 
     std::wstringstream ss;
@@ -50,25 +46,11 @@ void IntegralMenu::rectanglesMethodMenu() {
 
 void IntegralMenu::trapezoidMethodMenu() {
     const float a = -1, b = 3;
-    const int n = 50;
+    const int n = 100;
     float solution = trapezoid(a, b, n, func2);
 
     std::wstringstream ss;
     ss << L"Метод трапеций:" << std::endl;
-    ss << L"— Интервал: [" << a << ", " << b << "]" << std::endl; 
-    ss << L"— Кол-во итераций: n=" << n << std::endl;
-    ss << L"Определенный интеграл: " << solution << std::endl;
-    ss << std::endl;
-    _menu.fillFromStream(ss);
-}
-
-void IntegralMenu::simpsonMethodMenu() {
-    const float a = -1, b = 3;
-    const int n = 50;
-    float solution = simpson(a, b, n, func2);
-
-    std::wstringstream ss;
-    ss << L"Метод Симпсона:" << std::endl;
     ss << L"— Интервал: [" << a << ", " << b << "]" << std::endl; 
     ss << L"— Кол-во итераций: n=" << n << std::endl;
     ss << L"Определенный интеграл: " << solution << std::endl;
@@ -117,21 +99,4 @@ float IntegralMenu::trapezoid(float a, float b, float n,
         area += 2.f * func(x);
     }
     return h / 2.f * area;
-}
-
-float IntegralMenu::simpson(float a, float b, float n,
-                            std::function<float(float)> func) {
-    float s = std::floor(n / 2.f);
-    float h = (b - a) / n;
-    float last = a + 2.f * s * h;
-    float area = func(a) + func(last);
-
-    bool even = false;
-    for (float x = a + h; x < last - h / 2.f; x += h) {
-        if (even) area += 2.f * func(x);
-        else area += 4.f * func(x);
-        even = !even;
-    }
-
-    return h / 3.f * area;
 }

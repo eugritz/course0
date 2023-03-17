@@ -16,11 +16,12 @@ AuthorMenu::AuthorMenu(sf::RenderTarget *target) : MenuScene(target) {
 
 void AuthorMenu::setupMenu() {
     std::wstring s1 = L"Расчетно-графическая работа по программированию";
-    std::wstring s2 = L"выполнена студентом группы ИВТ-223";
-    std::wstring s3 = L"Гриценко Евгением Вячеславовичем";
+    std::wstring s2 = L"выполнена студентом группы ИВТ-223 Факультета";
+    std::wstring s3 = L"Информационных технологий и компьютерных систем";
+    std::wstring s4 = L"Гриценко Евгением Вячеславовичем";
 
     auto center = [&](const std::wstring &s) {
-        return width / 2 + s.length() / 2;
+        return width / 2 + s.length() / 2 + 2;
     };
 
     std::wstringstream ss;
@@ -31,9 +32,11 @@ void AuthorMenu::setupMenu() {
     ss << std::endl;
     ss << std::setw(center(s3)) << s3 << std::endl;
     ss << std::endl;
+    ss << std::setw(center(s4)) << s4 << std::endl;
+    ss << std::endl;
     ss << std::right << std::setw(width) << L"Омск 2023" << std::endl;
     ss << std::endl;
-    _menu[5].setStyle(sf::Text::Italic);
+    _menu[7].setStyle(sf::Text::Italic);
 
     _menu.fillFromStream(ss);
 }

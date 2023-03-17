@@ -4,7 +4,7 @@
 
 #include "menuscene.h"
 
-#define SOLUTION_MENU_ITEM_COUNT 17
+#define SOLUTION_MENU_ITEM_COUNT 12
 #define SOLUTION_MENU_ITEM_LENGTH 44
 
 class SolutionMenu : public MenuScene {
@@ -14,7 +14,6 @@ public:
     SolutionMenu(sf::RenderTarget *target);
     void setupMenu();
     void bisectMethodMenu();
-    void secantMethodMenu();
     void chordsMethodMenu();
 
     void draw(sf::RenderStates states);
@@ -22,6 +21,5 @@ public:
 
 private:
     float bisect(float a, float b, float e, std::function<float(float)> func);
-    float secant(float x0, float x1, float e, std::function<float(float)> func);
     float chords(float x0, float x1, float e, std::function<float(float)> func);
 };

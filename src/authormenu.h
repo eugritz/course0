@@ -4,8 +4,8 @@
 
 #include "menuscene.h"
 
-#define AUTHOR_MENU_ITEM_COUNT 9
-#define AUTHOR_MENU_ITEM_LENGTH 50
+#define AUTHOR_MENU_ITEM_COUNT 11
+#define AUTHOR_MENU_ITEM_LENGTH 60
 
 class AuthorMenu : public MenuScene {
     bool _finishing;
