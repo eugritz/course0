@@ -39,6 +39,9 @@ void MainMenu::setupMenu() {
     addItem({ L"6) Сведения об авторе", []() {
         Project0::getInstance()->postEvent(AUTHOR_OPEN);
     }});
+    addItem({ L"7) Выход", []() {
+        Project0::getInstance()->postEvent(EXIT);
+    }});
 
     _menu.fillItem(L"");
     std::size_t inputIndex = _menu.fillItem(PROMPT);
@@ -99,7 +102,7 @@ void MainMenu::onTextEntered(const sf::Event::TextEvent &event) {
     sf::String input = _inputText->getString();
     if (event.unicode == 8) {
         _input = _input.substring(0, _input.getSize() - 1);
-    } else if (event.unicode > 31) {
+    } else if (event.unicode > 31 && event.unicode != 127) {
         _input += event.unicode;
     } else {
         return;

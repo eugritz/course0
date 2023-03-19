@@ -17,6 +17,7 @@ enum GameEvent {
     SOLUTION_OPEN,
     INTEGRAL_OPEN,
     AUTHOR_OPEN,
+    EXIT,
 };
 
 class Project0 {

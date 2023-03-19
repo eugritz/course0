@@ -87,6 +87,9 @@ void Project0::handleGameEvent(GameEvent event) {
             delete _scene;
             _scene = new AuthorMenu(&_window);
             break;
+        case EXIT:
+            _window.close();
+            break;
     };
 }
 
