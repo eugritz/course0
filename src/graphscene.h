@@ -4,6 +4,7 @@
 
 #include <functional>
 
+#include "linearray.h"
 #include "scene.h"
 
 #define GRAPH_AXIS_ARROW_RADIUS 10.f
@@ -37,6 +38,9 @@ class GraphScene : public Scene {
         ASCENDING,
     };
 
+    LineArray _lines;
+    bool _needsRefresh;
+
 public:
     GraphScene(sf::RenderTarget *target);
 
@@ -57,6 +61,8 @@ private:
     void onMouseButtonReleased(const sf::Event::MouseButtonEvent &event);
     void onMouseWheelScrolled(const sf::Event::MouseWheelScrollEvent &event);
 
+    void origin();
+    void move(float dx, float dy);
     void scale(float delta);
 
     sf::Vector2f absoluteCoords(float x, float y);

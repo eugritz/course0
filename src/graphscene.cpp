@@ -44,7 +44,7 @@ void GraphScene::draw(sf::RenderStates states) {
     drawGrid();
 
     drawFunc(firstColor, first);
-    drawFunc(secondColor, second);
+    // drawFunc(secondColor, second);
 
     drawAxesLabels();
 
@@ -177,70 +177,76 @@ void GraphScene::drawAxesLabels() {
 
 void GraphScene::drawFunc(const sf::Color &color,
                           std::function<float(float)> func) {
-    const float step = _scale / 1000.f;
-    const float tinyStep = step / 10.f;
+    if (_needsRefresh) {
+        _lines.clear();
+        const float step = _scale / 1000.f;
+        const float tinyStep = step / 10.f;
 
-    const sf::FloatRect visibleArea(0.f, 0.f, _size.x, _size.y);
-    const float start = relativeCoords(0, 0).x - _scale / 10.f;
-    const float end = relativeCoords(_size.x, 0).x + _scale / 10.f;
+        const sf::FloatRect visibleArea(0.f, 0.f, _size.x, _size.y);
+        const float start = relativeCoords(0, 0).x - _scale / 10.f;
+        const float end = relativeCoords(_size.x, 0).x + _scale / 10.f;
 
-    FuncDirection direction = CONTINUOUS;
-    sf::Vector2f position = absoluteCoords(start, func(start));
+        FuncDirection direction = CONTINUOUS;
+        sf::Vector2f position = absoluteCoords(start, func(start));
 
-    bool jump = false;
-    std::size_t dirLasted = 0;
-    FuncDirection funcDirection = CONTINUOUS;
+        bool jump = false;
+        std::size_t dirLasted = 0;
+        FuncDirection funcDirection = CONTINUOUS;
 
-    auto jumped = [&](const sf::Vector2f &pos, FuncDirection dir) {
-        bool switched = funcDirection != CONTINUOUS && dir != funcDirection;
-        bool spike = std::abs(pos.y - position.y) > GRAPH_SPIKE_DIFF;
-        return switched && spike;
-    };
+        auto jumped = [&](const sf::Vector2f &pos, FuncDirection dir) {
+            bool switched = funcDirection != CONTINUOUS && dir != funcDirection;
+            bool spike = std::abs(pos.y - position.y) > GRAPH_SPIKE_DIFF;
+            return switched && spike;
+        };
 
-    for (float x = start + step; x < end; x += step) {
-        float y = func(x);
-        sf::Vector2f nextPosition = absoluteCoords(x, y);
-        FuncDirection nextDirection;
-        nextDirection = position.y < nextPosition.y ? DESCENDING : ASCENDING;
+        for (float x = start + step; x < end; x += step) {
+            float y = func(x);
+            sf::Vector2f nextPosition = absoluteCoords(x, y);
+            FuncDirection nextDirection;
+            nextDirection = position.y < nextPosition.y ? DESCENDING : ASCENDING;
 
-        jump = jumped(nextPosition, nextDirection);
-        if (direction == nextDirection)
-            dirLasted++;
-        if (!jump && dirLasted > _scale)
-            funcDirection = nextDirection;
+            jump = jumped(nextPosition, nextDirection);
+            if (direction == nextDirection)
+                dirLasted++;
+            if (!jump && dirLasted > _scale)
+                funcDirection = nextDirection;
 
-        Line segment(GRAPH_WIDTH);
+            Line segment(GRAPH_WIDTH);
 
-        if (jump) {
-            sf::Vector2f pos;
-            float precisionStep = tinyStep;
-            float lastX = x - step;
-            do {
-                float localX = lastX + precisionStep;
-                float localY = func(localX);
-                pos = absoluteCoords(localX, localY);
-                FuncDirection dir = position.y < pos.y ? DESCENDING : ASCENDING;
-                if (jumped(pos, dir)) {
-                    precisionStep /= 100.f;
-                    funcDirection = CONTINUOUS;
-                    continue;
-                } else {
-                    segment.setPoints(position, pos);
-                    lastX += precisionStep;
-                    funcDirection = dir;
-                }
-            } while (visibleArea.contains(pos));
-            dirLasted = 0;
-        } else {
-            segment.setPoints(position, nextPosition);
+            if (jump) {
+                sf::Vector2f pos;
+                float precisionStep = tinyStep;
+                float lastX = x - step;
+                do {
+                    float localX = lastX + precisionStep;
+                    float localY = func(localX);
+                    pos = absoluteCoords(localX, localY);
+                    FuncDirection dir = position.y < pos.y ? DESCENDING : ASCENDING;
+                    if (jumped(pos, dir)) {
+                        precisionStep /= 100.f;
+                        funcDirection = CONTINUOUS;
+                        continue;
+                    } else {
+                        segment.setPoints(position, pos);
+                        lastX += precisionStep;
+                        funcDirection = dir;
+                    }
+                } while (visibleArea.contains(pos));
+                dirLasted = 0;
+            } else {
+                segment.setPoints(position, nextPosition);
+            }
+
+            segment.setFillColor(color);
+            _lines.join(segment, LineArray::LINE_PRIORITY);
+
+            direction = nextDirection;
+            position = nextPosition;
         }
-
-        segment.setFillColor(color);
-        _target->draw(segment);
-
-        direction = nextDirection;
-        position = nextPosition;
+        _needsRefresh = false;
     }
+
+    _target->draw(_lines);
 }
 
 bool GraphScene::handleEvent(const sf::Event &event) {
@@ -266,13 +272,13 @@ void GraphScene::onKeyPressed(const sf::Event::KeyEvent &event) {
         event.code == sf::Keyboard::Space) {
         _finishing = true;
     } else if (event.code == sf::Keyboard::Left) {
-        _absOrigin.x += 10.f;
+        move(10.f, 0);
     } else if (event.code == sf::Keyboard::Right) {
-        _absOrigin.x -= 10.f;
+        move(-10.f, 0);
     } else if (event.code == sf::Keyboard::Up) {
-        _absOrigin.y += 10.f;
+        move(0, 10.f);
     } else if (event.code == sf::Keyboard::Down) {
-        _absOrigin.y -= 10.f;
+        move(0, -10.f);
     } else if (event.code == sf::Keyboard::Add ||
             (event.shift && event.code == sf::Keyboard::Equal)) {
         scale(1.f);
@@ -280,8 +286,7 @@ void GraphScene::onKeyPressed(const sf::Event::KeyEvent &event) {
             event.code == sf::Keyboard::Hyphen) {
         scale(-1.f);
     } else if (event.code == sf::Keyboard::Home) {
-        _absOrigin = _absCenter;
-        _scale = GRAPH_SCALE_START;
+        origin();
     }
 }
 
@@ -295,8 +300,11 @@ void GraphScene::onKeyReleased(const sf::Event::KeyEvent &event) {
 void GraphScene::onMouseMoved(const sf::Event::MouseMoveEvent &event) {
     if (_grab) {
         float x = event.x, y = event.y;
-        _absOrigin.x += x - _cursorPosition.x;
-        _absOrigin.y += y - _cursorPosition.y;
+
+        float dx = x - _cursorPosition.x;
+        float dy = y - _cursorPosition.y;
+        move(dx, dy);
+
         _cursorPosition.x = x;
         _cursorPosition.y = y;
     }
@@ -322,6 +330,18 @@ void GraphScene::onMouseWheelScrolled(
     scale(event.delta);
 }
 
+void GraphScene::origin() {
+    _absOrigin = _absCenter;
+    _scale = GRAPH_SCALE_START;
+    _needsRefresh = true;
+}
+
+void GraphScene::move(float dx, float dy) {
+    _absOrigin.x += dx;
+    _absOrigin.y += dy;
+    _needsRefresh = true;
+}
+
 void GraphScene::scale(float delta) {
     const float min = GRAPH_SCALE_MIN;
     const float max = GRAPH_SCALE_MAX;
@@ -332,6 +352,8 @@ void GraphScene::scale(float delta) {
             _scale -= delta;
         }
     }
+
+    _needsRefresh = true;
 }
 
 sf::Vector2f GraphScene::absoluteCoords(float x, float y) {

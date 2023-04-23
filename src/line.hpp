@@ -26,6 +26,14 @@ public:
         update();
     }
 
+    sf::Vector2f getStart() const {
+        return _start;
+    }
+
+    sf::Vector2f getEnd() const {
+        return _end;
+    }
+
     float getLength() const {
         float dx = _start.x - _end.x;
         float dy = _start.y - _end.y;
@@ -50,6 +58,20 @@ public:
             case 2: return _rotate(getLength(), _width, rad);
             case 3: return _rotate(0, _width, rad);
         }
+    }
+
+    sf::VertexArray toArray() const {
+        sf::VertexArray arr(sf::TriangleStrip, 4);
+        arr[0] = getPoint(0);
+        arr[1] = getPoint(3);
+        arr[2] = getPoint(1);
+        arr[3] = getPoint(2);
+
+        arr[0].color = getFillColor();
+        arr[1].color = getFillColor();
+        arr[2].color = getFillColor();
+        arr[3].color = getFillColor();
+        return arr;
     }
 
 private:
