@@ -97,7 +97,7 @@ void GraphScene::drawGrid() {
             bounds = labelText.getLocalBounds();
             labelText.setOrigin(bounds.width, bounds.height / 2.f);
             labelText.setPosition(clamp(_absOrigin.x,
-                        bounds.width, _size.x), posY.y);
+                        bounds.width + 5.f, _size.x - 5.f), posY.y);
             _target->draw(labelText);
         }
 
@@ -210,6 +210,7 @@ void GraphScene::drawFunc(const sf::Color &color,
             funcDirection = nextDirection;
 
         Line segment(GRAPH_WIDTH);
+
         if (jump) {
             sf::Vector2f pos;
             float precisionStep = tinyStep;
@@ -233,9 +234,8 @@ void GraphScene::drawFunc(const sf::Color &color,
         } else {
             segment.setPoints(position, nextPosition);
         }
+
         segment.setFillColor(color);
-        segment.setOutlineColor(sf::Color(0, 0, 0, 10));
-        segment.setOutlineThickness(1.f);
         _target->draw(segment);
 
         direction = nextDirection;

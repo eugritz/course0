@@ -17,7 +17,7 @@
 #define GRAPH_SCALE_MAX 20.f
 #define GRAPH_SCALE_MIN 0.f
 #define GRAPH_SPIKE_DIFF 300.f
-#define GRAPH_WIDTH 2.f
+#define GRAPH_WIDTH 1.5f
 
 class GraphScene : public Scene {
     sf::Vector2f _absOrigin;
