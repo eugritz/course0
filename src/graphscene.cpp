@@ -21,45 +21,43 @@ float second(float x) {
 }
 
 GraphScene::GraphScene(sf::RenderTarget *target) : Scene(target) {
-    sf::Vector2u size = target->getSize();
-    _size.x = size.x;
-    _size.y = size.y;
-    _absCenter.x = size.x / 2.f;
-    _absCenter.y = size.y / 2.f;
-    _absOrigin = _absCenter;
+    _size = target->getSize();
+    _graph.create(_size);
+
     _finishing = false;
     _grab = false;
-    _scale = GRAPH_SCALE_START;
 
     if (!_axisFont.loadFromFile("FiraMono-Regular.ttf")) {
         std::cerr << "ERROR: Couldn't load font \"FiraMono-Regular.ttf\"\n";
     }
+
+    _graph.add({ firstColor, first });
+    _graph.add({ secondColor, second });
 }
 
-void GraphScene::update(sf::Time elapsed) { }
+void GraphScene::update(sf::Time elapsed) {
+    _graph.update();
+}
 
 void GraphScene::draw(sf::RenderStates states) {
     _target->clear(sf::Color::White);
     drawAxes();
     drawGrid();
-
-    drawFunc(firstColor, first);
-    // drawFunc(secondColor, second);
-
+    drawFunc();
     drawAxesLabels();
 
     sf::Text firstLabel("y=ctg(x)", _axisFont, 10);
     firstLabel.setOutlineThickness(2.f);
     firstLabel.setOutlineColor(sf::Color::White);
     firstLabel.setFillColor(firstColor);
-    firstLabel.setPosition(absoluteCoords(0.6f, first(0.8f)));
+    firstLabel.setPosition(_graph.absoluteCoords(0.6f, first(0.8f)));
     firstLabel.setStyle(sf::Text::Bold);
 
     sf::Text secondLabel("y=2^x*log(x)-3^x*log(x)", _axisFont, 10);
     secondLabel.setOutlineThickness(2.f);
     secondLabel.setOutlineColor(sf::Color::White);
     secondLabel.setFillColor(secondColor);
-    secondLabel.setPosition(absoluteCoords(0.3f, -0.9));
+    secondLabel.setPosition(_graph.absoluteCoords(0.3f, -0.9));
     secondLabel.setStyle(sf::Text::Bold);
 
     _target->draw(firstLabel);
@@ -72,12 +70,12 @@ void GraphScene::drawGrid() {
     const sf::Color horizontalColor = sf::Color(0, 0, 0, 40);
     const sf::Color bigShadow = sf::Color(0, 0, 0, 5);
 
-    float remX = std::remainder(_absOrigin.x, step);
-    float remY = std::remainder(_absOrigin.y, step);
+    float remX = std::remainder(_graph.getOrigin().x, step);
+    float remY = std::remainder(_graph.getOrigin().y, step);
     for (float x = remX, y = remY; x < _size.x; x += step, y += step) {
         sf::Vector2f posX(x, 0.f), posY(0, y);
-        float roundedX = std::round(relativeCoords(x, 0).x * 100.f) / 100.f;
-        float roundedY = std::round(relativeCoords(0, y).y * 100.f) / 100.f;
+        float roundedX = std::round(_graph.relativeCoords(x, 0).x * 100.f) / 100.f;
+        float roundedY = std::round(_graph.relativeCoords(0, y).y * 100.f) / 100.f;
         std::string labelX = to_string_rounded(roundedX, 2);
         std::string labelY = to_string_rounded(roundedY, 2);
 
@@ -88,7 +86,7 @@ void GraphScene::drawGrid() {
 
         sf::FloatRect bounds = labelText.getLocalBounds();
         labelText.setOrigin(bounds.width / 2.f, -GRAPH_AXIS_VALUES_INDENT);
-        labelText.setPosition(posX.x, clamp(_absOrigin.y,
+        labelText.setPosition(posX.x, clamp(_graph.getOrigin().y,
                     0.f, _size.y - 2.f * bounds.height));
         _target->draw(labelText);
 
@@ -96,7 +94,7 @@ void GraphScene::drawGrid() {
             labelText.setString(labelY);
             bounds = labelText.getLocalBounds();
             labelText.setOrigin(bounds.width, bounds.height / 2.f);
-            labelText.setPosition(clamp(_absOrigin.x,
+            labelText.setPosition(clamp(_graph.getOrigin().x,
                         bounds.width + 5.f, _size.x - 5.f), posY.y);
             _target->draw(labelText);
         }
@@ -132,8 +130,8 @@ void GraphScene::drawAxes() {
 
     axisX.setOrigin(axisX.getSize() / 2.f);
     axisY.setOrigin(axisY.getSize() / 2.f);
-    axisX.setPosition(_absCenter.x, _absOrigin.y);
-    axisY.setPosition(_absOrigin.x, _absCenter.y);
+    axisX.setPosition(_graph.getCenter().x, _graph.getOrigin().y);
+    axisY.setPosition(_graph.getOrigin().x, _graph.getCenter().y);
 
     _target->draw(axisX);
     _target->draw(axisY);
@@ -145,9 +143,9 @@ void GraphScene::drawAxesLabels() {
     sf::FloatRect boundsX = textX.getLocalBounds();
     sf::FloatRect boundsY = textY.getLocalBounds();
 
-    textX.setPosition(_size.x - 12.f, clamp(_absOrigin.y + 5.f,
+    textX.setPosition(_size.x - 12.f, clamp(_graph.getOrigin().y + 5.f,
                 12.f, _size.y - 3.f * boundsX.height));
-    textY.setPosition(clamp(_absOrigin.x + 10.f,
+    textY.setPosition(clamp(_graph.getOrigin().x + 10.f,
                 10.f, _size.x - 3.f * boundsY.width), 2.f);
 
     textX.setOutlineThickness(GRAPH_LABEL_THICKNESS);
@@ -165,88 +163,18 @@ void GraphScene::drawAxesLabels() {
     const float radius = GRAPH_AXIS_ARROW_RADIUS;
     sf::CircleShape arrow(radius, 3);
     arrow.setOrigin(radius, 0);
-    arrow.setPosition(clamp(_absOrigin.x, 0.f, _size.x), 0);
+    arrow.setPosition(clamp(_graph.getOrigin().x, 0.f, _size.x), 0);
     arrow.setFillColor(sf::Color::Black);
     _target->draw(arrow);
 
     arrow.rotate(90.f);
     arrow.setFillColor(sf::Color::Black);
-    arrow.setPosition(_size.x, clamp(_absOrigin.y, 0.f, _size.y));
+    arrow.setPosition(_size.x, clamp(_graph.getOrigin().y, 0.f, _size.y));
     _target->draw(arrow);
 }
 
-void GraphScene::drawFunc(const sf::Color &color,
-                          std::function<float(float)> func) {
-    if (_needsRefresh) {
-        _lines.clear();
-        const float step = _scale / 1000.f;
-        const float tinyStep = step / 10.f;
-
-        const sf::FloatRect visibleArea(0.f, 0.f, _size.x, _size.y);
-        const float start = relativeCoords(0, 0).x - _scale / 10.f;
-        const float end = relativeCoords(_size.x, 0).x + _scale / 10.f;
-
-        FuncDirection direction = CONTINUOUS;
-        sf::Vector2f position = absoluteCoords(start, func(start));
-
-        bool jump = false;
-        std::size_t dirLasted = 0;
-        FuncDirection funcDirection = CONTINUOUS;
-
-        auto jumped = [&](const sf::Vector2f &pos, FuncDirection dir) {
-            bool switched = funcDirection != CONTINUOUS && dir != funcDirection;
-            bool spike = std::abs(pos.y - position.y) > GRAPH_SPIKE_DIFF;
-            return switched && spike;
-        };
-
-        for (float x = start + step; x < end; x += step) {
-            float y = func(x);
-            sf::Vector2f nextPosition = absoluteCoords(x, y);
-            FuncDirection nextDirection;
-            nextDirection = position.y < nextPosition.y ? DESCENDING : ASCENDING;
-
-            jump = jumped(nextPosition, nextDirection);
-            if (direction == nextDirection)
-                dirLasted++;
-            if (!jump && dirLasted > _scale)
-                funcDirection = nextDirection;
-
-            Line segment(GRAPH_WIDTH);
-
-            if (jump) {
-                sf::Vector2f pos;
-                float precisionStep = tinyStep;
-                float lastX = x - step;
-                do {
-                    float localX = lastX + precisionStep;
-                    float localY = func(localX);
-                    pos = absoluteCoords(localX, localY);
-                    FuncDirection dir = position.y < pos.y ? DESCENDING : ASCENDING;
-                    if (jumped(pos, dir)) {
-                        precisionStep /= 100.f;
-                        funcDirection = CONTINUOUS;
-                        continue;
-                    } else {
-                        segment.setPoints(position, pos);
-                        lastX += precisionStep;
-                        funcDirection = dir;
-                    }
-                } while (visibleArea.contains(pos));
-                dirLasted = 0;
-            } else {
-                segment.setPoints(position, nextPosition);
-            }
-
-            segment.setFillColor(color);
-            _lines.join(segment, LineArray::LINE_PRIORITY);
-
-            direction = nextDirection;
-            position = nextPosition;
-        }
-        _needsRefresh = false;
-    }
-
-    _target->draw(_lines);
+void GraphScene::drawFunc() {
+    _target->draw(_graph);
 }
 
 bool GraphScene::handleEvent(const sf::Event &event) {
@@ -272,21 +200,21 @@ void GraphScene::onKeyPressed(const sf::Event::KeyEvent &event) {
         event.code == sf::Keyboard::Space) {
         _finishing = true;
     } else if (event.code == sf::Keyboard::Left) {
-        move(10.f, 0);
+        _graph.move(10.f, 0);
     } else if (event.code == sf::Keyboard::Right) {
-        move(-10.f, 0);
+        _graph.move(-10.f, 0);
     } else if (event.code == sf::Keyboard::Up) {
-        move(0, 10.f);
+        _graph.move(0, 10.f);
     } else if (event.code == sf::Keyboard::Down) {
-        move(0, -10.f);
+        _graph.move(0, -10.f);
     } else if (event.code == sf::Keyboard::Add ||
             (event.shift && event.code == sf::Keyboard::Equal)) {
-        scale(1.f);
+        _graph.scale(1.f);
     } else if (event.code == sf::Keyboard::Subtract ||
             event.code == sf::Keyboard::Hyphen) {
-        scale(-1.f);
+        _graph.scale(-1.f);
     } else if (event.code == sf::Keyboard::Home) {
-        origin();
+        _graph.origin();
     }
 }
 
@@ -303,7 +231,7 @@ void GraphScene::onMouseMoved(const sf::Event::MouseMoveEvent &event) {
 
         float dx = x - _cursorPosition.x;
         float dy = y - _cursorPosition.y;
-        move(dx, dy);
+        _graph.move(dx, dy);
 
         _cursorPosition.x = x;
         _cursorPosition.y = y;
@@ -327,53 +255,7 @@ void GraphScene::onMouseButtonReleased(
 
 void GraphScene::onMouseWheelScrolled(
         const sf::Event::MouseWheelScrollEvent &event) {
-    scale(event.delta);
-}
-
-void GraphScene::origin() {
-    _absOrigin = _absCenter;
-    _scale = GRAPH_SCALE_START;
-    _needsRefresh = true;
-}
-
-void GraphScene::move(float dx, float dy) {
-    _absOrigin.x += dx;
-    _absOrigin.y += dy;
-    _needsRefresh = true;
-}
-
-void GraphScene::scale(float delta) {
-    const float min = GRAPH_SCALE_MIN;
-    const float max = GRAPH_SCALE_MAX;
-    if (min <= _scale - delta && _scale - delta <= max) {
-        if (_scale <= 1.f) {
-            _scale /= std::pow(2.f, delta);
-        } else {
-            _scale -= delta;
-        }
-    }
-
-    _needsRefresh = true;
-}
-
-sf::Vector2f GraphScene::absoluteCoords(float x, float y) {
-    sf::Vector2f position(_absOrigin.x + _absCenter.x * x / _scale,
-            _absOrigin.y - _absCenter.y * y / _scale);
-    return position;
-}
-
-sf::Vector2f GraphScene::absoluteCoords(const sf::Vector2f &relative) {
-    return absoluteCoords(relative.x, relative.y);
-}
-
-sf::Vector2f GraphScene::relativeCoords(float x, float y) {
-    sf::Vector2f position((x - _absOrigin.x) * _scale / _absCenter.x,
-            -(y - _absOrigin.y) * _scale / _absCenter.y);
-    return position;
-}
-
-sf::Vector2f GraphScene::relativeCoords(const sf::Vector2f &absolute) {
-    return relativeCoords(absolute.x, absolute.y);
+    _graph.scale(event.delta);
 }
 
 float clamp(float val, float min, float max) {

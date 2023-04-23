@@ -44,14 +44,14 @@ int LineArray::join(const Line &segment, JoinPriority priority) {
     return 1;
 }
 
-void LineArray::clear() {
-    _arr.clear();
-}
-
 std::size_t LineArray::getVertexCount() const {
     std::size_t count = 0;
     for (auto it = _arr.begin(); it != _arr.end(); it++) {
         count += it->getVertexCount();
     }
     return count;
+}
+
+void LineArray::clear() {
+    _arr.clear();
 }
