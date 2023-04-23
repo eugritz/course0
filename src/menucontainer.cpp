@@ -1,4 +1,5 @@
 #include "menucontainer.h"
+#include <iostream>
 
 MenuContainer::MenuContainer() { }
 MenuContainer::MenuContainer(const sf::Font &font, unsigned characterSize) {
@@ -125,6 +126,7 @@ void MenuContainer::update() {
 
 void MenuContainer::draw(sf::RenderTarget &target,
                          sf::RenderStates states) const {
+    // TODO: optimize
     std::size_t shown = 0;
     states.transform *= getTransform();
     for (auto it = _items.begin(); it != _items.end(); it++) {

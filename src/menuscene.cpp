@@ -92,12 +92,10 @@ bool MenuScene::setupMenu(float menuWidth, std::size_t rows,
 
 void MenuScene::update(sf::Time elapsed) {
     std::size_t totalLength = _menu.getTotalLength();
-    if (totalLength != 0) {
-        int timeout = MENU_LOADING_DURATION / _menu.getTotalLength();
-        if (_loadingDuration < MENU_LOADING_DURATION &&
-                _nextCharTimeout > timeout) {
-            _loadingDuration += timeout;
-            _nextCharTimeout = 0;
+    if (totalLength != 0 && !_loadingFinished) {
+        int timeout = MENU_LOADING_DURATION / totalLength;
+        while (_nextCharTimeout > timeout) {
+            _nextCharTimeout -= timeout;
             _menu.update();
         }
     }
@@ -118,6 +116,7 @@ void MenuScene::update(sf::Time elapsed) {
 
     _colorOffsetTimeout += elapsed.asMicroseconds();
     _nextCharTimeout += elapsed.asMicroseconds();
+    _loadingDuration += elapsed.asMicroseconds();
 }
 
 void MenuScene::draw(sf::RenderStates states) {

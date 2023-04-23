@@ -62,10 +62,12 @@ void Project0::handleGameEvent(GameEvent event) {
         case INTRO_OPEN:
             delete _scene;
             _scene = new IntroScene(&_window);
+            _window.setFramerateLimit(0);
             break;
         case MENU_OPEN:
             delete _scene;
             _scene = new MainMenu(&_window);
+            _window.setFramerateLimit(60);
             break;
         case GRAPHS_OPEN:
             delete _scene;

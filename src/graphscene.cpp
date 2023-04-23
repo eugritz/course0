@@ -13,7 +13,7 @@ const sf::Color firstColor = sf::Color(210, 80, 60);
 const sf::Color secondColor = sf::Color(70, 70, 190);
 
 float first(float x) {
-    return 1.f / tan(x);
+    return 1.f / std::tan(x);
 }
 
 float second(float x) {
