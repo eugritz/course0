@@ -3,7 +3,7 @@
 #include <cmath>
 #include <iostream>
 
-#include "Project0.h"
+#include "Course0.h"
 
 float clamp(float val, float min, float max);
 std::string to_string_rounded(float val, std::size_t precision);
@@ -219,7 +219,7 @@ void GraphScene::onKeyPressed(const sf::Event::KeyEvent &event) {
 
 void GraphScene::onKeyReleased(const sf::Event::KeyEvent &event) {
     if (_finishing) {
-        Project0::getInstance()->postEvent(MENU_OPEN);
+        Course0::getInstance()->postEvent(MENU_OPEN);
         _finishing = false;
     }
 }

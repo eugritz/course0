@@ -4,7 +4,7 @@
 #include <iostream>
 
 #include "FragmentRectangleShape.h"
-#include "Project0.h"
+#include "Course0.h"
 #include "Resources.hpp"
 
 const float margin = MENU_BORDER_MARGIN;

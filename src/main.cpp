@@ -1,6 +1,6 @@
-#include "Project0.h"
+#include "Course0.h"
 
 int main() {
-    Project0 *project0 = Project0::getInstance();
+    Course0 *project0 = Course0::getInstance();
     project0->start();
 }

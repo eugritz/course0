@@ -1,4 +1,4 @@
-#include "Project0.h"
+#include "Course0.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -10,25 +10,25 @@
 #include "SolutionMenu.h"
 #include "TableMenu.h"
 
-Project0 *Project0::_instance;
+Course0 *Course0::_instance;
 
-Project0 *Project0::getInstance() {
+Course0 *Course0::getInstance() {
     if (_instance == nullptr)
-        _instance = new Project0();
+        _instance = new Course0();
     return _instance;
 }
 
-void Project0::start() {
+void Course0::start() {
     if (_window.isOpen()) return;
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
-    _window.create(sf::VideoMode(WIDTH, HEIGHT), "Project0",
+    _window.create(sf::VideoMode(WIDTH, HEIGHT), "Course0",
             sf::Style::Default, settings);
     _scene = new IntroScene(&_window);
     gameLoop();
 }
 
-void Project0::gameLoop() {
+void Course0::gameLoop() {
     while (_window.isOpen()) {
         sf::Time timeElapsed = _clock.restart();
 
@@ -57,7 +57,7 @@ void Project0::gameLoop() {
     }
 }
 
-void Project0::handleGameEvent(GameEvent event) {
+void Course0::handleGameEvent(GameEvent event) {
     switch (event) {
         case INTRO_OPEN:
             delete _scene;
@@ -95,6 +95,6 @@ void Project0::handleGameEvent(GameEvent event) {
     };
 }
 
-void Project0::postEvent(GameEvent event) {
+void Course0::postEvent(GameEvent event) {
     _eventBus.push(event);
 }

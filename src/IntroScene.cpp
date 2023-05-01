@@ -1,7 +1,7 @@
 #include "IntroScene.h"
 
 #include "Mandelbrot.h"
-#include "Project0.h"
+#include "Course0.h"
 #include "ZoomArea.h"
 
 IntroScene::IntroScene(sf::RenderTarget *target) : Scene(target) {
@@ -79,7 +79,7 @@ bool IntroScene::handleEvent(const sf::Event &event) {
         }
     } else if (event.type == sf::Event::KeyReleased) {
         if (_finishing) {
-            Project0::getInstance()->postEvent(MENU_OPEN);
+            Course0::getInstance()->postEvent(MENU_OPEN);
             _finishing = false;
         }
     }

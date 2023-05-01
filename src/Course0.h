@@ -20,8 +20,8 @@ enum GameEvent {
     EXIT,
 };
 
-class Project0 {
-    static Project0 *_instance;
+class Course0 {
+    static Course0 *_instance;
     Scene *_scene;
 
     sf::RenderWindow _window;
@@ -30,7 +30,7 @@ class Project0 {
     std::queue<GameEvent> _eventBus;
 
 public:
-    static Project0 *getInstance();
+    static Course0 *getInstance();
 
     void start();
     void gameLoop();

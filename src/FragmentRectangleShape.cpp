@@ -1,6 +1,5 @@
 #include "FragmentRectangleShape.h"
 
-
 FragmentRectangleShape::FragmentRectangleShape(sf::Vector2f size, int fragX,
                                                int fragY) {
     _size = size;

@@ -1,6 +1,6 @@
 #include "MainMenu.h"
 
-#include "Project0.h"
+#include "Course0.h"
 
 MainMenu::MainMenu(sf::RenderTarget *target) : MenuScene(target) {
     _inputBlinking = false;
@@ -22,25 +22,25 @@ void MainMenu::setupMenu() {
     _menu.fillItem(L"");
 
     addItem({ L"1) Заставка", []() {
-        Project0::getInstance()->postEvent(INTRO_OPEN);
+        Course0::getInstance()->postEvent(INTRO_OPEN);
     }});
     addItem({ L"2) Графики функций", []() {
-        Project0::getInstance()->postEvent(GRAPHS_OPEN);
+        Course0::getInstance()->postEvent(GRAPHS_OPEN);
     }});
     addItem({ L"3) Таблица", []() {
-        Project0::getInstance()->postEvent(TABLE_OPEN);
+        Course0::getInstance()->postEvent(TABLE_OPEN);
     }});
     addItem({ L"4) Корни уравнения", []() {
-        Project0::getInstance()->postEvent(SOLUTION_OPEN);
+        Course0::getInstance()->postEvent(SOLUTION_OPEN);
     }});
     addItem({ L"5) Определенный интеграл", []() {
-        Project0::getInstance()->postEvent(INTEGRAL_OPEN);
+        Course0::getInstance()->postEvent(INTEGRAL_OPEN);
     }});
     addItem({ L"6) Сведения об авторе", []() {
-        Project0::getInstance()->postEvent(AUTHOR_OPEN);
+        Course0::getInstance()->postEvent(AUTHOR_OPEN);
     }});
     addItem({ L"7) Выход", []() {
-        Project0::getInstance()->postEvent(EXIT);
+        Course0::getInstance()->postEvent(EXIT);
     }});
 
     _menu.fillItem(L"");

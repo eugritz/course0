@@ -3,7 +3,7 @@
 #include <cmath>
 #include <cstring>
 
-#include "Project0.h"
+#include "Course0.h"
 
 using namespace mandelbrot;
 

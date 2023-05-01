@@ -3,7 +3,6 @@
 #include <SFML/Graphics.hpp>
 
 #include "Mandelbrot.h"
-#include "Project0.h"
 #include "Scene.h"
 
 #define INTRO_FILL_TIMEOUT 100

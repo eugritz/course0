@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(project0)
+project(course0)
 
 include(FetchContent)
 FetchContent_Declare(SFML

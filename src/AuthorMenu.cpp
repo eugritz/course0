@@ -3,7 +3,7 @@
 #include <iomanip>
 #include <sstream>
 
-#include "Project0.h"
+#include "Course0.h"
 
 const int width = AUTHOR_MENU_ITEM_LENGTH;
 const int height = AUTHOR_MENU_ITEM_COUNT;
@@ -57,7 +57,7 @@ bool AuthorMenu::handleEvent(const sf::Event &event) {
         }
     } else if (event.type == sf::Event::KeyReleased) {
         if (_finishing) {
-            Project0::getInstance()->postEvent(MENU_OPEN);
+            Course0::getInstance()->postEvent(MENU_OPEN);
             _finishing = false;
         }
     }

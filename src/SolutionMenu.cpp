@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-#include "Project0.h"
+#include "Course0.h"
 
 bool sign(float num);
 
@@ -75,7 +75,7 @@ bool SolutionMenu::handleEvent(const sf::Event &event) {
         }
     } else if (event.type == sf::Event::KeyReleased) {
         if (_finishing) {
-            Project0::getInstance()->postEvent(MENU_OPEN);
+            Course0::getInstance()->postEvent(MENU_OPEN);
             _finishing = false;
         }
     }
