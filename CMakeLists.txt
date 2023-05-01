@@ -9,7 +9,14 @@ FetchContent_Declare(SFML
 )
 FetchContent_MakeAvailable(SFML)
 
-file(GLOB GLSL_SHADERS
+FetchContent_Declare(PortAudio
+    GIT_REPOSITORY https://github.com/PortAudio/portaudio.git
+    GIT_TAG v19.7.0
+    FIND_PACKAGE_ARGS
+)
+FetchContent_MakeAvailable(PortAudio)
+
+file(GLOB_RECURSE GLSL_SHADERS
      RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/src
      src/*.vert src/*.frag)
 
@@ -25,6 +32,6 @@ foreach(SHADER ${GLSL_SHADERS})
     list(APPEND SHADER_FILES "${SHADER}.o")
 endforeach()
 
-file(GLOB SOURCE_FILES src/*.cpp)
+file(GLOB_RECURSE SOURCE_FILES src/*.c src/*.cpp)
 add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${SHADER_FILES})
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics)
+target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics portaudio)

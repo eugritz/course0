@@ -5,6 +5,7 @@
 #include "AuthorMenu.h"
 #include "IntroScene.h"
 #include "MainMenu.h"
+#include "SynthesizerMenu.h"
 
 Course0 *Course0::_instance;
 
@@ -64,6 +65,10 @@ void Course0::handleGameEvent(GameEvent event) {
             delete _scene;
             _scene = new MainMenu(&_window);
             _window.setFramerateLimit(60);
+            break;
+        case SYNTHESIZER_OPEN:
+            delete _scene;
+            _scene = new SynthesizerMenu(&_window);
             break;
         case AUTHOR_OPEN:
             delete _scene;

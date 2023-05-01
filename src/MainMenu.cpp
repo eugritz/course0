@@ -25,7 +25,7 @@ void MainMenu::setupMenu() {
         Course0::getInstance()->postEvent(INTRO_OPEN);
     }});
     addItem({ L"2) Клавишный синтезатор", []() {
-        // TODO: implement
+        Course0::getInstance()->postEvent(SYNTHESIZER_OPEN);
     }});
     addItem({ L"3) Игра «Ипподром»", []() {
         // TODO: implement
