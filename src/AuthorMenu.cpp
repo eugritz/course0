@@ -15,7 +15,7 @@ AuthorMenu::AuthorMenu(sf::RenderTarget *target) : MenuScene(target) {
 }
 
 void AuthorMenu::setupMenu() {
-    std::wstring s1 = L"Расчетно-графическая работа по программированию";
+    std::wstring s1 = L"Курсовая работа по проектной деятельности";
     std::wstring s2 = L"выполнена студентом группы ИВТ-223 Факультета";
     std::wstring s3 = L"Информационных технологий и компьютерных систем";
     std::wstring s4 = L"Гриценко Евгением Вячеславовичем";

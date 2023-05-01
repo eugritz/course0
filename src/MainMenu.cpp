@@ -24,22 +24,16 @@ void MainMenu::setupMenu() {
     addItem({ L"1) Заставка", []() {
         Course0::getInstance()->postEvent(INTRO_OPEN);
     }});
-    addItem({ L"2) Графики функций", []() {
-        Course0::getInstance()->postEvent(GRAPHS_OPEN);
+    addItem({ L"2) Клавишный синтезатор", []() {
+        // TODO: implement
     }});
-    addItem({ L"3) Таблица", []() {
-        Course0::getInstance()->postEvent(TABLE_OPEN);
+    addItem({ L"3) Игра «Ипподром»", []() {
+        // TODO: implement
     }});
-    addItem({ L"4) Корни уравнения", []() {
-        Course0::getInstance()->postEvent(SOLUTION_OPEN);
-    }});
-    addItem({ L"5) Определенный интеграл", []() {
-        Course0::getInstance()->postEvent(INTEGRAL_OPEN);
-    }});
-    addItem({ L"6) Сведения об авторе", []() {
+    addItem({ L"4) Сведения об авторе", []() {
         Course0::getInstance()->postEvent(AUTHOR_OPEN);
     }});
-    addItem({ L"7) Выход", []() {
+    addItem({ L"5) Выход", []() {
         Course0::getInstance()->postEvent(EXIT);
     }});
 

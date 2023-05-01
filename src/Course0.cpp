@@ -3,12 +3,8 @@
 #include <SFML/Graphics.hpp>
 
 #include "AuthorMenu.h"
-#include "GraphScene.h"
-#include "IntegralMenu.h"
 #include "IntroScene.h"
 #include "MainMenu.h"
-#include "SolutionMenu.h"
-#include "TableMenu.h"
 
 Course0 *Course0::_instance;
 
@@ -68,22 +64,6 @@ void Course0::handleGameEvent(GameEvent event) {
             delete _scene;
             _scene = new MainMenu(&_window);
             _window.setFramerateLimit(60);
-            break;
-        case GRAPHS_OPEN:
-            delete _scene;
-            _scene = new GraphScene(&_window);
-            break;
-        case TABLE_OPEN:
-            delete _scene;
-            _scene = new TableMenu(&_window);
-            break;
-        case SOLUTION_OPEN:
-            delete _scene;
-            _scene = new SolutionMenu(&_window);
-            break;
-        case INTEGRAL_OPEN:
-            delete _scene;
-            _scene = new IntegralMenu(&_window);
             break;
         case AUTHOR_OPEN:
             delete _scene;

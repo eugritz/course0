@@ -12,10 +12,6 @@ class Scene;
 enum GameEvent {
     INTRO_OPEN,
     MENU_OPEN,
-    GRAPHS_OPEN,
-    TABLE_OPEN,
-    SOLUTION_OPEN,
-    INTEGRAL_OPEN,
     AUTHOR_OPEN,
     EXIT,
 };
