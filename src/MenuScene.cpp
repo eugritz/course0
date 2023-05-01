@@ -1,11 +1,11 @@
-#include "menuscene.h"
+#include "MenuScene.h"
 
 #include <cmath>
 #include <iostream>
 
-#include "fragrect.hpp"
-#include "project0.h"
-#include "resources.hpp"
+#include "FragmentRectangleShape.h"
+#include "Project0.h"
+#include "Resources.hpp"
 
 const float margin = MENU_BORDER_MARGIN;
 const float width = MENU_BORDER_WIDTH;

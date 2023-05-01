@@ -4,7 +4,7 @@
 
 #include <functional>
 
-#include "linearray.h"
+#include "LineArray.h"
 
 #define GRAPH_SCALE_START 10.f
 #define GRAPH_SPIKE_DIFF 300.f

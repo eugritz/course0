@@ -1,4 +1,4 @@
-#include "tablemenu.h"
+#include "TableMenu.h"
 
 #include <cmath>
 #include <iomanip>
@@ -6,7 +6,7 @@
 #include <limits>
 #include <sstream>
 
-#include "project0.h"
+#include "Project0.h"
 
 const int width = TABLE_MENU_ITEM_LENGTH;
 const int height = TABLE_MENU_ITEM_COUNT;

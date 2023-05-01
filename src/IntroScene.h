@@ -2,9 +2,9 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "mandelbrot.h"
-#include "project0.h"
-#include "scene.h"
+#include "Mandelbrot.h"
+#include "Project0.h"
+#include "Scene.h"
 
 #define INTRO_FILL_TIMEOUT 100
 #define INTRO_FRAME_BLINK_COUNT 8

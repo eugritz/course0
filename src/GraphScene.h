@@ -4,9 +4,9 @@
 
 #include <functional>
 
-#include "funcgraph.h"
-#include "linearray.h"
-#include "scene.h"
+#include "FuncGraph.h"
+#include "LineArray.h"
+#include "Scene.h"
 
 #define GRAPH_AXIS_ARROW_RADIUS 10.f
 #define GRAPH_AXIS_LABEL_FONT_SIZE 14

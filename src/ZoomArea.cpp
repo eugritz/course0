@@ -1,4 +1,4 @@
-#include "zoomarea.h"
+#include "ZoomArea.h"
 
 ZoomArea calculateZoomArea(const mandelbrot::Mandelbrot &mandel, 
                            sf::Vector2<Real> origin, Real radius) {

@@ -1,14 +1,14 @@
-#include "project0.h"
+#include "Project0.h"
 
 #include <SFML/Graphics.hpp>
 
-#include "authormenu.h"
-#include "graphscene.h"
-#include "integralmenu.h"
-#include "introscene.h"
-#include "mainmenu.h"
-#include "solutionmenu.h"
-#include "tablemenu.h"
+#include "AuthorMenu.h"
+#include "GraphScene.h"
+#include "IntegralMenu.h"
+#include "IntroScene.h"
+#include "MainMenu.h"
+#include "SolutionMenu.h"
+#include "TableMenu.h"
 
 Project0 *Project0::_instance;
 

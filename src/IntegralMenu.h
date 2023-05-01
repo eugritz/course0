@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <functional>
 
-#include "menuscene.h"
+#include "MenuScene.h"
 
 #define INTEGRAL_MENU_ITEM_COUNT 12
 #define INTEGRAL_MENU_ITEM_LENGTH 44

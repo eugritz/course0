@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "mandelbrot.h"
+#include "Mandelbrot.h"
 
 struct ZoomArea {
     sf::Vector2f size;

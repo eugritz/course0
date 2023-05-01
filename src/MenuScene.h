@@ -5,9 +5,9 @@
 #include <functional>
 #include <vector>
 
-#include "fragrect.hpp"
-#include "menucontainer.h"
-#include "scene.h"
+#include "FragmentRectangleShape.h"
+#include "MenuContainer.h"
+#include "Scene.h"
 
 #define MENU_BORDER_MARGIN 10.f
 #define MENU_BORDER_WIDTH 5.f

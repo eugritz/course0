@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "line.hpp"
+#include "Line.h"
 
 class LineArray : public sf::Drawable {
   std::vector<sf::VertexArray> _arr;

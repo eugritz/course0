@@ -1,9 +1,9 @@
-#include "mandelbrot.h"
+#include "Mandelbrot.h"
 
 #include <cmath>
 #include <cstring>
 
-#include "project0.h"
+#include "Project0.h"
 
 using namespace mandelbrot;
 
@@ -26,14 +26,10 @@ Mandelbrot::Mandelbrot(const sf::Vector2u &size, const sf::Vector2<Real> &begin,
 }
 
 Mandelbrot::~Mandelbrot() {
-    if (_done) { 
-        delete _done;
-        _done = nullptr;
-    }
-    if (_data) {
-        delete _data;
-        _data = nullptr;
-    }
+    delete _done;
+    _done = nullptr;
+    delete _data;
+    _data = nullptr;
 }
 
 void Mandelbrot::init() {

@@ -1,8 +1,8 @@
-#include "introscene.h"
+#include "IntroScene.h"
 
-#include "mandelbrot.h"
-#include "project0.h"
-#include "zoomarea.h"
+#include "Mandelbrot.h"
+#include "Project0.h"
+#include "ZoomArea.h"
 
 IntroScene::IntroScene(sf::RenderTarget *target) : Scene(target) {
     _zoomPoint = ZOOM_START;

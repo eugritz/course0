@@ -1,6 +1,6 @@
-#include "mainmenu.h"
+#include "MainMenu.h"
 
-#include "project0.h"
+#include "Project0.h"
 
 MainMenu::MainMenu(sf::RenderTarget *target) : MenuScene(target) {
     _inputBlinking = false;

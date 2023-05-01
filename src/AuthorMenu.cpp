@@ -1,9 +1,9 @@
-#include "authormenu.h"
+#include "AuthorMenu.h"
 
 #include <iomanip>
 #include <sstream>
 
-#include "project0.h"
+#include "Project0.h"
 
 const int width = AUTHOR_MENU_ITEM_LENGTH;
 const int height = AUTHOR_MENU_ITEM_COUNT;

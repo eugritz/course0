@@ -1,10 +1,9 @@
-#include "graphscene.h"
+#include "GraphScene.h"
 
 #include <cmath>
 #include <iostream>
 
-#include "line.hpp"
-#include "project0.h"
+#include "Project0.h"
 
 float clamp(float val, float min, float max);
 std::string to_string_rounded(float val, std::size_t precision);

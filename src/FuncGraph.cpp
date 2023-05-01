@@ -1,4 +1,4 @@
-#include "funcgraph.h"
+#include "FuncGraph.h"
 
 FuncGraph::FuncGraph() {
     init();

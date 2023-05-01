@@ -1,8 +1,8 @@
-#include "solutionmenu.h"
+#include "SolutionMenu.h"
 
 #include <sstream>
 
-#include "project0.h"
+#include "Project0.h"
 
 bool sign(float num);
 

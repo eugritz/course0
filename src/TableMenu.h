@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "menuscene.h"
+#include "MenuScene.h"
 
 #define TABLE_MENU_ITEM_COUNT 22
 #define TABLE_MENU_ITEM_LENGTH 48

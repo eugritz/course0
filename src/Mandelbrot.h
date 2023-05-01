@@ -4,7 +4,7 @@
 
 #include <queue>
 
-#include "complex.hpp"
+#include "Complex.h"
 
 namespace mandelbrot {
 

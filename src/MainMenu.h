@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "menuscene.h"
+#include "MenuScene.h"
 
 #define MAIN_MENU_INPUT_BLINKING_TIMEOUT 500000
 #define MAIN_MENU_ITEM_COUNT 15

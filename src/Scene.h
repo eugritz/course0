@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
-class Scene  {
+class Scene {
 public:
     Scene(sf::RenderTarget *target) : _target(target) { }
     virtual ~Scene() = default;

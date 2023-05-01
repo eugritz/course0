@@ -1,8 +1,8 @@
-#include "integralmenu.h"
+#include "IntegralMenu.h"
 
 #include <cmath>
 
-#include "project0.h"
+#include "Project0.h"
 
 const int width = INTEGRAL_MENU_ITEM_LENGTH;
 const int height = INTEGRAL_MENU_ITEM_COUNT;

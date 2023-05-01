@@ -1,4 +1,4 @@
-#include "linearray.h"
+#include "LineArray.h"
 #include <iostream>
 
 LineArray::LineArray() { }
