@@ -37,7 +37,8 @@ int Synthesizer::paCallbackMethod(const void *inputBuffer, void *outputBuffer,
             *out++ = -0.1f;
 
         _phase += 1;
-        if (_phase >= TABLE_SIZE) _phase -= TABLE_SIZE;
+        while (_phase >= SAMPLE_RATE / pitch)
+            _phase -= SAMPLE_RATE / pitch;
     }
 
     return paContinue;
@@ -49,7 +50,7 @@ void Synthesizer::setSemitone(int nth) {
         return;
     }
 
-    double octaveBaseFrequency = 110.0;
+    double octaveBaseFrequency = 130.81; // C3 small
     double octaveMultiplier = std::pow(2.0, 1.0 / 12.0);
     _pitch = octaveBaseFrequency * pow(octaveMultiplier, nth - 1);
 }

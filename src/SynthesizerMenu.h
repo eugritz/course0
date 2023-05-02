@@ -9,7 +9,7 @@
 #define SYNTHESIZER_MENU_ITEM_LENGTH 44
 
 class SynthesizerMenu : public MenuScene {
-    const sf::String KEY_NOTES = "zsxcfvgbnjmk,l.";
+    const sf::String KEY_NOTES = "q2w3er5t6y7ui";
 
     ScopedPaHandler _handler;
     Synthesizer _synth;

@@ -6,12 +6,10 @@
 #include <atomic>
 
 #define SAMPLE_RATE 44100
-#define TABLE_SIZE  200
 
 class Synthesizer {
     PaStream *_stream;
     int _phase;
-
     std::atomic<double> _pitch;
 
 public:
