@@ -23,7 +23,8 @@ int Synthesizer::paCallbackMethod(const void *inputBuffer, void *outputBuffer,
 
     for (i = 0; i < framesPerBuffer; i++) {
         double freq = _waveform->getFrequency();
-        double sample = _waveform->getSample(_phase, (double)SAMPLE_RATE);
+        double sample = _waveform->getSample((double)SAMPLE_RATE,
+                                             timeInfo->currentTime, _phase);
         *out++ = (float)sample;
 
         _phase += 1;

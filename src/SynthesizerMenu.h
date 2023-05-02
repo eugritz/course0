@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "MenuScene.h"
+#include "EnvelopeADSR.hpp"
 #include "SquareWave.hpp"
 #include "Synthesizer.h"
 
@@ -15,6 +16,7 @@ class SynthesizerMenu : public MenuScene {
     ScopedPaHandler _handler;
     Synthesizer _synth;
     std::shared_ptr<SquareWave> _waveform;
+    std::shared_ptr<EnvelopeADSR> _envelope;
     sf::String _pressedNotes;
 
     bool _finishing;

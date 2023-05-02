@@ -13,11 +13,12 @@ public:
     SquareWave() : _baseOctaveFreq(110.0) { }
     SquareWave(double baseOctaveFreq) : _baseOctaveFreq(baseOctaveFreq) { }
 
-    virtual double getSample(int phase, double sampleRate) const {
+    virtual double getSample(double sampleRate, PaTime time, int phase) const {
         if (!_isStarted)
             return 0.0;
-        return std::sin(_pitch * (double)phase / sampleRate * 2.0 * M_PI) > 0.0 ?
-            0.1 : -0.1;
+        double angularVelocity = _pitch * 2.0 * M_PI;
+        return std::sin((double)phase / sampleRate * angularVelocity) > 0.0 ?
+            1.0 : -1.0;
     }
 
     virtual double getFrequency() const {

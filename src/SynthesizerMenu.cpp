@@ -13,8 +13,13 @@ SynthesizerMenu::SynthesizerMenu(sf::RenderTarget *target) : MenuScene(target) {
     _finishing = false;
 
     _waveform = std::make_shared<SquareWave>(130.81);
+    _envelope = std::make_shared<EnvelopeADSR>(_waveform);
+    _envelope->setReleaseDuration(0.8);
+    _envelope->setAttackAmplitude(0.1);
+    _envelope->setSustainAmplitude(0.08);
+
     _synth.open();
-    _synth.setWaveform(_waveform);
+    _synth.setWaveform(_envelope);
     _synth.start();
 
     setup(width, height);
@@ -77,7 +82,7 @@ void SynthesizerMenu::addKeySemitone(char key) {
     }
 
     _pressedNotes += key;
-    _waveform->start();
+    _envelope->start();
     _waveform->setSemitone(semitone);
 }
 
@@ -88,7 +93,7 @@ void SynthesizerMenu::removeKeySemitone(char key) {
     if ((semitonePosition = _pressedNotes.find(key)) != std::string::npos)
         _pressedNotes.erase(semitonePosition, 1);
     if (_pressedNotes.getSize() == 0) {
-        _waveform->stop();
+        _envelope->stop();
         return;
     }
 
