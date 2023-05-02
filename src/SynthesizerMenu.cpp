@@ -1,6 +1,7 @@
 #include "SynthesizerMenu.h"
 
 #include "Course0.h"
+#include "SquareWave.hpp"
 
 #include <iostream>
 #include <string>
@@ -11,7 +12,9 @@ const int height = SYNTHESIZER_MENU_ITEM_COUNT;
 SynthesizerMenu::SynthesizerMenu(sf::RenderTarget *target) : MenuScene(target) {
     _finishing = false;
 
+    _waveform = std::make_shared<SquareWave>(130.81);
     _synth.open();
+    _synth.setWaveform(_waveform);
     _synth.start();
 
     setup(width, height);
@@ -74,7 +77,8 @@ void SynthesizerMenu::addKeySemitone(char key) {
     }
 
     _pressedNotes += key;
-    _synth.setSemitone(semitone + 1);
+    _waveform->start();
+    _waveform->setSemitone(semitone);
 }
 
 void SynthesizerMenu::removeKeySemitone(char key) {
@@ -84,12 +88,12 @@ void SynthesizerMenu::removeKeySemitone(char key) {
     if ((semitonePosition = _pressedNotes.find(key)) != std::string::npos)
         _pressedNotes.erase(semitonePosition, 1);
     if (_pressedNotes.getSize() == 0) {
-        _synth.setSemitone(0);
+        _waveform->stop();
         return;
     }
 
     char last = _pressedNotes[_pressedNotes.getSize() - 1];
     if ((semitone = KEY_NOTES.find(last)) == std::string::npos)
         return;
-    _synth.setSemitone(semitone + 1);
+    _waveform->setSemitone(semitone);
 }

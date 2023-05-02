@@ -5,7 +5,6 @@
 Synthesizer::Synthesizer() {
     _stream = nullptr;
     _phase = 0;
-    _pitch = 0.0;
 }
 
 Synthesizer::~Synthesizer() {
@@ -23,36 +22,21 @@ int Synthesizer::paCallbackMethod(const void *inputBuffer, void *outputBuffer,
     double seconds_per_frame = 1.0 / (double)SAMPLE_RATE;
 
     for (i = 0; i < framesPerBuffer; i++) {
-        double pitch = _pitch;
-        double radians = pitch * 2.0 * M_PI;
-        float sample = (float)std::sin(
-                (double)_phase * seconds_per_frame * radians
-                );
-
-        if (pitch == 0.0)
-            *out++ = 0.f;
-        else if (sample > 0.f)
-            *out++ = 0.1f;
-        else
-            *out++ = -0.1f;
+        double freq = _waveform->getFrequency();
+        double sample = _waveform->getSample(_phase, (double)SAMPLE_RATE);
+        *out++ = (float)sample;
 
         _phase += 1;
-        while (_phase >= SAMPLE_RATE / pitch)
-            _phase -= SAMPLE_RATE / pitch;
+        while (_phase >= SAMPLE_RATE / freq)
+            _phase -= SAMPLE_RATE / freq;
     }
 
     return paContinue;
 }
 
-void Synthesizer::setSemitone(int nth) {
-    if (nth == 0) {
-        _pitch = 0.0;
-        return;
-    }
-
-    double octaveBaseFrequency = 130.81; // C3 small
-    double octaveMultiplier = std::pow(2.0, 1.0 / 12.0);
-    _pitch = octaveBaseFrequency * pow(octaveMultiplier, nth - 1);
+void Synthesizer::setWaveform(std::shared_ptr<Waveform> waveform) {
+    _waveform = waveform;
+    _waveform->setStream(_stream);
 }
 
 bool Synthesizer::open(PaDeviceIndex deviceIndex) {

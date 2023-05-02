@@ -2,15 +2,18 @@
 
 #include <portaudio.h>
 
-#include <cstdio>
 #include <atomic>
+#include <cstdio>
+#include <memory>
+
+#include "Waveform.h"
 
 #define SAMPLE_RATE 44100
 
 class Synthesizer {
     PaStream *_stream;
+    std::shared_ptr<Waveform> _waveform;
     int _phase;
-    std::atomic<double> _pitch;
 
 public:
     Synthesizer();
@@ -21,7 +24,7 @@ public:
     bool stop();
     bool close();
 
-    void setSemitone(int nth);
+    void setWaveform(std::shared_ptr<Waveform> waveform);
 
 private:
     int paCallbackMethod(const void *inputBuffer, void *outputBuffer,

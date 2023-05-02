@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "MenuScene.h"
+#include "SquareWave.hpp"
 #include "Synthesizer.h"
 
 #define SYNTHESIZER_MENU_ITEM_COUNT 15
@@ -13,6 +14,7 @@ class SynthesizerMenu : public MenuScene {
 
     ScopedPaHandler _handler;
     Synthesizer _synth;
+    std::shared_ptr<SquareWave> _waveform;
     sf::String _pressedNotes;
 
     bool _finishing;
