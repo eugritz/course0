@@ -6,18 +6,18 @@
 #include <iostream>
 #include <memory>
 
-class EnvelopeADSR : public Waveform {
+class AtomicEnvelopeADSR : public Waveform {
     std::shared_ptr<Waveform> _waveform;
     std::atomic<PaTime> _startTime, _endTime;
 
-    double _attackDuration;
-    double _decayDuration;
-    double _releaseDuration;
-    double _attackAmplitude;
-    double _sustainAmplitude;
+    std::atomic<double> _attackDuration;
+    std::atomic<double> _decayDuration;
+    std::atomic<double> _releaseDuration;
+    std::atomic<double> _attackAmplitude;
+    std::atomic<double> _sustainAmplitude;
 
 public:
-    EnvelopeADSR(std::shared_ptr<Waveform> waveform) {
+    AtomicEnvelopeADSR(std::shared_ptr<Waveform> waveform) {
         _waveform = waveform;
 
         _attackDuration = 0.1;

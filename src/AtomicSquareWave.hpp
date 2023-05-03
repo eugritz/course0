@@ -1,23 +1,23 @@
 #pragma once
 
-#include "Waveform.h"
-
 #include <atomic>
 #include <cmath>
 
-class SquareWave : public Waveform {
+#include "Waveform.h"
+
+class AtomicSquareWave : public Waveform {
     std::atomic<double> _pitch;
-    double _baseOctaveFreq;
+    std::atomic<double> _baseOctaveFreq;
 
 public:
-    SquareWave() : _baseOctaveFreq(110.0) { }
-    SquareWave(double baseOctaveFreq) : _baseOctaveFreq(baseOctaveFreq) { }
+    AtomicSquareWave() : _baseOctaveFreq(110.0) { }
+    AtomicSquareWave(double baseOctaveFreq) : _baseOctaveFreq(baseOctaveFreq) { }
 
     virtual double getSample(double sampleRate, PaTime time, int phase) const {
         if (!_isStarted)
             return 0.0;
         double angularVelocity = _pitch * 2.0 * M_PI;
-        return std::sin((double)phase / sampleRate * angularVelocity) > 0.0 ?
+        return std::sin(time / sampleRate * angularVelocity) > 0.0 ?
             1.0 : -1.0;
     }
 

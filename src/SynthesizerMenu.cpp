@@ -1,10 +1,9 @@
 #include "SynthesizerMenu.h"
 
-#include "Course0.h"
-#include "SquareWave.hpp"
-
 #include <iostream>
 #include <string>
+
+#include "Course0.h"
 
 const int width = SYNTHESIZER_MENU_ITEM_LENGTH;
 const int height = SYNTHESIZER_MENU_ITEM_COUNT;
@@ -12,8 +11,8 @@ const int height = SYNTHESIZER_MENU_ITEM_COUNT;
 SynthesizerMenu::SynthesizerMenu(sf::RenderTarget *target) : MenuScene(target) {
     _finishing = false;
 
-    _waveform = std::make_shared<SquareWave>(130.81);
-    _envelope = std::make_shared<EnvelopeADSR>(_waveform);
+    _waveform = std::make_shared<AtomicSquareWave>(130.81);
+    _envelope = std::make_shared<AtomicEnvelopeADSR>(_waveform);
     _envelope->setReleaseDuration(0.8);
     _envelope->setAttackAmplitude(0.1);
     _envelope->setSustainAmplitude(0.08);
