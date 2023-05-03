@@ -6,23 +6,30 @@
 #include "Waveform.h"
 
 class AtomicSquareWave : public Waveform {
+    int _phase;
     std::atomic<double> _pitch;
     std::atomic<double> _baseOctaveFreq;
 
 public:
-    AtomicSquareWave() : _baseOctaveFreq(110.0) { }
-    AtomicSquareWave(double baseOctaveFreq) : _baseOctaveFreq(baseOctaveFreq) { }
-
-    virtual double getSample(double sampleRate, PaTime time, int phase) const {
-        if (!_isStarted)
-            return 0.0;
-        double angularVelocity = _pitch * 2.0 * M_PI;
-        return std::sin(time / sampleRate * angularVelocity) > 0.0 ?
-            1.0 : -1.0;
+    AtomicSquareWave() : _baseOctaveFreq(110.0) {
+        _phase = 0;
     }
 
-    virtual double getFrequency() const {
-        return _pitch;
+    AtomicSquareWave(double baseOctaveFreq) : _baseOctaveFreq(baseOctaveFreq) {
+        _phase = 0;
+    }
+
+    virtual double getSample(double sampleRate, PaTime time) {
+        if (!_isStarted)
+            return 0.0;
+
+        _phase += 1;
+        while (_phase >= sampleRate / _pitch)
+            _phase -= sampleRate / _pitch;
+
+        double angularVelocity = _pitch * 2.0 * M_PI;
+        return std::sin(_phase / sampleRate * angularVelocity) > 0.0 ?
+            1.0 : -1.0;
     }
 
     void setSemitone(int nth) {

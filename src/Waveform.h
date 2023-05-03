@@ -5,11 +5,10 @@
 class Waveform {
 public:
     virtual void start();
+    virtual bool isStarted();
     virtual void stop();
 
-    virtual double getSample(double sampleRate, PaTime time, int phase) const = 0;
-    virtual double getFrequency() const = 0;
-
+    virtual double getSample(double sampleRate, PaTime time) = 0;
     virtual void setStream(PaStream *stream);
 
 protected:

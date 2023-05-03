@@ -30,22 +30,14 @@ public:
         _endTime = 0.0;
     }
 
-    virtual double getSample(double sampleRate, PaTime time,
-                             int phase) const override {
+    virtual double getSample(double sampleRate, PaTime time) override {
         double amplitude = 0.0;
         PaTime lifeTime = time - _startTime;
 
         if (_isStarted) {
-            double startAmplitude = 0.0;
-            if (time < _endTime + _releaseDuration) {
-                double release = (time - _endTime) / _releaseDuration;
-                startAmplitude = _sustainAmplitude - _sustainAmplitude * release;
-            }
-
             if (lifeTime <= _attackDuration) {
                 double attack = lifeTime / _attackDuration;
-                double step = _attackAmplitude - startAmplitude;
-                amplitude = startAmplitude + attack * step;
+                amplitude = attack * _attackAmplitude;
             } else if (lifeTime - _attackDuration <= _decayDuration) {
                 double decay = (lifeTime - _attackDuration) / _decayDuration;
                 double step = _sustainAmplitude - _attackAmplitude;
@@ -60,11 +52,7 @@ public:
 
         if (amplitude <= 0.0001)
             return 0.0;
-        return amplitude * _waveform->getSample(sampleRate, time, phase);
-    }
-
-    virtual double getFrequency() const override {
-        return _waveform->getFrequency();
+        return amplitude * _waveform->getSample(sampleRate, time);
     }
 
     virtual void start() override {
@@ -80,6 +68,11 @@ public:
             return;
         Waveform::stop();
         _endTime = Pa_GetStreamTime(_stream);
+    }
+
+    void setStream(PaStream *stream) override {
+        Waveform::setStream(stream);
+        _waveform->setStream(stream);
     }
 
     virtual void setAttackDuration(double durationSeconds) {

@@ -3,6 +3,9 @@
 #include <iostream>
 #include <string>
 
+#include "AtomicEnvelopeADSR.hpp"
+#include "AtomicSquareWave.hpp"
+#include "AtomicWaveSummator.hpp"
 #include "Course0.h"
 
 const int width = SYNTHESIZER_MENU_ITEM_LENGTH;
@@ -11,14 +14,9 @@ const int height = SYNTHESIZER_MENU_ITEM_COUNT;
 SynthesizerMenu::SynthesizerMenu(sf::RenderTarget *target) : MenuScene(target) {
     _finishing = false;
 
-    _waveform = std::make_shared<AtomicSquareWave>(130.81);
-    _envelope = std::make_shared<AtomicEnvelopeADSR>(_waveform);
-    _envelope->setReleaseDuration(0.8);
-    _envelope->setAttackAmplitude(0.1);
-    _envelope->setSustainAmplitude(0.08);
-
+    _waveform = std::make_shared<AtomicWaveSummator>();
     _synth.open();
-    _synth.setWaveform(_envelope);
+    _synth.setWaveform(_waveform);
     _synth.start();
 
     setup(width, height);
@@ -81,23 +79,24 @@ void SynthesizerMenu::addKeySemitone(char key) {
     }
 
     _pressedNotes += key;
-    _envelope->start();
-    _waveform->setSemitone(semitone);
+    double octave12th = std::pow(2.0, 1.0 / 12.0);
+    double pitch = 130.81 * pow(octave12th, semitone);
+
+    auto wave = std::make_shared<AtomicSquareWave>();
+    wave->setPitch(pitch);
+    auto envelope = std::make_shared<AtomicEnvelopeADSR>(wave);
+    envelope->setReleaseDuration(0.8);
+    envelope->setAttackAmplitude(0.1);
+    envelope->setSustainAmplitude(0.08);
+
+    _waveform->addWave(envelope);
+    envelope->start();
 }
 
 void SynthesizerMenu::removeKeySemitone(char key) {
-    int semitone = 0;
-
     size_t semitonePosition = 0;
-    if ((semitonePosition = _pressedNotes.find(key)) != std::string::npos)
+    if ((semitonePosition = _pressedNotes.find(key)) != std::string::npos) {
         _pressedNotes.erase(semitonePosition, 1);
-    if (_pressedNotes.getSize() == 0) {
-        _envelope->stop();
-        return;
+        _waveform->stopNthWave(semitonePosition);
     }
-
-    char last = _pressedNotes[_pressedNotes.getSize() - 1];
-    if ((semitone = KEY_NOTES.find(last)) == std::string::npos)
-        return;
-    _waveform->setSemitone(semitone);
 }

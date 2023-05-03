@@ -4,7 +4,6 @@
 
 Synthesizer::Synthesizer() {
     _stream = nullptr;
-    _phase = 0;
 }
 
 Synthesizer::~Synthesizer() {
@@ -17,19 +16,11 @@ int Synthesizer::paCallbackMethod(const void *inputBuffer, void *outputBuffer,
                                   const PaStreamCallbackTimeInfo *timeInfo,
                                   PaStreamCallbackFlags statusFlags) {
     float *out = (float *)outputBuffer;
-    int i;
-
-    double seconds_per_frame = 1.0 / (double)SAMPLE_RATE;
+    unsigned int i;
 
     for (i = 0; i < framesPerBuffer; i++) {
-        double freq = _waveform->getFrequency();
-        double sample = _waveform->getSample((double)SAMPLE_RATE,
-                                             timeInfo->currentTime, _phase);
+        double sample = _waveform->getSample((double)SAMPLE_RATE, timeInfo->currentTime);
         *out++ = (float)sample;
-
-        _phase += 1;
-        while (_phase >= SAMPLE_RATE / freq)
-            _phase -= SAMPLE_RATE / freq;
     }
 
     return paContinue;

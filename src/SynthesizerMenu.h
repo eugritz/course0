@@ -2,8 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "AtomicEnvelopeADSR.hpp"
-#include "AtomicSquareWave.hpp"
+#include "AtomicWaveSummator.hpp"
 #include "MenuScene.h"
 #include "Synthesizer.h"
 
@@ -15,8 +14,7 @@ class SynthesizerMenu : public MenuScene {
 
     ScopedPaHandler _handler;
     Synthesizer _synth;
-    std::shared_ptr<AtomicSquareWave> _waveform;
-    std::shared_ptr<AtomicEnvelopeADSR> _envelope;
+    std::shared_ptr<AtomicWaveSummator> _waveform;
     sf::String _pressedNotes;
 
     bool _finishing;
