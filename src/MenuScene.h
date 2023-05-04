@@ -42,8 +42,10 @@ protected:
     bool _loadingFinished;
 
     void setup(std::size_t cols, std::size_t rows);
+    void setup(const sf::Vector2f &size);
 
 private:
     void setupBorders(const sf::Vector2f &size, const sf::Vector2f &center);
     bool setupMenu(float menuWidth, std::size_t rows, const sf::Vector2f &center);
+    bool setupMenuRaw(float menuWidth, float menuHeight, const sf::Vector2f &center);
 };

@@ -45,6 +45,32 @@ void MenuScene::setup(std::size_t cols, std::size_t rows) {
     _background.setPosition(center);
 }
 
+void MenuScene::setup(const sf::Vector2f &size) {
+    const std::string vertexSource = RESOURCE(border_vert);
+    _borderShader.loadFromMemory(vertexSource, sf::Shader::Vertex);
+    _borderShader.setUniform("off", _colorOffset);
+
+    if (!_itemFont.loadFromFile("FiraMono-Regular.ttf")) {
+        std::cerr << "ERROR: Couldn't load font \"FiraMono-Regular.ttf\"\n";
+        return;
+    }
+    _itemFont.setSmooth(true);
+
+    float characterWidth = _itemFont.getGlyph('A',
+            MENU_ITEM_FONT_SIZE, false, 0).bounds.width;
+
+    sf::Vector2f center(_target->getSize().x / 2.f,
+                        _target->getSize().y / 2.f);
+    setupMenuRaw(size.x, size.y, center);
+    sf::Vector2f sizeMargins(size.x + 4.f * margin, _menu.getSize().y + margin * 4.f);
+    setupBorders(sizeMargins, center);
+
+    _background.setFillColor(sf::Color::Black);
+    _background.setSize(size);
+    _background.setOrigin(size / 2.f);
+    _background.setPosition(center);
+}
+
 void MenuScene::setupBorders(const sf::Vector2f &size,
                              const sf::Vector2f &center) {
     _r1.setSize(sf::Vector2f(size.x - 2.f * margin, width));
@@ -84,6 +110,24 @@ bool MenuScene::setupMenu(float menuWidth, std::size_t rows,
     menuSize = _menu.setFixedSize(sf::Vector2f(
         menuWidth - margin * 2.f - width * 4.f,
         menuSize.y
+    ));
+    _menu.setOrigin(menuSize / 2.f);
+    _menu.setPosition(center);
+    return true;
+}
+
+bool MenuScene::setupMenuRaw(float menuWidth, float menuHeight,
+                          const sf::Vector2f &center) {
+    _menu.create(_itemFont, MENU_ITEM_FONT_SIZE);
+    _menu.setIndent(MENU_ITEM_INDENT);
+    menuWidth = std::floor(menuWidth);
+    if ((long)menuWidth % 2 != 0)
+        menuWidth = std::floor(menuWidth - 1.f);
+
+    sf::Vector2f menuSize = _menu.getSize();
+    menuSize = _menu.setFixedSize(sf::Vector2f(
+        menuWidth - margin * 2.f - width * 4.f,
+        menuHeight
     ));
     _menu.setOrigin(menuSize / 2.f);
     _menu.setPosition(center);
