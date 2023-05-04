@@ -46,10 +46,6 @@ void MenuScene::setup(std::size_t cols, std::size_t rows) {
 }
 
 void MenuScene::setup(const sf::Vector2f &size) {
-    const std::string vertexSource = RESOURCE(border_vert);
-    _borderShader.loadFromMemory(vertexSource, sf::Shader::Vertex);
-    _borderShader.setUniform("off", _colorOffset);
-
     if (!_itemFont.loadFromFile("FiraMono-Regular.ttf")) {
         std::cerr << "ERROR: Couldn't load font \"FiraMono-Regular.ttf\"\n";
         return;
@@ -73,6 +69,10 @@ void MenuScene::setup(const sf::Vector2f &size) {
 
 void MenuScene::setupBorders(const sf::Vector2f &size,
                              const sf::Vector2f &center) {
+    const std::string vertexSource = RESOURCE(border_vert);
+    _borderShader.loadFromMemory(vertexSource, sf::Shader::Vertex);
+    _borderShader.setUniform("off", _colorOffset);
+
     _r1.setSize(sf::Vector2f(size.x - 2.f * margin, width));
     _r1.setFragments(10, 1);
     _r1.setFillColor(sf::Color::White);
