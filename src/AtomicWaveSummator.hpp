@@ -1,8 +1,5 @@
 #pragma once
 
-#include <atomic>
-#include <cmath>
-#include <iostream>
 #include <memory>
 #include <mutex>
 #include <shared_mutex>

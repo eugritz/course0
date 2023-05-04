@@ -3,7 +3,6 @@
 #include "Waveform.h"
 
 #include <atomic>
-#include <iostream>
 #include <memory>
 
 class AtomicEnvelopeADSR : public Waveform {

@@ -1,8 +1,5 @@
 #include "SynthesizerMenu.h"
 
-#include <iostream>
-#include <string>
-
 #include "AtomicEnvelopeADSR.hpp"
 #include "AtomicSquareWave.hpp"
 #include "AtomicWaveSummator.hpp"
