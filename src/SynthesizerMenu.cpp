@@ -1,5 +1,7 @@
 #include "SynthesizerMenu.h"
 
+#include <iostream>
+
 #include "AtomicEnvelopeADSR.hpp"
 #include "AtomicSquareWave.hpp"
 #include "AtomicWaveSummator.hpp"
@@ -16,15 +18,20 @@ SynthesizerMenu::SynthesizerMenu(sf::RenderTarget *target) : MenuScene(target) {
     _synth.setWaveform(_waveform);
     _synth.start();
 
-    setup(width, height);
+    setup(_keyboard.getSize());
     setupMenu();
 }
 
 void SynthesizerMenu::setupMenu() {
+    _keyboard.setOrigin(_keyboard.getSize() / 2.f);
+    float centerX = (float)_target->getSize().x / 2.f;
+    float centerY = (float)_target->getSize().y / 2.f;
+    _keyboard.setPosition(centerX, centerY);
 }
 
 void SynthesizerMenu::draw(sf::RenderStates states) {
     MenuScene::draw(states);
+    _target->draw(_keyboard);
 }
 
 bool SynthesizerMenu::handleEvent(const sf::Event &event) {
@@ -86,6 +93,7 @@ void SynthesizerMenu::addKeySemitone(char key) {
     envelope->setAttackAmplitude(0.1);
     envelope->setSustainAmplitude(0.08);
 
+    _keyboard[semitone]->setKeyPressed(true);
     _waveform->addWave(envelope);
     envelope->start();
 }
@@ -93,6 +101,10 @@ void SynthesizerMenu::addKeySemitone(char key) {
 void SynthesizerMenu::removeKeySemitone(char key) {
     size_t semitonePosition = 0;
     if ((semitonePosition = _pressedNotes.find(key)) != std::string::npos) {
+        size_t semitone = 0;
+        if ((semitone = KEY_NOTES.find(key)) != std::string::npos) {
+            _keyboard[semitone]->setKeyPressed(false);
+        }
         _pressedNotes.erase(semitonePosition, 1);
         _waveform->stopNthWave(semitonePosition);
     }

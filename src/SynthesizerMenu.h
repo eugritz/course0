@@ -5,6 +5,7 @@
 #include "AtomicWaveSummator.hpp"
 #include "MenuScene.h"
 #include "Synthesizer.h"
+#include "SynthesizerKeyboard.h"
 
 #define SYNTHESIZER_MENU_ITEM_COUNT 15
 #define SYNTHESIZER_MENU_ITEM_LENGTH 44
@@ -15,6 +16,8 @@ class SynthesizerMenu : public MenuScene {
     ScopedPaHandler _handler;
     Synthesizer _synth;
     std::shared_ptr<AtomicWaveSummator> _waveform;
+
+    SynthesizerKeyboard _keyboard;
     sf::String _pressedNotes;
 
     bool _finishing;
