@@ -7,11 +7,16 @@
 
 #define RACE_TRACK_SIZE_X 400.f
 #define RACE_TRACK_SIZE_Y 200.f
+#define RACE_TRACK_ROUNDNESS 0.5f
+#define RACE_TRACK_ITERATIONS 50
 
 class RaceScene : public Scene {
     sf::Vector2f _size;
     bool _finishing;
-    RectangleShape2 _path;
+
+    RectangleShape2 _track;
+    sf::CircleShape _player;
+    size_t _playerPosition;
 
 public:
     RaceScene(sf::RenderTarget *target);
