@@ -5,6 +5,7 @@
 #include "AuthorMenu.h"
 #include "IntroScene.h"
 #include "MainMenu.h"
+#include "RaceScene.h"
 #include "SynthesizerMenu.h"
 
 Course0 *Course0::_instance;
@@ -69,6 +70,10 @@ void Course0::handleGameEvent(GameEvent event) {
         case SYNTHESIZER_OPEN:
             delete _scene;
             _scene = new SynthesizerMenu(&_window);
+            break;
+        case RACE_OPEN:
+            delete _scene;
+            _scene = new RaceScene(&_window);
             break;
         case AUTHOR_OPEN:
             delete _scene;

@@ -28,7 +28,7 @@ void MainMenu::setupMenu() {
         Course0::getInstance()->postEvent(SYNTHESIZER_OPEN);
     }});
     addItem({ L"3) Игра «Ипподром»", []() {
-        // TODO: implement
+        Course0::getInstance()->postEvent(RACE_OPEN);
     }});
     addItem({ L"4) Сведения об авторе", []() {
         Course0::getInstance()->postEvent(AUTHOR_OPEN);

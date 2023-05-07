@@ -13,6 +13,7 @@ enum GameEvent {
     INTRO_OPEN,
     MENU_OPEN,
     SYNTHESIZER_OPEN,
+    RACE_OPEN,
     AUTHOR_OPEN,
     EXIT,
 };
