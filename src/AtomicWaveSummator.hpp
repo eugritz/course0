@@ -2,18 +2,17 @@
 
 #include <memory>
 #include <mutex>
-#include <shared_mutex>
 #include <vector>
 
 #include "Waveform.h"
 
 class AtomicWaveSummator : public Waveform{
     std::vector<std::shared_ptr<Waveform>> _waves;
-    std::shared_mutex _mutex;
+    std::mutex _mutex;
 
 public:
     virtual double getSample(double sampleRate, PaTime time) {
-        std::shared_lock lock(_mutex);
+        std::unique_lock lock(_mutex);
 
         double mixed = 0.0;
         size_t i = 0;
