@@ -2,21 +2,21 @@
 
 RectangleShape2::RectangleShape2() {
     _iters = 0;
-    _rounding = 0.f;
+    _roundness = 0.f;
     _step = 0.f;
     _offset = 0.f;
     update();
 }
 
 RectangleShape2::RectangleShape2(sf::Vector2f size, std::size_t iters,
-                                 float rounding) {
+                                 float roundness) {
     _size = size;
     _iters = iters + 1;
-    _rounding = rounding;
+    _roundness = roundness;
     _step = 1.f / (float)iters;
 
     float smallSide = _size.x > _size.y ? _size.y : _size.x;
-    _offset = smallSide * rounding;
+    _offset = smallSide * roundness;
     update();
 }
 
@@ -27,7 +27,7 @@ const sf::Vector2f &RectangleShape2::getSize() const {
 void RectangleShape2::setSize(const sf::Vector2f &size) {
     _size = size;
     float smallSide = size.x > size.y ? size.y : size.x;
-    _offset = smallSide * _rounding;
+    _offset = smallSide * _roundness;
     update();
 }
 
@@ -37,10 +37,10 @@ void RectangleShape2::setIterationCount(std::size_t iters) {
     update();
 }
 
-void RectangleShape2::setRounding(float rounding) {
-    _rounding = rounding;
+void RectangleShape2::setRoundness(float roundness) {
+    _roundness = roundness;
     float smallSide = _size.x > _size.y ? _size.y : _size.x;
-    _offset = smallSide * rounding;
+    _offset = smallSide * roundness;
     update();
 }
 

@@ -17,7 +17,7 @@ void RaceScene::setup() {
     _path.setOrigin(_path.getSize() / 2.f);
     _path.setPosition(_size / 2.f);
 
-    _path.setRounding(0.5f);
+    _path.setRoundness(0.5f);
     _path.setIterationCount(50);
     _path.setFillColor(sf::Color::Transparent);
     _path.setOutlineColor(sf::Color::White);
