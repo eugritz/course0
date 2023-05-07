@@ -10,7 +10,6 @@ FragmentRectangleShape::FragmentRectangleShape(sf::Vector2f size, int fragX,
 
 
 const sf::Vector2f &FragmentRectangleShape::getSize() const {
-    sf::RectangleShape as;
     return _size;
 }
 
