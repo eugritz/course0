@@ -1,9 +1,13 @@
 #include "RectangleShape2.h"
 
+#include <cmath>
+#include <iostream>
+
 RectangleShape2::RectangleShape2() {
     _iters = 0;
     _itersX = 0;
     _itersY = 0;
+    _fractured = false;
     _roundness = 0.f;
     _step = 0.f;
     _offset = 0.f;
@@ -11,30 +15,22 @@ RectangleShape2::RectangleShape2() {
 }
 
 RectangleShape2::RectangleShape2(const sf::Vector2f &size, std::size_t iters,
-                                 float roundness) {
-    init(size, iters, roundness);
-    calculateIters(_iters, _iters);
-    update();
-}
-
-RectangleShape2::RectangleShape2(const sf::Vector2f &size, std::size_t iters,
-                                 std::size_t itersX, std::size_t itersY,
-                                 float roundness) {
-    sf::RectangleShape a;
-    init(size, iters, roundness);
-    calculateIters(itersX, itersY);
+                                 float roundness, bool fractured) {
+    init(size, iters, roundness, fractured);
     update();
 }
 
 void RectangleShape2::init(const sf::Vector2f &size, std::size_t iters,
-                           float roundness) {
+                           float roundness, bool fractured) {
     _size = size;
-    _iters = iters + 1;
+    _iters = iters;
+    _fractured = fractured;
     _roundness = roundness;
     _step = 1.f / (float)iters;
 
     float smallSide = _size.x > _size.y ? _size.y : _size.x;
     _offset = smallSide * roundness;
+    calculateIters();
 }
 
 const sf::Vector2f &RectangleShape2::getSize() const {
@@ -45,31 +41,15 @@ void RectangleShape2::setSize(const sf::Vector2f &size) {
     _size = size;
     float smallSide = size.x > size.y ? size.y : size.x;
     _offset = smallSide * _roundness;
-
-    _itersX = _iters * (1.f - 2.f * _offset / _size.x);
-    _itersY = _iters * (1.f - 2.f * _offset / _size.y);
-
+    calculateIters();
     update();
 }
 
-void RectangleShape2::setIterationCount(std::size_t iters) {
-    _iters = iters + 1;
+void RectangleShape2::setIterationCount(std::size_t iters, bool fractured) {
+    _iters = iters;
     _step = 1.f / (float)iters;
-
-    _itersX = _iters * (1.f - 2.f * _offset / _size.x);
-    _itersY = _iters * (1.f - 2.f * _offset / _size.y);
-
-    update();
-}
-
-void RectangleShape2::setIterationCount(std::size_t iters, std::size_t itersX,
-                       std::size_t itersY) {
-    _iters = iters + 1;
-    _step = 1.f / (float)iters;
-
-    _itersX = itersX * (1.f - 2.f * _offset / _size.x);
-    _itersY = itersY * (1.f - 2.f * _offset / _size.y);
-
+    _fractured = fractured;
+    calculateIters();
     update();
 }
 
@@ -81,7 +61,12 @@ void RectangleShape2::setRoundness(float roundness) {
 }
 
 std::size_t RectangleShape2::getPointCount() const {
-    return 4 * _iters + 2 * _itersX + 2 * _itersY;
+    std::size_t points = 4 * _iters + 2 * _itersX + 2 * _itersY;
+    if (points == 0)
+        return 0;
+    if (_fractured)
+        points -= 1;
+    return points;
 }
 
 sf::Vector2f RectangleShape2::getPoint(std::size_t index) const {
@@ -126,8 +111,8 @@ sf::Vector2f RectangleShape2::getPoint(std::size_t index) const {
         return bezier2(p0, p1, p2, t);
     } else if (index < 2 * _itersX + 2 * _itersY + 3 * _iters - 1) {
         // Left
-        std::size_t nth = index - 2 * _itersX - _itersY - 3 * _itersX;
-        return sf::Vector2f(0, _offset + (_iters - nth) * vert);
+        std::size_t nth = index - 2 * _itersX - _itersY - 3 * _iters;
+        return sf::Vector2f(0, _offset + (_itersY - nth) * vert);
     } else {
         // Top-left corner
         std::size_t nth = index - 2 * _itersX - 2 * _itersY - 3 * _iters + 1;
@@ -141,11 +126,28 @@ sf::Vector2f RectangleShape2::getPoint(std::size_t index) const {
     return sf::Vector2f();
 }
 
-void RectangleShape2::calculateIters(std::size_t x, std::size_t y) {
-    if (_size.x - 2.f * _offset == 0.f) _itersX = 0;
-    else _itersX = x * (1.f - 2.f * _offset / _size.x);
-    if (_size.y - 2.f * _offset == 0.f) _itersY = 0;
-    else _itersY = y * (1.f - 2.f * _offset / _size.y);
+void RectangleShape2::calculateIters() {
+    if (!_fractured) {
+        _itersX = _itersY = 1;
+        return;
+    }
+
+    float length = 0;
+    sf::Vector2f p0, p1(_offset, 0), p2(_offset, _offset);
+
+    sf::Vector2f prev;
+    for (size_t i = 0; i < _iters; i++) {
+        float t = (float)(i + 1) / (float)_iters;
+        sf::Vector2f next = RectangleShape2::bezier2(p0, p1, p2, t);
+        float dist = std::sqrt(std::pow((next.x - prev.x), 2) +
+                               std::pow((next.y - prev.y), 2));
+
+        length += dist;
+        prev = next;
+    }
+
+    _itersX = _iters * (_size.x - 2.f * _offset) / length;
+    _itersY = _iters * (_size.y - 2.f * _offset) / length;
 }
 
 sf::Vector2f RectangleShape2::bezier2(const sf::Vector2f &p0,

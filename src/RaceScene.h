@@ -4,6 +4,7 @@
 
 #include "RectangleShape2.h"
 #include "Scene.h"
+#include "TileMap.hpp"
 
 #define RACE_TRACK_SIZE_X 400.f
 #define RACE_TRACK_SIZE_Y 200.f
@@ -14,6 +15,7 @@ class RaceScene : public Scene {
     sf::Vector2f _size;
     bool _finishing;
 
+    TileMap _map;
     RectangleShape2 _track;
     sf::CircleShape _player;
     size_t _playerPosition;

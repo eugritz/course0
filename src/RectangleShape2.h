@@ -7,6 +7,7 @@ class RectangleShape2 : public sf::Shape {
     std::size_t _iters;
     std::size_t _itersX;
     std::size_t _itersY;
+    bool _fractured;
     float _roundness;
     float _offset;
     float _step;
@@ -14,17 +15,12 @@ class RectangleShape2 : public sf::Shape {
 public:
     RectangleShape2();
     RectangleShape2(const sf::Vector2f &size, std::size_t iters = 1,
-                    float roundness = 0.f);
-    RectangleShape2(const sf::Vector2f &size, std::size_t iters = 1,
-                    std::size_t itersX = 1, std::size_t itersY = 1,
-                    float roundness = 0.f);
+                    float roundness = 0.f, bool fractured = false);
 
     const sf::Vector2f &getSize() const;
     void setSize(const sf::Vector2f &size);
 
-    void setIterationCount(std::size_t iters);
-    void setIterationCount(std::size_t iters, std::size_t itersX,
-                           std::size_t itersY);
+    void setIterationCount(std::size_t iters, bool fractured = false);
     void setRoundness(float roundness);
 
     std::size_t getPointCount() const;
@@ -34,6 +30,7 @@ public:
                                 const sf::Vector2f &p2, float t);
 
 private:
-    void init(const sf::Vector2f &size, std::size_t iters, float roundness);
-    void calculateIters(std::size_t x, std::size_t y);
+    void init(const sf::Vector2f &size, std::size_t iters, float roundness,
+              bool fractured);
+    void calculateIters();
 };
