@@ -2,33 +2,37 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "RacePlayer.hpp"
 #include "RectangleShape2.h"
 #include "Scene.h"
 #include "TileMap.hpp"
 
+#define RACE_DELAY 10000
+#define RACE_PARTICIPANTS 3
+#define RACE_PIXEL_SCALE 2.5f
+#define RACE_TRACK_INDENT 40.f
+#define RACE_TRACK_ITERATIONS 50
+#define RACE_TRACK_ROUNDNESS 0.5f
 #define RACE_TRACK_SIZE_X 510.f
 #define RACE_TRACK_SIZE_Y 270.f
-#define RACE_TRACK_ROUNDNESS 0.5f
-#define RACE_TRACK_ITERATIONS 50
-#define RACE_PARTICIPANTS 3
-#define RACE_DELAY 0
 
 struct Player {
+    RacePlayer racer;
     size_t bound;
     float tick;
-    float speed;
 
-    Player() : bound(0), tick(0), speed(1.0f) {}
+    Player() : bound(0), tick(0.f) {
+        racer.setSpeed(1.f);
+    }
 };
 
 class RaceScene : public Scene {
     sf::Vector2f _size;
     bool _finishing;
 
-    TileMap _map;
+    TileMap _layers[3];
     RectangleShape2 _tracks[RACE_PARTICIPANTS];
-    Player _participants[RACE_PARTICIPANTS];
-    sf::CircleShape _circles[RACE_PARTICIPANTS];
+    Player _players[RACE_PARTICIPANTS];
 
     int _raceDelay;
 
@@ -41,8 +45,11 @@ public:
 
 private:
     void setup();
+    void setupTileMap(TileMap &tileMap, const std::string &tileset,
+                      const int *layer);
     void setupTrack(RectangleShape2 &track, const sf::Vector2f &size);
-    void setupPlayer(Player &participant, sf::CircleShape &circle);
+    void setupPlayer(Player &player);
+    void syncTrackVertices(RectangleShape2 &dest, const RectangleShape2 &source);
 
     void onKeyPressed(const sf::Event::KeyEvent &event);
     void onKeyReleased(const sf::Event::KeyEvent &event);
