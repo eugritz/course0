@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <string>
 #include <memory>
 #include <unordered_map>
@@ -31,10 +32,15 @@ class GlobalResourceManager {
 
 public:
     template<typename T>
-    static void load(const std::string &id, const std::shared_ptr<T> resource);
+    static SharedResource<T> load(const std::string &id,
+                                  const std::shared_ptr<T> resource);
 
     template<typename T>
     static SharedResource<T> ref(const std::string &id);
+
+    template<typename T>
+    static SharedResource<T> refOr(const std::string &id,
+            std::function<std::shared_ptr<T>()> callback);
 };
 
 template<typename T>
