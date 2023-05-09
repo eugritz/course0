@@ -19,7 +19,7 @@ MenuScene::MenuScene(sf::RenderTarget *target) : Scene(target) {
 }
 
 void MenuScene::setup(std::size_t cols, std::size_t rows) {
-    const std::string vertexSource = RESOURCE(border_vert);
+    const std::string vertexSource = BINARY_RESOURCE(border_vert);
     _borderShader.loadFromMemory(vertexSource, sf::Shader::Vertex);
     _borderShader.setUniform("off", _colorOffset);
 
@@ -69,7 +69,7 @@ void MenuScene::setup(const sf::Vector2f &size) {
 
 void MenuScene::setupBorders(const sf::Vector2f &size,
                              const sf::Vector2f &center) {
-    const std::string vertexSource = RESOURCE(border_vert);
+    const std::string vertexSource = BINARY_RESOURCE(border_vert);
     _borderShader.loadFromMemory(vertexSource, sf::Shader::Vertex);
     _borderShader.setUniform("off", _colorOffset);
 
