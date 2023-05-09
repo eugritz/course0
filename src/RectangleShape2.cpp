@@ -9,8 +9,9 @@ RectangleShape2::RectangleShape2() {
     _itersY = 0;
     _fractured = false;
     _roundness = 0.f;
-    _step = 0.f;
+    _length = 0.f;
     _offset = 0.f;
+    _step = 0.f;
     update();
 }
 
@@ -43,6 +44,10 @@ void RectangleShape2::setSize(const sf::Vector2f &size) {
     _offset = smallSide * _roundness;
     calculateIters();
     update();
+}
+
+std::size_t RectangleShape2::getIterationCount() const {
+    return _iters;
 }
 
 void RectangleShape2::setIterationCount(std::size_t iters, bool fractured) {
@@ -126,18 +131,36 @@ sf::Vector2f RectangleShape2::getPoint(std::size_t index) const {
     return sf::Vector2f();
 }
 
+float RectangleShape2::getCurveLength() const {
+    return _length;
+}
+
 void RectangleShape2::calculateIters() {
     if (!_fractured) {
         _itersX = _itersY = 1;
         return;
     }
 
-    float length = 0;
     sf::Vector2f p0, p1(_offset, 0), p2(_offset, _offset);
+    _length = bezier2Length(_iters, p0, p1, p2);
 
+    _itersX = _iters * (_size.x - 2.f * _offset) / _length;
+    _itersY = _iters * (_size.y - 2.f * _offset) / _length;
+}
+
+sf::Vector2f RectangleShape2::bezier2(const sf::Vector2f &p0,
+                                      const sf::Vector2f &p1,
+                                      const sf::Vector2f &p2, float t) {
+    return (1 - t) * (1 - t) * p0 + 2 * t * (1 - t) * p1 + t * t * p2;
+}
+
+float RectangleShape2::bezier2Length(std::size_t iters, const sf::Vector2f &p0,
+                                     const sf::Vector2f &p1,
+                                     const sf::Vector2f &p2) {
+    float length = 0;
     sf::Vector2f prev;
-    for (size_t i = 0; i < _iters; i++) {
-        float t = (float)(i + 1) / (float)_iters;
+    for (size_t i = 0; i < iters; i++) {
+        float t = (float)(i + 1) / (float)iters;
         sf::Vector2f next = RectangleShape2::bezier2(p0, p1, p2, t);
         float dist = std::sqrt(std::pow((next.x - prev.x), 2) +
                                std::pow((next.y - prev.y), 2));
@@ -145,13 +168,5 @@ void RectangleShape2::calculateIters() {
         length += dist;
         prev = next;
     }
-
-    _itersX = _iters * (_size.x - 2.f * _offset) / length;
-    _itersY = _iters * (_size.y - 2.f * _offset) / length;
-}
-
-sf::Vector2f RectangleShape2::bezier2(const sf::Vector2f &p0,
-                                      const sf::Vector2f &p1,
-                                      const sf::Vector2f &p2, float t) {
-    return (1 - t) * (1 - t) * p0 + 2 * t * (1 - t) * p1 + t * t * p2;
+    return length;
 }
