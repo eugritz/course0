@@ -2,13 +2,28 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <memory>
+
 #include "AuthorMenu.h"
 #include "IntroScene.h"
 #include "MainMenu.h"
 #include "RaceScene.h"
+#include "Resources.hpp"
 #include "SynthesizerMenu.h"
 
 Course0 *Course0::_instance;
+
+Course0::Course0() {
+    std::shared_ptr<sf::Font> itemFont = std::make_shared<sf::Font>();
+    if (!itemFont->loadFromFile("FiraMono-Regular.ttf")) {
+        std::cerr << "ERROR: Couldn't load font \"FiraMono-Regular.ttf\"\n";
+        return;
+    }
+    itemFont->setSmooth(true);
+    
+    GlobalResourceManager::load("MENU_ITEM_FONT", itemFont);
+    GlobalResourceManager::load("SYNTHESIZER_KEYBOARD_KEY_FONT", itemFont);
+}
 
 Course0 *Course0::getInstance() {
     if (_instance == nullptr)

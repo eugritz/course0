@@ -7,6 +7,7 @@
 
 #include "FragmentRectangleShape.h"
 #include "MenuContainer.h"
+#include "Resources.hpp"
 #include "Scene.h"
 
 #define MENU_BORDER_MARGIN 10.f
@@ -38,7 +39,7 @@ public:
 
 protected:
     MenuContainer _menu;
-    sf::Font _itemFont;
+    SharedResource<sf::Font> _itemFont;
     bool _loadingFinished;
 
     void setup(std::size_t cols, std::size_t rows);

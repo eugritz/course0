@@ -27,6 +27,10 @@ class Course0 {
 
     std::queue<GameEvent> _eventBus;
 
+    Course0();
+    Course0(const Course0 &);
+    Course0 &operator=(Course0 &);
+
 public:
     static Course0 *getInstance();
 

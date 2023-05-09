@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "BlackPianoKey.h"
+#include "Resources.hpp"
 #include "WhitePianoKey.h"
 
 class SynthesizerKeyboard : public sf::Drawable, public sf::Transformable {
@@ -13,7 +14,7 @@ class SynthesizerKeyboard : public sf::Drawable, public sf::Transformable {
     std::map<size_t, std::shared_ptr<PianoKey>> _mappings;
     size_t _last;
 
-    sf::Font _keyFont;
+    SharedResource<sf::Font> _keyFont;
 
 public:
     SynthesizerKeyboard();

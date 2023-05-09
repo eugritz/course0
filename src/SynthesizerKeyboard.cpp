@@ -1,11 +1,7 @@
 #include "SynthesizerKeyboard.h"
 
 SynthesizerKeyboard::SynthesizerKeyboard() {
-    if (!_keyFont.loadFromFile("FiraMono-Regular.ttf")) {
-        std::cerr << "ERROR: Couldn't load font \"FiraMono-Regular.ttf\"\n";
-        return;
-    }
-    _keyFont.setSmooth(true);
+    _keyFont = GlobalResourceManager::ref<sf::Font>("SYNTHESIZER_KEYBOARD_KEY_FONT");
     _last = 0;
 
     setupKeys();
@@ -54,7 +50,7 @@ std::shared_ptr<PianoKey> SynthesizerKeyboard::operator[](size_t index) {
 }
 
 std::shared_ptr<PianoKey> SynthesizerKeyboard::addWhiteKey(const sf::String &note) {
-    auto key = std::make_shared<WhitePianoKey>(_keyFont, note);
+    auto key = std::make_shared<WhitePianoKey>(**_keyFont, note);
     key->setPosition(0, 0);
     _whiteKeys.push_back(key);
 
@@ -64,7 +60,7 @@ std::shared_ptr<PianoKey> SynthesizerKeyboard::addWhiteKey(const sf::String &not
 
 std::shared_ptr<PianoKey> SynthesizerKeyboard::addWhiteKey(
         const sf::String &note, std::shared_ptr<PianoKey> previous) {
-    auto key = std::make_shared<WhitePianoKey>(_keyFont, note);
+    auto key = std::make_shared<WhitePianoKey>(**_keyFont, note);
     key->setPosition(previous->getPosition().x + previous->getSize().x, 0);
     _whiteKeys.push_back(key);
 
@@ -74,7 +70,7 @@ std::shared_ptr<PianoKey> SynthesizerKeyboard::addWhiteKey(
 
 std::shared_ptr<PianoKey> SynthesizerKeyboard::addBlackKey(
         const sf::String &note, std::shared_ptr<PianoKey> previous) {
-    auto key = std::make_shared<BlackPianoKey>(_keyFont, note);
+    auto key = std::make_shared<BlackPianoKey>(**_keyFont, note);
     key->setOrigin(key->getSize().x / 2.f, 0);
     key->setPosition(previous->getPosition().x + previous->getSize().x, 0);
     _blackKeys.push_back(key);

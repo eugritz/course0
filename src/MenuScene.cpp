@@ -23,13 +23,8 @@ void MenuScene::setup(std::size_t cols, std::size_t rows) {
     _borderShader.loadFromMemory(vertexSource, sf::Shader::Vertex);
     _borderShader.setUniform("off", _colorOffset);
 
-    if (!_itemFont.loadFromFile("FiraMono-Regular.ttf")) {
-        std::cerr << "ERROR: Couldn't load font \"FiraMono-Regular.ttf\"\n";
-        return;
-    }
-    _itemFont.setSmooth(true);
-
-    float characterWidth = _itemFont.getGlyph('A',
+    _itemFont = GlobalResourceManager::ref<sf::Font>("MENU_ITEM_FONT");
+    float characterWidth = _itemFont->getGlyph('A',
             MENU_ITEM_FONT_SIZE, false, 0).bounds.width;
     float menuWidth = characterWidth * cols;
 
@@ -46,13 +41,8 @@ void MenuScene::setup(std::size_t cols, std::size_t rows) {
 }
 
 void MenuScene::setup(const sf::Vector2f &size) {
-    if (!_itemFont.loadFromFile("FiraMono-Regular.ttf")) {
-        std::cerr << "ERROR: Couldn't load font \"FiraMono-Regular.ttf\"\n";
-        return;
-    }
-    _itemFont.setSmooth(true);
-
-    float characterWidth = _itemFont.getGlyph('A',
+    _itemFont = GlobalResourceManager::ref<sf::Font>("MENU_ITEM_FONT");
+    float characterWidth = _itemFont->getGlyph('A',
             MENU_ITEM_FONT_SIZE, false, 0).bounds.width;
 
     sf::Vector2f center(_target->getSize().x / 2.f,
@@ -100,7 +90,7 @@ void MenuScene::setupBorders(const sf::Vector2f &size,
 
 bool MenuScene::setupMenu(float menuWidth, std::size_t rows,
                           const sf::Vector2f &center) {
-    _menu.create(rows, _itemFont, MENU_ITEM_FONT_SIZE);
+    _menu.create(rows, **_itemFont, MENU_ITEM_FONT_SIZE);
     _menu.setIndent(MENU_ITEM_INDENT);
     menuWidth = std::floor(menuWidth);
     if ((long)menuWidth % 2 != 0)
@@ -118,7 +108,7 @@ bool MenuScene::setupMenu(float menuWidth, std::size_t rows,
 
 bool MenuScene::setupMenuRaw(float menuWidth, float menuHeight,
                           const sf::Vector2f &center) {
-    _menu.create(_itemFont, MENU_ITEM_FONT_SIZE);
+    _menu.create(**_itemFont, MENU_ITEM_FONT_SIZE);
     _menu.setIndent(MENU_ITEM_INDENT);
     menuWidth = std::floor(menuWidth);
     if ((long)menuWidth % 2 != 0)
