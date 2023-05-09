@@ -46,6 +46,10 @@ void RectangleShape2::setSize(const sf::Vector2f &size) {
     update();
 }
 
+sf::Vector2u RectangleShape2::getAxesIterationCount() const {
+    return sf::Vector2u(_itersX, _itersY);
+}
+
 std::size_t RectangleShape2::getIterationCount() const {
     return _iters;
 }

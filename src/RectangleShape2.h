@@ -21,6 +21,7 @@ public:
     const sf::Vector2f &getSize() const;
     void setSize(const sf::Vector2f &size);
 
+    sf::Vector2u getAxesIterationCount() const;
     std::size_t getIterationCount() const;
     void setIterationCount(std::size_t iters, bool fractured = false);
     void setRoundness(float roundness);

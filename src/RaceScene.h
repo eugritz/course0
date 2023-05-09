@@ -48,7 +48,7 @@ private:
     void setupTileMap(TileMap &tileMap, const std::string &tileset,
                       const int *layer);
     void setupTrack(RectangleShape2 &track, const sf::Vector2f &size);
-    void setupPlayer(Player &player);
+    void setupPlayer(Player &player, RectangleShape2 &track);
     void syncTrackVertices(RectangleShape2 &dest, const RectangleShape2 &source);
 
     void onKeyPressed(const sf::Event::KeyEvent &event);

@@ -33,12 +33,19 @@ class RacePlayer : public sf::Drawable, public sf::Transformable {
 
 public:
     RacePlayer() {
-        _speed = 0.f;
+        init();
     }
 
     RacePlayer(PlayerType type) {
-        _speed = 0.f;
+        init();
         create(type);
+    }
+
+    void init() {
+        _animationFrame = 0;
+        _animationTick = 0;
+        _speed = 0.f;
+        _direction = LEFT;
     }
 
     void create(PlayerType type) {

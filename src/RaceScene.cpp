@@ -83,9 +83,9 @@ void RaceScene::setup() {
     _tracks[1].setOutlineColor(sf::Color(0, 0, 0, 0));
     _tracks[2].setOutlineColor(sf::Color(0, 0, 0, 10));
 
-    setupPlayer(_players[0]);
-    setupPlayer(_players[1]);
-    setupPlayer(_players[2]);
+    setupPlayer(_players[0], _tracks[0]);
+    setupPlayer(_players[1], _tracks[1]);
+    setupPlayer(_players[2], _tracks[2]);
 }
 
 void RaceScene::setupTileMap(TileMap &tileMap, const std::string &tileset,
@@ -114,9 +114,15 @@ void RaceScene::syncTrackVertices(RectangleShape2 &dest,
             dest.getCurveLength() / source.getCurveLength(), true);
 }
 
-void RaceScene::setupPlayer(Player &player) {
+void RaceScene::setupPlayer(Player &player, RectangleShape2 &track) {
     player.racer.create(BROWN);
     player.racer.setScale(RACE_PIXEL_SCALE, RACE_PIXEL_SCALE);
+
+    std::size_t iters = track.getIterationCount();
+    sf::Vector2u itersXY = track.getAxesIterationCount();
+    player.bound = itersXY.x + itersXY.y + 2 * iters;
+    player.racer.setDirection(RIGHT);
+    player.racer.setPosition(track.getPoint(player.bound));
 }
 
 bool RaceScene::handleEvent(const sf::Event &event) {
@@ -142,9 +148,9 @@ void RaceScene::update(sf::Time elapsed) {
         player.tick += player.racer.getSpeed();
 
         while (player.tick > 1.f) {
-            size_t previous = player.bound++;
+            size_t previous = player.bound--;
             if (player.bound > track.getPointCount()) {
-                player.bound = 0;
+                player.bound = track.getPointCount() - 1;
             }
 
             sf::Vector2f p0 = track.getPoint(previous);
