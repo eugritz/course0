@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <random>
 
 #include "Course0.h"
 #include "RacePlayer.hpp"
@@ -126,6 +127,7 @@ void RaceScene::setupPlayer(Player &player, RectangleShape2 &track) {
     std::size_t iters = track.getIterationCount();
     sf::Vector2u itersXY = track.getAxesIterationCount();
     player.bound = itersXY.x + itersXY.y + 2 * iters - RACE_PLAYER_OFFSET_START;
+    player.start = itersXY.x + itersXY.y + 2 * iters - RACE_PLAYER_OFFSET_START;
 
     player.racer.setDirection(RIGHT);
     player.racer.setPosition(track.getPoint(player.bound) +
@@ -184,6 +186,26 @@ void RaceScene::update(sf::Time elapsed) {
                 player.racer.setDirection(LEFT);
             }
 
+            float offX = track.getGlobalBounds().left;
+            float offY = track.getGlobalBounds().top;
+            float halfX = _size.x / 2.f;
+            float halfY = _size.y / 2.f;
+            bool passedHalfX = offX + p0.x <= halfX && halfX <= offX + p1.x ||
+                               offX + p1.x <= halfX && halfX <= offX + p0.x;
+            bool passedHalfY = offY + p0.y <= halfY && halfY <= offY + p1.y ||
+                               offY + p1.y <= halfY && halfY <= offY + p0.y;
+            bool passedQuarter = passedHalfX || passedHalfY;
+            if (passedQuarter) {
+                std::random_device rd;
+                std::mt19937 gen(rd());
+                std::uniform_real_distribution dist(0.6, 1.0);
+                player.racer.setSpeed(dist(gen));
+            }
+
+            bool finished = player.bound == player.start;
+            if (finished)
+                _finishers.push_back(i);
+
             player.tick -= 1.f;
         }
 
@@ -198,10 +220,21 @@ void RaceScene::draw(sf::RenderStates states) {
         _target->draw(_layers[i]);
     }
 
-    for (size_t i = 0; i < RACE_PLAYERS; i++) {
-        const RectangleShape2 &track = _tracks[i];
+    std::vector<size_t> indexes;
+    for (size_t i = 0; i < RACE_PLAYERS; i++)
+        indexes.push_back(i);
+    while (!indexes.empty()) {
+        std::vector<size_t>::iterator min = indexes.begin();
+        for (auto it = indexes.begin(); it != indexes.end(); it++) {
+            if (_players[*it].racer.getPosition().y <
+                _players[*min].racer.getPosition().y)
+                min = it;
+        }
+
+        const RectangleShape2 &track = _tracks[*min];
         _target->draw(track);
-        _target->draw(_players[i].racer, track.getTransform());
+        _target->draw(_players[*min].racer, track.getTransform());
+        indexes.erase(min);
     }
 
     if (!_timer.isFinished())

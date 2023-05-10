@@ -10,7 +10,7 @@
 
 #define RACE_DELAY 10000
 #define RACE_PLAYERS 3
-#define RACE_PLAYER_OFFSET_Y -10.f
+#define RACE_PLAYER_OFFSET_Y -15.f
 #define RACE_PLAYER_OFFSET_START -20
 #define RACE_PIXEL_SCALE 2.5f
 #define RACE_TIMER_DURATION 3
@@ -23,6 +23,7 @@
 struct Player {
     RacePlayer racer;
     size_t bound;
+    size_t start;
     float tick;
 
     Player() : bound(0), tick(0.f) {
@@ -38,6 +39,7 @@ class RaceScene : public Scene {
     RectangleShape2 _tracks[RACE_PLAYERS];
     Player _players[RACE_PLAYERS];
     Timer _timer;
+    std::vector<size_t> _finishers;
 
     int _raceDelay;
 

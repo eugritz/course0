@@ -1,10 +1,11 @@
 #pragma once
 
+#include <SFML/Graphics.hpp>
+
 #include <cmath>
 #include <iostream>
 
 #include "Resources.hpp"
-#include <SFML/Graphics.hpp>
 
 class Timer : public sf::Drawable, public sf::Transformable {
     SharedResource<sf::Font> _font;

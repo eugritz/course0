@@ -27,7 +27,6 @@ void WhitePianoKey::draw(sf::RenderTarget &target, sf::RenderStates states) cons
         vertices.append(sf::Vertex({ width, 0.0f }, sf::Color(255, 255, 255)));
         vertices.append(sf::Vertex({ width, height }, sf::Color(120, 120, 120)));
         vertices.append(sf::Vertex({ 0.0f, height }, sf::Color(140, 140, 140)));
-
     } else {
         std::random_device rd;
         std::mt19937 gen(rd());
