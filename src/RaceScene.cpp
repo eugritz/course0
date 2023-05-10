@@ -6,6 +6,7 @@
 
 #include "Course0.h"
 #include "RacePlayer.hpp"
+#include "Timer.hpp"
 
 // Backgrounds/Tilesets/TilesetFloor.png
 const int LAYER0[] = {
@@ -86,6 +87,10 @@ void RaceScene::setup() {
     setupPlayer(_players[0], _tracks[0]);
     setupPlayer(_players[1], _tracks[1]);
     setupPlayer(_players[2], _tracks[2]);
+
+    _timer.create(sf::seconds(RACE_TIMER_DURATION));
+    _timer.setOrigin(_timer.getSize() / 2.f);
+    _timer.setPosition(_size / 2.f);
 }
 
 void RaceScene::setupTileMap(TileMap &tileMap, const std::string &tileset,
@@ -120,9 +125,11 @@ void RaceScene::setupPlayer(Player &player, RectangleShape2 &track) {
 
     std::size_t iters = track.getIterationCount();
     sf::Vector2u itersXY = track.getAxesIterationCount();
-    player.bound = itersXY.x + itersXY.y + 2 * iters;
+    player.bound = itersXY.x + itersXY.y + 2 * iters - RACE_PLAYER_OFFSET_START;
+
     player.racer.setDirection(RIGHT);
-    player.racer.setPosition(track.getPoint(player.bound));
+    player.racer.setPosition(track.getPoint(player.bound) +
+                             sf::Vector2f(0, RACE_PLAYER_OFFSET_Y));
 }
 
 bool RaceScene::handleEvent(const sf::Event &event) {
@@ -135,6 +142,13 @@ bool RaceScene::handleEvent(const sf::Event &event) {
 }
 
 void RaceScene::update(sf::Time elapsed) {
+    if (!_timer.isFinished()) {
+        _timer.update(elapsed);
+        _timer.setOrigin(_timer.getSize() / 2.f);
+        _timer.setPosition(_size / 2.f);
+        return;
+    }
+
     if (_raceDelay < RACE_DELAY) {
         _raceDelay += elapsed.asMicroseconds();
         return;
@@ -142,7 +156,7 @@ void RaceScene::update(sf::Time elapsed) {
         _raceDelay -= RACE_DELAY;
     }
 
-    for (size_t i = 0; i < RACE_PARTICIPANTS; i++) {
+    for (size_t i = 0; i < RACE_PLAYERS; i++) {
         const RectangleShape2 &track = _tracks[i];
         Player &player = _players[i];
         player.tick += player.racer.getSpeed();
@@ -174,7 +188,8 @@ void RaceScene::update(sf::Time elapsed) {
         }
 
         player.racer.update(elapsed);
-        player.racer.setPosition(track.getPoint(player.bound));
+        player.racer.setPosition(track.getPoint(player.bound) +
+                                 sf::Vector2f(0, RACE_PLAYER_OFFSET_Y));
     }
 }
 
@@ -183,11 +198,14 @@ void RaceScene::draw(sf::RenderStates states) {
         _target->draw(_layers[i]);
     }
 
-    for (size_t i = 0; i < RACE_PARTICIPANTS; i++) {
+    for (size_t i = 0; i < RACE_PLAYERS; i++) {
         const RectangleShape2 &track = _tracks[i];
         _target->draw(track);
         _target->draw(_players[i].racer, track.getTransform());
     }
+
+    if (!_timer.isFinished())
+        _target->draw(_timer);
 }
 
 void RaceScene::onKeyPressed(const sf::Event::KeyEvent &event) {

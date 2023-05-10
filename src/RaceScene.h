@@ -6,10 +6,14 @@
 #include "RectangleShape2.h"
 #include "Scene.h"
 #include "TileMap.hpp"
+#include "Timer.hpp"
 
 #define RACE_DELAY 10000
-#define RACE_PARTICIPANTS 3
+#define RACE_PLAYERS 3
+#define RACE_PLAYER_OFFSET_Y -10.f
+#define RACE_PLAYER_OFFSET_START -20
 #define RACE_PIXEL_SCALE 2.5f
+#define RACE_TIMER_DURATION 3
 #define RACE_TRACK_INDENT 40.f
 #define RACE_TRACK_ITERATIONS 50
 #define RACE_TRACK_ROUNDNESS 0.5f
@@ -31,8 +35,9 @@ class RaceScene : public Scene {
     bool _finishing;
 
     TileMap _layers[3];
-    RectangleShape2 _tracks[RACE_PARTICIPANTS];
-    Player _players[RACE_PARTICIPANTS];
+    RectangleShape2 _tracks[RACE_PLAYERS];
+    Player _players[RACE_PLAYERS];
+    Timer _timer;
 
     int _raceDelay;
 
