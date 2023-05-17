@@ -7,6 +7,7 @@
 #include "AuthorMenu.h"
 #include "IntroScene.h"
 #include "MainMenu.h"
+#include "RacePlayerSelectScene.h"
 #include "RaceScene.h"
 #include "Resources.hpp"
 #include "SynthesizerMenu.h"
@@ -14,25 +15,26 @@
 Course0 *Course0::_instance;
 
 Course0::Course0() {
-    std::shared_ptr<sf::Font> itemFont = std::make_shared<sf::Font>();
-    std::shared_ptr<sf::Font> timerFont = std::make_shared<sf::Font>();
+    std::shared_ptr<sf::Font> monoFont = std::make_shared<sf::Font>();
+    std::shared_ptr<sf::Font> pixelFont = std::make_shared<sf::Font>();
 
-    if (!itemFont->loadFromFile("./Resources/FiraMono-Regular.ttf")) {
+    if (!monoFont->loadFromFile("./Resources/FiraMono-Regular.ttf")) {
         std::cerr << "ERROR: Couldn't load font \"FiraMono-Regular.ttf\"\n";
         return;
     }
-    itemFont->setSmooth(true);
+    monoFont->setSmooth(true);
 
-    if (!timerFont ->loadFromFile("./Resources/bionicle-training-card-font-2-4.ttf")) {
+    if (!pixelFont->loadFromFile("./Resources/bionicle-training-card-font-2-4.ttf")) {
         std::cerr << "ERROR: Couldn't load font \"bionicle-training-card-font-2-4.ttf\"\n";
         return;
     }
-    timerFont ->setSmooth(true);
+    pixelFont->setSmooth(false);
     
     // Fonts
-    GlobalResourceManager::load("MENU_ITEM_FONT", itemFont);
-    GlobalResourceManager::load("SYNTHESIZER_KEYBOARD_KEY_FONT", itemFont);
-    GlobalResourceManager::load("TIMER_FONT", timerFont);
+    GlobalResourceManager::load("MENU_ITEM_FONT", monoFont);
+    GlobalResourceManager::load("SYNTHESIZER_KEYBOARD_KEY_FONT", monoFont);
+    GlobalResourceManager::load("TIMER_FONT", pixelFont);
+    GlobalResourceManager::load("SCROLL_FONT", pixelFont);
 }
 
 Course0 *Course0::getInstance() {
@@ -98,7 +100,7 @@ void Course0::handleGameEvent(GameEvent event) {
             break;
         case GameEvent::RacePlayerSelectOpen:
             delete _scene;
-            _scene = new RaceScene(&_window, event.raceOpen);
+            _scene = new RacePlayerSelectScene(&_window);
             break;
         case GameEvent::RaceOpen:
             delete _scene;

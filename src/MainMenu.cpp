@@ -33,7 +33,7 @@ void MainMenu::setupMenu() {
     }});
     addItem({ L"3) Игра «Ипподром»", []() {
         GameEvent event;
-        event.type = GameEvent::RaceOpen;
+        event.type = GameEvent::RacePlayerSelectOpen;
         Course0::getInstance()->postEvent(event);
     }});
     addItem({ L"4) Сведения об авторе", []() {

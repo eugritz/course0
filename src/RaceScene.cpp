@@ -145,6 +145,21 @@ bool RaceScene::handleEvent(const sf::Event &event) {
     return true;
 }
 
+void RaceScene::onKeyPressed(const sf::Event::KeyEvent &event) {
+    if (event.code == sf::Keyboard::Escape) {
+        _finishing = true;
+    }
+}
+
+void RaceScene::onKeyReleased(const sf::Event::KeyEvent &event) {
+    if (_finishing) {
+        GameEvent event;
+        event.type = GameEvent::MenuOpen;
+        Course0::getInstance()->postEvent(event);
+        _finishing = false;
+    }
+}
+
 void RaceScene::update(sf::Time elapsed) {
     if (!_timer.isFinished()) {
         _timer.update(elapsed);
@@ -241,19 +256,4 @@ void RaceScene::draw(sf::RenderStates states) {
 
     if (!_timer.isFinished())
         _target->draw(_timer);
-}
-
-void RaceScene::onKeyPressed(const sf::Event::KeyEvent &event) {
-    if (event.code == sf::Keyboard::Escape) {
-        _finishing = true;
-    }
-}
-
-void RaceScene::onKeyReleased(const sf::Event::KeyEvent &event) {
-    if (_finishing) {
-        GameEvent event;
-        event.type = GameEvent::MenuOpen;
-        Course0::getInstance()->postEvent(event);
-        _finishing = false;
-    }
 }

@@ -137,7 +137,7 @@ private:
             []() {
                 auto texture = std::make_shared<sf::Texture>();
                 if (!texture->loadFromFile("./Resources/Actor/Animals/Horse/SpriteSheetBrown.png")) {
-                    std::cerr << "ERROR: Couldn't \"load SpriteSheetBrown.png\"\n";
+                    std::cerr << "ERROR: Couldn't load \"SpriteSheetBrown.png\"\n";
                 }
                 return texture;
             }
@@ -148,7 +148,7 @@ private:
             []() {
                 auto texture = std::make_shared<sf::Texture>();
                 if (!texture->loadFromFile("./Resources/Actor/Animals/Horse/SpriteSheetBrownSide.png")) {
-                    std::cerr << "ERROR: Couldn't \"load SpriteSheetBrownSide.png\"\n";
+                    std::cerr << "ERROR: Couldn't load \"SpriteSheetBrownSide.png\"\n";
                 }
                 return texture;
             }
@@ -161,18 +161,18 @@ private:
             []() {
                 auto texture = std::make_shared<sf::Texture>();
                 if (!texture->loadFromFile("./Resources/Actor/Animals/Horse/SpriteSheetBlack.png")) {
-                    std::cerr << "ERROR: Couldn't \"load SpriteSheetBlack.png\"\n";
+                    std::cerr << "ERROR: Couldn't load \"SpriteSheetBlack.png\"\n";
                 }
                 return texture;
             }
         );
 
         _sideTexture = GlobalResourceManager::refOr<sf::Texture>(
-            "RACE_PLAYER_SPRITE_BROWN_HORSE_SIDE",
+            "RACE_PLAYER_SPRITE_BLACK_HORSE_SIDE",
             []() {
                 auto texture = std::make_shared<sf::Texture>();
                 if (!texture->loadFromFile("./Resources/Actor/Animals/Horse/SpriteSheetBlackSide.png")) {
-                    std::cerr << "ERROR: Couldn't \"load SpriteSheetBlackSide.png\"\n";
+                    std::cerr << "ERROR: Couldn't load \"SpriteSheetBlackSide.png\"\n";
                 }
                 return texture;
             }
