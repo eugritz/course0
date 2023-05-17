@@ -60,7 +60,9 @@ const int LAYER2[] = {
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 };
 
-RaceScene::RaceScene(sf::RenderTarget *target) : Scene(target) {
+RaceScene::RaceScene(sf::RenderTarget *target,
+                     const GameEvent::RaceOpenEvent &event)
+        : Scene(target) {
     sf::Vector2u size = _target->getSize();
     _size = sf::Vector2f((float)size.x, (float)size.y);
     _finishing = false;
@@ -249,7 +251,9 @@ void RaceScene::onKeyPressed(const sf::Event::KeyEvent &event) {
 
 void RaceScene::onKeyReleased(const sf::Event::KeyEvent &event) {
     if (_finishing) {
-        Course0::getInstance()->postEvent(MENU_OPEN);
+        GameEvent event;
+        event.type = GameEvent::MenuOpen;
+        Course0::getInstance()->postEvent(event);
         _finishing = false;
     }
 }

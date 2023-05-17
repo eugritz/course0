@@ -81,30 +81,34 @@ void Course0::gameLoop() {
 }
 
 void Course0::handleGameEvent(GameEvent event) {
-    switch (event) {
-        case INTRO_OPEN:
+    switch (event.type) {
+        case GameEvent::IntroOpen:
             delete _scene;
             _scene = new IntroScene(&_window);
             _window.setFramerateLimit(0);
             break;
-        case MENU_OPEN:
+        case GameEvent::MenuOpen:
             delete _scene;
             _scene = new MainMenu(&_window);
             _window.setFramerateLimit(60);
             break;
-        case SYNTHESIZER_OPEN:
+        case GameEvent::SynthesizerOpen:
             delete _scene;
             _scene = new SynthesizerMenu(&_window);
             break;
-        case RACE_OPEN:
+        case GameEvent::RacePlayerSelectOpen:
             delete _scene;
-            _scene = new RaceScene(&_window);
+            _scene = new RaceScene(&_window, event.raceOpen);
             break;
-        case AUTHOR_OPEN:
+        case GameEvent::RaceOpen:
+            delete _scene;
+            _scene = new RaceScene(&_window, event.raceOpen);
+            break;
+        case GameEvent::AuthorOpen:
             delete _scene;
             _scene = new AuthorMenu(&_window);
             break;
-        case EXIT:
+        case GameEvent::Exit:
             _window.close();
             break;
     };

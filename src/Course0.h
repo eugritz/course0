@@ -4,19 +4,12 @@
 
 #include <queue>
 
+#include "GameEvent.hpp"
+
 #define WIDTH 600
 #define HEIGHT 500
 
 class Scene;
-
-enum GameEvent {
-    INTRO_OPEN,
-    MENU_OPEN,
-    SYNTHESIZER_OPEN,
-    RACE_OPEN,
-    AUTHOR_OPEN,
-    EXIT,
-};
 
 class Course0 {
     static Course0 *_instance;

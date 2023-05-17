@@ -22,19 +22,29 @@ void MainMenu::setupMenu() {
     _menu.fillItem(L"");
 
     addItem({ L"1) Заставка", []() {
-        Course0::getInstance()->postEvent(INTRO_OPEN);
+        GameEvent event;
+        event.type = GameEvent::IntroOpen;
+        Course0::getInstance()->postEvent(event);
     }});
     addItem({ L"2) Клавишный синтезатор", []() {
-        Course0::getInstance()->postEvent(SYNTHESIZER_OPEN);
+        GameEvent event;
+        event.type = GameEvent::SynthesizerOpen;
+        Course0::getInstance()->postEvent(event);
     }});
     addItem({ L"3) Игра «Ипподром»", []() {
-        Course0::getInstance()->postEvent(RACE_OPEN);
+        GameEvent event;
+        event.type = GameEvent::RaceOpen;
+        Course0::getInstance()->postEvent(event);
     }});
     addItem({ L"4) Сведения об авторе", []() {
-        Course0::getInstance()->postEvent(AUTHOR_OPEN);
+        GameEvent event;
+        event.type = GameEvent::AuthorOpen;
+        Course0::getInstance()->postEvent(event);
     }});
     addItem({ L"5) Выход", []() {
-        Course0::getInstance()->postEvent(EXIT);
+        GameEvent event;
+        event.type = GameEvent::Exit;
+        Course0::getInstance()->postEvent(event);
     }});
 
     _menu.fillItem(L"");

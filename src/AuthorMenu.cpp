@@ -57,7 +57,9 @@ bool AuthorMenu::handleEvent(const sf::Event &event) {
         }
     } else if (event.type == sf::Event::KeyReleased) {
         if (_finishing) {
-            Course0::getInstance()->postEvent(MENU_OPEN);
+            GameEvent event;
+            event.type = GameEvent::MenuOpen;
+            Course0::getInstance()->postEvent(event);
             _finishing = false;
         }
     }
