@@ -17,6 +17,9 @@ class Scroll : public sf::Drawable, public sf::Transformable {
     SharedResource<sf::Font> _font;
     sf::Text _name;
 
+    sf::Shader _outline;
+    sf::Color _outlineColor;
+
 public:
     Scroll() { }
     Scroll(const sf::String &name, PlayerType type) {
@@ -50,6 +53,20 @@ public:
         _player.create(type);
         _player.setOrigin(-(float)(scrollSize.x / 2.f),
                           -(float)(scrollSize.y / 2.f - indent));
+
+        const std::string fragmentSource = BINARY_RESOURCE(outline_frag);
+        _outline.loadFromMemory(fragmentSource, sf::Shader::Fragment);
+        _outline.setUniform("textureOffset",
+                            1.0f / _scrollTexture->getSize().x);
+        _outline.setUniform("texture", sf::Shader::CurrentTexture);
+    }
+
+    void setOutlineColor(const sf::Color &color) {
+        _outlineColor = color;
+        _outline.setUniform("color", sf::Glsl::Vec4(_outlineColor.r / 255.f,
+                                                    _outlineColor.g / 255.f,
+                                                    _outlineColor.b / 255.f,
+                                                    _outlineColor.a / 255.f));
     }
 
     void setName(const sf::String &name) {
@@ -73,7 +90,9 @@ public:
 private:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const {
         states.transform *= getTransform();
+        states.shader = &_outline;
         target.draw(_scroll, states);
+        states.shader = nullptr;
         target.draw(_player, states);
         states.transform.scale(1 / getScale().x, 1 / getScale().y);
         target.draw(_name, states);
