@@ -4,6 +4,7 @@
 
 #include "RacePlayer.hpp"
 #include "RectangleShape2.h"
+#include "Resources.hpp"
 #include "Scene.h"
 #include "TileMap.hpp"
 #include "Timer.hpp"
@@ -22,6 +23,8 @@
 
 struct Player {
     RacePlayer racer;
+    sf::Text nameLabel;
+    PlayerType type;
     size_t bound;
     size_t start;
     float tick;
@@ -34,6 +37,7 @@ struct Player {
 class RaceScene : public Scene {
     sf::Vector2f _size;
     bool _finishing;
+    SharedResource<sf::Font> _nameFont;
 
     TileMap _layers[3];
     RectangleShape2 _tracks[RACE_PLAYERS];
@@ -44,7 +48,7 @@ class RaceScene : public Scene {
     int _raceDelay;
 
 public:
-    RaceScene(sf::RenderTarget *target);
+    RaceScene(sf::RenderTarget *target, PlayerOption players[RACE_PLAYERS]);
 
     void update(sf::Time elapsed);
     void draw(sf::RenderStates states);
@@ -52,6 +56,7 @@ public:
 
 private:
     void setup();
+    void setupOptions(PlayerOption options[RACE_PLAYERS]);
     void setupTileMap(TileMap &tileMap, const std::string &tileset,
                       const int *layer);
     void setupTrack(RectangleShape2 &track, const sf::Vector2f &size);

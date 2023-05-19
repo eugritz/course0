@@ -18,8 +18,8 @@ const sf::String NAMES[] = { "John",    "Doe",      "Jack",    "Sparrow",
                              "Calvin",  "McMurray", "Uni",     "Cornelius" };
 
 class RacePlayerSelectionScene : public Scene {
-    bool _finishing;
     sf::Vector2f _size;
+    bool _finishing;
     std::mt19937 _gen;
 
     Scroll _scrolls[3];

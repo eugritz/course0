@@ -11,6 +11,6 @@ RaceOpenEvent::RaceOpenEvent(PlayerOption options[3]) {
 }
 
 bool RaceOpenEvent::run(Course0 *context) {
-    context->setScene(new RaceScene(&context->getWindow()));
+    context->setScene(new RaceScene(&context->getWindow(), _options));
     return true;
 }

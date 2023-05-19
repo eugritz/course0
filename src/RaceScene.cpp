@@ -61,11 +61,14 @@ const int LAYER2[] = {
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 };
 
-RaceScene::RaceScene(sf::RenderTarget *target) : Scene(target) {
+RaceScene::RaceScene(sf::RenderTarget *target, PlayerOption players[RACE_PLAYERS])
+        : Scene(target) {
     sf::Vector2u size = _target->getSize();
     _size = sf::Vector2f((float)size.x, (float)size.y);
     _finishing = false;
     _raceDelay = 0;
+
+    setupOptions(players);
     setup();
 }
 
@@ -95,6 +98,21 @@ void RaceScene::setup() {
     _timer.setPosition(_size / 2.f);
 }
 
+void RaceScene::setupOptions(PlayerOption options[RACE_PLAYERS]) {
+    _nameFont = GlobalResourceManager::ref<sf::Font>("SCROLL_FONT");
+
+    for (size_t i = 0; i < RACE_PLAYERS; i++) {
+        _players[i].type = options[i].type;
+        _players[i].nameLabel.setFont(**_nameFont);
+        _players[i].nameLabel.setString(options[i].name);
+        _players[i].nameLabel.setCharacterSize(10);
+        _players[i].nameLabel.setOutlineThickness(1.f);
+        _players[i].nameLabel.setOutlineColor(sf::Color::Black);
+        _players[i].nameLabel.setOrigin(
+                _players[i].nameLabel.getLocalBounds().getSize() / 2.f);
+    }
+}
+
 void RaceScene::setupTileMap(TileMap &tileMap, const std::string &tileset,
                              const int *layer) {
     tileMap.load(tileset, sf::Vector2u(16, 16), layer, 15, 13);
@@ -122,7 +140,7 @@ void RaceScene::syncTrackVertices(RectangleShape2 &dest,
 }
 
 void RaceScene::setupPlayer(Player &player, RectangleShape2 &track) {
-    player.racer.create(BROWN);
+    player.racer.create(player.type);
     player.racer.setScale(RACE_PIXEL_SCALE, RACE_PIXEL_SCALE);
 
     std::size_t iters = track.getIterationCount();
@@ -131,8 +149,11 @@ void RaceScene::setupPlayer(Player &player, RectangleShape2 &track) {
     player.start = itersXY.x + itersXY.y + 2 * iters - RACE_PLAYER_OFFSET_START;
 
     player.racer.setDirection(RIGHT);
-    player.racer.setPosition(track.getPoint(player.bound) +
-                             sf::Vector2f(0, RACE_PLAYER_OFFSET_Y));
+    sf::Vector2f playerPosition(track.getPoint(player.bound) +
+                                sf::Vector2f(0, RACE_PLAYER_OFFSET_Y));
+    player.racer.setPosition(playerPosition);
+    playerPosition.y -= player.racer.getSize().y;
+    player.nameLabel.setPosition(playerPosition);
 }
 
 bool RaceScene::handleEvent(const sf::Event &event) {
@@ -224,8 +245,11 @@ void RaceScene::update(sf::Time elapsed) {
         }
 
         player.racer.update(elapsed);
-        player.racer.setPosition(track.getPoint(player.bound) +
-                                 sf::Vector2f(0, RACE_PLAYER_OFFSET_Y));
+        sf::Vector2f playerPosition(track.getPoint(player.bound) +
+                                    sf::Vector2f(0, RACE_PLAYER_OFFSET_Y));
+        player.racer.setPosition(playerPosition);
+        playerPosition.y -= player.racer.getSize().y;
+        player.nameLabel.setPosition(playerPosition);
     }
 }
 
@@ -238,17 +262,18 @@ void RaceScene::draw(sf::RenderStates states) {
     for (size_t i = 0; i < RACE_PLAYERS; i++)
         indexes.push_back(i);
     while (!indexes.empty()) {
-        std::vector<size_t>::iterator max = indexes.begin();
+        std::vector<size_t>::iterator min = indexes.begin();
         for (auto it = indexes.begin(); it != indexes.end(); it++) {
-            float offY = _tracks[*it].getPosition().y;
-            if (offY + _players[*it].racer.getPosition().y > _size.y / 2.f)
-                max = it;
+            if (_players[*it].racer.getPosition().y <
+                _players[*min].racer.getPosition().y)
+                min = it;
         }
 
-        const RectangleShape2 &track = _tracks[*max];
+        const RectangleShape2 &track = _tracks[*min];
         _target->draw(track);
-        _target->draw(_players[*max].racer, track.getTransform());
-        indexes.erase(max);
+        _target->draw(_players[*min].racer, track.getTransform());
+        _target->draw(_players[*min].nameLabel, track.getTransform());
+        indexes.erase(min);
     }
 
     if (!_timer.isFinished())

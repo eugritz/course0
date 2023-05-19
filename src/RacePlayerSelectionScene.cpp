@@ -1,6 +1,5 @@
 #include "RacePlayerSelectionScene.h"
 
-#include <iostream>
 #include <random>
 
 #include "Course0.h"
@@ -12,10 +11,10 @@
 
 RacePlayerSelectionScene::RacePlayerSelectionScene(sf::RenderTarget *target)
         : Scene(target) {
-    _finishing = false;
     sf::Vector2u size = _target->getSize();
     _size.x = (float)size.x;
     _size.y = (float)size.y;
+    _finishing = false;
     _gen.seed(std::random_device()());
 
     std::uniform_real_distribution chanceDist(0.f, 1.f), degreesDist(-10.f, 10.f);

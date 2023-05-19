@@ -118,6 +118,10 @@ public:
         _direction = direction;
     }
 
+    sf::Vector2f getSize() const {
+        return _sprite.getLocalBounds().getSize();
+    }
+
     float getSpeed() const {
         return _speed;
     }
