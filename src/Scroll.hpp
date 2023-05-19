@@ -12,7 +12,6 @@ class Scroll : public sf::Drawable, public sf::Transformable {
 
     sf::Sprite _scroll;
     SharedResource<sf::Texture> _scrollTexture;
-
     RacePlayer _player;
     SharedResource<sf::Font> _font;
     sf::Text _name;
@@ -20,13 +19,16 @@ class Scroll : public sf::Drawable, public sf::Transformable {
     sf::Shader _outline;
     sf::Color _outlineColor;
 
+    const PlayerOption *_option;
+
 public:
     Scroll() { }
-    Scroll(const sf::String &name, PlayerType type) {
-        create(name, type);
+    Scroll(const PlayerOption *option) {
+        _option = option;
+        create(option);
     }
 
-    void create(const sf::String &name, PlayerType type) {
+    void create(const PlayerOption *option) {
         _scrollTexture = GlobalResourceManager::refOr<sf::Texture>(
             "SCROLL_TEXTURE",
             []() {
@@ -42,7 +44,7 @@ public:
 
         _font = GlobalResourceManager::ref<sf::Font>("SCROLL_FONT");
         _name.setFont(**_font);
-        _name.setString(name);
+        _name.setString(option->name);
         _name.setCharacterSize(8);
 
         float textCenterX = _name.getLocalBounds().getSize().x / 2.f;
@@ -50,7 +52,7 @@ public:
                         -(scrollSize.y / 2.f + indent));
         _name.setFillColor(sf::Color::Black);
 
-        _player.create(type);
+        _player.create(option->type);
         _player.setOrigin(-(float)(scrollSize.x / 2.f),
                           -(float)(scrollSize.y / 2.f - indent));
 
@@ -59,6 +61,13 @@ public:
         _outline.setUniform("textureOffset",
                             1.0f / _scrollTexture->getSize().x);
         _outline.setUniform("texture", sf::Shader::CurrentTexture);
+        setOutlineColor(sf::Color::Transparent);
+    }
+
+    sf::Vector2f getSize() const {
+        sf::Vector2f size = _scroll.getLocalBounds().getSize();
+        sf::Vector2f scale = getScale();
+        return sf::Vector2f(size.x * scale.x, size.y * scale.y);
     }
 
     void setOutlineColor(const sf::Color &color) {
@@ -68,10 +77,6 @@ public:
                                                     _outlineColor.b / 255.f,
                                                     _outlineColor.a / 255.f));
     }
-
-    void setName(const sf::String &name) {
-        _name.setString(name);
-    };
 
     void scale(float factorX, float factorY) {
         sf::Transformable::scale(factorX, factorY);
@@ -87,13 +92,20 @@ public:
                           -(float)(scrollSize.y / 2.f - indent));
     }
 
+    const PlayerOption *getOption() const {
+        return _option;
+    }
+
 private:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const {
         states.transform *= getTransform();
+
         states.shader = &_outline;
         target.draw(_scroll, states);
         states.shader = nullptr;
+
         target.draw(_player, states);
+
         states.transform.scale(1 / getScale().x, 1 / getScale().y);
         target.draw(_name, states);
     }

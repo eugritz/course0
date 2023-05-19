@@ -1,6 +1,11 @@
 #include "MainMenu.h"
 
 #include "Course0.h"
+#include "Event/AuthorMenuOpenEvent.h"
+#include "Event/ExitEvent.h"
+#include "Event/IntroOpenEvent.h"
+#include "Event/RacePlayerSelectionOpenEvent.h"
+#include "Event/SynthesizerMenuOpenEvent.h"
 
 MainMenu::MainMenu(sf::RenderTarget *target) : MenuScene(target) {
     _inputBlinking = false;
@@ -22,29 +27,19 @@ void MainMenu::setupMenu() {
     _menu.fillItem(L"");
 
     addItem({ L"1) Заставка", []() {
-        GameEvent event;
-        event.type = GameEvent::IntroOpen;
-        Course0::getInstance()->postEvent(event);
+        Course0::getInstance()->postEvent(std::make_shared<IntroOpenEvent>());
     }});
     addItem({ L"2) Клавишный синтезатор", []() {
-        GameEvent event;
-        event.type = GameEvent::SynthesizerOpen;
-        Course0::getInstance()->postEvent(event);
+        Course0::getInstance()->postEvent(std::make_shared<SynthesizerMenuOpenEvent>());
     }});
     addItem({ L"3) Игра «Ипподром»", []() {
-        GameEvent event;
-        event.type = GameEvent::RacePlayerSelectOpen;
-        Course0::getInstance()->postEvent(event);
+        Course0::getInstance()->postEvent(std::make_shared<RacePlayerSelectionOpenEvent>());
     }});
     addItem({ L"4) Сведения об авторе", []() {
-        GameEvent event;
-        event.type = GameEvent::AuthorOpen;
-        Course0::getInstance()->postEvent(event);
+        Course0::getInstance()->postEvent(std::make_shared<AuthorMenuOpenEvent>());
     }});
     addItem({ L"5) Выход", []() {
-        GameEvent event;
-        event.type = GameEvent::Exit;
-        Course0::getInstance()->postEvent(event);
+        Course0::getInstance()->postEvent(std::make_shared<ExitEvent>());
     }});
 
     _menu.fillItem(L"");

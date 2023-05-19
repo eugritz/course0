@@ -6,7 +6,7 @@
 
 #include "Waveform.h"
 
-class AtomicWaveSummator : public Waveform{
+class AtomicWaveSummator : public Waveform {
     std::vector<std::shared_ptr<Waveform>> _waves;
     std::mutex _mutex;
 

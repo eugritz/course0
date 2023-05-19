@@ -3,8 +3,9 @@
 #include <SFML/Graphics.hpp>
 
 #include <queue>
+#include <memory>
 
-#include "GameEvent.hpp"
+#include "GameEvent.h"
 
 #define WIDTH 600
 #define HEIGHT 500
@@ -18,7 +19,7 @@ class Course0 {
     sf::RenderWindow _window;
     sf::Clock _clock;
 
-    std::queue<GameEvent> _eventBus;
+    std::queue<std::shared_ptr<GameEvent>> _eventBus;
 
     Course0();
     Course0(const Course0 &);
@@ -29,7 +30,10 @@ public:
 
     void start();
     void gameLoop();
-    void handleGameEvent(GameEvent event);
+    void exit();
 
-    void postEvent(GameEvent event);
+    sf::RenderWindow &getWindow();
+
+    void setScene(Scene *scene);
+    void postEvent(std::shared_ptr<GameEvent> event);
 };

@@ -2,7 +2,6 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "GameEvent.hpp"
 #include "RacePlayer.hpp"
 #include "RectangleShape2.h"
 #include "Scene.h"
@@ -45,7 +44,7 @@ class RaceScene : public Scene {
     int _raceDelay;
 
 public:
-    RaceScene(sf::RenderTarget *target, const GameEvent::RaceOpenEvent &event);
+    RaceScene(sf::RenderTarget *target);
 
     void update(sf::Time elapsed);
     void draw(sf::RenderStates states);

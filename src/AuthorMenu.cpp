@@ -4,6 +4,7 @@
 #include <sstream>
 
 #include "Course0.h"
+#include "Event/AuthorMenuOpenEvent.h"
 
 const int width = AUTHOR_MENU_ITEM_LENGTH;
 const int height = AUTHOR_MENU_ITEM_COUNT;
@@ -57,9 +58,7 @@ bool AuthorMenu::handleEvent(const sf::Event &event) {
         }
     } else if (event.type == sf::Event::KeyReleased) {
         if (_finishing) {
-            GameEvent event;
-            event.type = GameEvent::MenuOpen;
-            Course0::getInstance()->postEvent(event);
+            Course0::getInstance()->postEvent(std::make_shared<AuthorMenuOpenEvent>());
             _finishing = false;
         }
     }

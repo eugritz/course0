@@ -20,6 +20,11 @@ enum PlayerType {
     BLACK
 };
 
+struct PlayerOption {
+    sf::String name;
+    PlayerType type;
+};
+
 class RacePlayer : public sf::Drawable, public sf::Transformable {
     sf::Sprite _sprite;
     SharedResource<sf::Texture> _baseTexture, _sideTexture;
@@ -49,14 +54,10 @@ public:
     }
 
     void create(PlayerType type) {
-        switch (type) {
-            case BROWN:
-                loadBrownTextures();
-                break;
-            case BLACK:
-                loadBlackTextures();
-                break;
-        }
+        if (type == BROWN)
+            loadBrownTextures();
+        else if (type == BLACK)
+            loadBlackTextures();
 
         _tileSize = sf::Vector2u(23, 16);
         _sprite.setTexture(**_sideTexture);

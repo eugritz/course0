@@ -3,14 +3,10 @@
 #include <SFML/Graphics.hpp>
 
 #include <memory>
+#include <iostream>
 
-#include "AuthorMenu.h"
 #include "IntroScene.h"
-#include "MainMenu.h"
-#include "RacePlayerSelectScene.h"
-#include "RaceScene.h"
 #include "Resources.hpp"
-#include "SynthesizerMenu.h"
 
 Course0 *Course0::_instance;
 
@@ -68,8 +64,8 @@ void Course0::gameLoop() {
         }
 
         while (!_eventBus.empty()) {
-            GameEvent gameEvent = _eventBus.front();
-            handleGameEvent(gameEvent);
+            std::shared_ptr<GameEvent> gameEvent = _eventBus.front();
+            gameEvent->run(this);
             _eventBus.pop();
         }
 
@@ -82,40 +78,19 @@ void Course0::gameLoop() {
     }
 }
 
-void Course0::handleGameEvent(GameEvent event) {
-    switch (event.type) {
-        case GameEvent::IntroOpen:
-            delete _scene;
-            _scene = new IntroScene(&_window);
-            _window.setFramerateLimit(0);
-            break;
-        case GameEvent::MenuOpen:
-            delete _scene;
-            _scene = new MainMenu(&_window);
-            _window.setFramerateLimit(60);
-            break;
-        case GameEvent::SynthesizerOpen:
-            delete _scene;
-            _scene = new SynthesizerMenu(&_window);
-            break;
-        case GameEvent::RacePlayerSelectOpen:
-            delete _scene;
-            _scene = new RacePlayerSelectScene(&_window);
-            break;
-        case GameEvent::RaceOpen:
-            delete _scene;
-            _scene = new RaceScene(&_window, event.raceOpen);
-            break;
-        case GameEvent::AuthorOpen:
-            delete _scene;
-            _scene = new AuthorMenu(&_window);
-            break;
-        case GameEvent::Exit:
-            _window.close();
-            break;
-    };
+void Course0::exit() {
+    _window.close();
 }
 
-void Course0::postEvent(GameEvent event) {
+sf::RenderWindow &Course0::getWindow() {
+    return _window;
+}
+
+void Course0::setScene(Scene *scene) {
+    delete _scene;
+    _scene = scene;
+}
+
+void Course0::postEvent(std::shared_ptr<GameEvent> event) {
     _eventBus.push(event);
 }

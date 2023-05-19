@@ -1,7 +1,8 @@
 #include "IntroScene.h"
 
-#include "Mandelbrot.h"
 #include "Course0.h"
+#include "Event/MenuOpenEvent.h"
+#include "Mandelbrot.h"
 #include "ZoomArea.h"
 
 IntroScene::IntroScene(sf::RenderTarget *target) : Scene(target) {
@@ -80,9 +81,7 @@ bool IntroScene::handleEvent(const sf::Event &event) {
         }
     } else if (event.type == sf::Event::KeyReleased) {
         if (_finishing) {
-            GameEvent event;
-            event.type = GameEvent::MenuOpen;
-            Course0::getInstance()->postEvent(event);
+            Course0::getInstance()->postEvent(std::make_shared<MenuOpenEvent>());
             _finishing = false;
         }
     }

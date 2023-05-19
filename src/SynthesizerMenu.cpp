@@ -6,6 +6,7 @@
 #include "AtomicSquareWave.hpp"
 #include "AtomicWaveSummator.hpp"
 #include "Course0.h"
+#include "Event/MenuOpenEvent.h"
 
 const int width = SYNTHESIZER_MENU_ITEM_LENGTH;
 const int height = SYNTHESIZER_MENU_ITEM_COUNT;
@@ -48,9 +49,7 @@ bool SynthesizerMenu::handleEvent(const sf::Event &event) {
         }
     } else if (event.type == sf::Event::KeyReleased) {
         if (_finishing) {
-            GameEvent event;
-            event.type = GameEvent::MenuOpen;
-            Course0::getInstance()->postEvent(event);
+            Course0::getInstance()->postEvent(std::make_shared<MenuOpenEvent>());
             _finishing = false;
         } else {
             onKeyReleased(event.key);
