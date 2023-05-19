@@ -8,13 +8,14 @@
 #include "Scene.h"
 #include "Scroll.hpp"
 
-const sf::String NAMES[] = { "John",    "Doe",    "Jack",    "Sparrow",
-                             "James",   "Bond",   "Tony",    "Stark",
-                             "Peter",   "Parker", "Jabba",   "the Hutt",
-                             "Lara",    "Croft",  "Scrudge", "McDuck",  
-                             "Rock",    "Lee",    "Sandy",   "Cheeks",
-                             "Leonard", "McCoy",  "Gregory", "House",
-                             "Dorian",  "Gray",   "Ellen",   "Ripley" };
+const sf::String NAMES[] = { "John",    "Doe",      "Jack",    "Sparrow",
+                             "James",   "Bond",     "Tony",    "Stark",
+                             "Peter",   "Parker",   "Jabba",   "the Hutt",
+                             "Lara",    "Croft",    "Scrudge", "McDuck",  
+                             "Rock",    "Lee",      "Sandy",   "Cheeks",
+                             "Leonard", "McCoy",    "Gregory", "House",
+                             "Dorian",  "Gray",     "Ellen",   "Ripley",
+                             "Calvin",  "McMurray", "Uni",     "Cornelius" };
 
 class RacePlayerSelectionScene : public Scene {
     bool _finishing;

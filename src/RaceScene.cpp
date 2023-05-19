@@ -238,17 +238,17 @@ void RaceScene::draw(sf::RenderStates states) {
     for (size_t i = 0; i < RACE_PLAYERS; i++)
         indexes.push_back(i);
     while (!indexes.empty()) {
-        std::vector<size_t>::iterator min = indexes.begin();
+        std::vector<size_t>::iterator max = indexes.begin();
         for (auto it = indexes.begin(); it != indexes.end(); it++) {
-            if (_players[*it].racer.getPosition().y <
-                _players[*min].racer.getPosition().y)
-                min = it;
+            float offY = _tracks[*it].getPosition().y;
+            if (offY + _players[*it].racer.getPosition().y > _size.y / 2.f)
+                max = it;
         }
 
-        const RectangleShape2 &track = _tracks[*min];
+        const RectangleShape2 &track = _tracks[*max];
         _target->draw(track);
-        _target->draw(_players[*min].racer, track.getTransform());
-        indexes.erase(min);
+        _target->draw(_players[*max].racer, track.getTransform());
+        indexes.erase(max);
     }
 
     if (!_timer.isFinished())

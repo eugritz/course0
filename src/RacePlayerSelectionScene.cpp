@@ -33,6 +33,7 @@ RacePlayerSelectionScene::RacePlayerSelectionScene(sf::RenderTarget *target)
                                 _size.y / 2.f);
         _scrolls[i].scale(RACE_PIXEL_SCALE, RACE_PIXEL_SCALE);
         _scrolls[i].rotate(degreesDist(_gen));
+        _scrolls[i].setOutlineColor(sf::Color::Black);
     }
 
     _prevSelectedPlayer = _selectedPlayer = 0;
@@ -111,7 +112,7 @@ void RacePlayerSelectionScene::moveSelection(int diff) {
         }
     }
 
-    _scrolls[_prevSelectedPlayer].setOutlineColor(sf::Color::Transparent);
+    _scrolls[_prevSelectedPlayer].setOutlineColor(sf::Color::Black);
     _scrolls[_selectedPlayer].setOutlineColor(sf::Color(255, 255, 100));
     _prevSelectedPlayer = _selectedPlayer;
 }

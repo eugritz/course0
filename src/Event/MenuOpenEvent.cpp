@@ -5,5 +5,6 @@
 
 bool MenuOpenEvent::run(Course0 *context) {
     context->setScene(new MainMenu(&context->getWindow()));
+    context->getWindow().setFramerateLimit(60);
     return true;
 }

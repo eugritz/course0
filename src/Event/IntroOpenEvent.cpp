@@ -5,5 +5,6 @@
 
 bool IntroOpenEvent::run(Course0 *context) {
     context->setScene(new IntroScene(&context->getWindow()));
+    context->getWindow().setFramerateLimit(0);
     return true;
 }
