@@ -43,7 +43,10 @@ class RaceScene : public Scene {
     RectangleShape2 _tracks[RACE_PLAYERS];
     Player _players[RACE_PLAYERS];
     Timer _timer;
+
+    sf::Text _finishNameLabel, _finishLabel;
     std::vector<size_t> _finishers;
+    bool _hasWinner;
 
     int _raceDelay;
 
@@ -65,4 +68,6 @@ private:
 
     void onKeyPressed(const sf::Event::KeyEvent &event);
     void onKeyReleased(const sf::Event::KeyEvent &event);
+
+    void updatePlayerPosition(Player &player, const RectangleShape2 &track);
 };

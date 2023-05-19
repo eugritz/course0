@@ -66,6 +66,7 @@ RaceScene::RaceScene(sf::RenderTarget *target, PlayerOption players[RACE_PLAYERS
     sf::Vector2u size = _target->getSize();
     _size = sf::Vector2f((float)size.x, (float)size.y);
     _finishing = false;
+    _hasWinner = false;
     _raceDelay = 0;
 
     setupOptions(players);
@@ -96,6 +97,16 @@ void RaceScene::setup() {
     _timer.create(sf::seconds(RACE_TIMER_DURATION));
     _timer.setOrigin(_timer.getSize() / 2.f);
     _timer.setPosition(_size / 2.f);
+
+    auto finishFont = GlobalResourceManager::ref<sf::Font>("TIMER_FONT");
+    _finishNameLabel.setFont(**finishFont);
+    _finishNameLabel.setString("Finish!");
+    _finishNameLabel.setCharacterSize(64);
+
+    _finishNameLabel.setFillColor(sf::Color::Red);
+    _finishNameLabel.setOutlineThickness(5.f);
+    _finishNameLabel.setOutlineColor(sf::Color::Black);
+    _finishLabel = _finishNameLabel;
 }
 
 void RaceScene::setupOptions(PlayerOption options[RACE_PLAYERS]) {
@@ -149,11 +160,7 @@ void RaceScene::setupPlayer(Player &player, RectangleShape2 &track) {
     player.start = itersXY.x + itersXY.y + 2 * iters - RACE_PLAYER_OFFSET_START;
 
     player.racer.setDirection(RIGHT);
-    sf::Vector2f playerPosition(track.getPoint(player.bound) +
-                                sf::Vector2f(0, RACE_PLAYER_OFFSET_Y));
-    player.racer.setPosition(playerPosition);
-    playerPosition.y -= player.racer.getSize().y;
-    player.nameLabel.setPosition(playerPosition);
+    updatePlayerPosition(player, track);
 }
 
 bool RaceScene::handleEvent(const sf::Event &event) {
@@ -191,6 +198,19 @@ void RaceScene::update(sf::Time elapsed) {
         return;
     } else {
         _raceDelay -= RACE_DELAY;
+    }
+
+    if (!_hasWinner && _finishers.size() > 0) {
+        _finishNameLabel.setString(_players[_finishers[0]].nameLabel.getString());
+        _finishNameLabel.setOrigin(_finishNameLabel.getLocalBounds().getSize() / 2.f);
+        _finishNameLabel.setPosition(_size / 2.f);
+
+        _finishLabel.setString("has won");
+        _finishLabel.setOrigin(_finishLabel.getLocalBounds().getSize() / 2.f);
+        float nameLabelHeight = _finishNameLabel.getLocalBounds().getSize().y;
+        _finishLabel.setPosition(_size / 2.f + sf::Vector2f(0, nameLabelHeight));
+
+        _hasWinner = true;
     }
 
     for (size_t i = 0; i < RACE_PLAYERS; i++) {
@@ -245,11 +265,7 @@ void RaceScene::update(sf::Time elapsed) {
         }
 
         player.racer.update(elapsed);
-        sf::Vector2f playerPosition(track.getPoint(player.bound) +
-                                    sf::Vector2f(0, RACE_PLAYER_OFFSET_Y));
-        player.racer.setPosition(playerPosition);
-        playerPosition.y -= player.racer.getSize().y;
-        player.nameLabel.setPosition(playerPosition);
+        updatePlayerPosition(player, track);
     }
 }
 
@@ -278,4 +294,16 @@ void RaceScene::draw(sf::RenderStates states) {
 
     if (!_timer.isFinished())
         _target->draw(_timer);
+    if (_hasWinner && _finishers.size() > 0) {
+        _target->draw(_finishNameLabel);
+        _target->draw(_finishLabel);
+    }
+}
+
+void RaceScene::updatePlayerPosition(Player &player, const RectangleShape2 &track) {
+    sf::Vector2f playerPosition(track.getPoint(player.bound) +
+            sf::Vector2f(0, RACE_PLAYER_OFFSET_Y));
+    player.racer.setPosition(playerPosition);
+    playerPosition.y -= player.racer.getSize().y;
+    player.nameLabel.setPosition(playerPosition);
 }
