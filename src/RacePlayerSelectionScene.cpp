@@ -67,7 +67,8 @@ void RacePlayerSelectionScene::onKeyPressed(const sf::Event::KeyEvent &event) {
     if (event.code == sf::Keyboard::Escape) {
         _finishing = true;
     } else if (event.code == sf::Keyboard::Enter) {
-        Course0::getInstance()->postEvent(std::make_shared<RaceOpenEvent>(_players));
+        Course0::getInstance()->postEvent(
+                std::make_shared<RaceOpenEvent>( _players, _selectedPlayer));
     } else if (event.code == sf::Keyboard::Left) {
         moveSelection(-1);
     } else if (event.code == sf::Keyboard::Right) {

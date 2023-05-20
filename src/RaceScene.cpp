@@ -61,11 +61,13 @@ const int LAYER2[] = {
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 };
 
-RaceScene::RaceScene(sf::RenderTarget *target, PlayerOption players[RACE_PLAYERS])
+RaceScene::RaceScene(sf::RenderTarget *target,
+                     PlayerOption players[RACE_PLAYERS], size_t selected)
         : Scene(target) {
     sf::Vector2u size = _target->getSize();
     _size = sf::Vector2f((float)size.x, (float)size.y);
     _finishing = false;
+    _selected = selected;
     _hasWinner = false;
     _raceDelay = 0;
 
@@ -117,10 +119,10 @@ void RaceScene::setupOptions(PlayerOption options[RACE_PLAYERS]) {
         _players[i].nameLabel.setFont(**_nameFont);
         _players[i].nameLabel.setString(options[i].name);
         _players[i].nameLabel.setCharacterSize(10);
-        _players[i].nameLabel.setOutlineThickness(1.f);
-        _players[i].nameLabel.setOutlineColor(sf::Color::Black);
         _players[i].nameLabel.setOrigin(
                 _players[i].nameLabel.getLocalBounds().getSize() / 2.f);
+        _players[i].nameLabel.setOutlineThickness(1.f);
+        _players[i].nameLabel.setOutlineColor(sf::Color::Black);
     }
 }
 
@@ -201,15 +203,7 @@ void RaceScene::update(sf::Time elapsed) {
     }
 
     if (!_hasWinner && _finishers.size() > 0) {
-        _finishNameLabel.setString(_players[_finishers[0]].nameLabel.getString());
-        _finishNameLabel.setOrigin(_finishNameLabel.getLocalBounds().getSize() / 2.f);
-        _finishNameLabel.setPosition(_size / 2.f);
-
-        _finishLabel.setString("has won");
-        _finishLabel.setOrigin(_finishLabel.getLocalBounds().getSize() / 2.f);
-        float nameLabelHeight = _finishNameLabel.getLocalBounds().getSize().y;
-        _finishLabel.setPosition(_size / 2.f + sf::Vector2f(0, nameLabelHeight));
-
+        onFinishPassed();
         _hasWinner = true;
     }
 
@@ -294,10 +288,25 @@ void RaceScene::draw(sf::RenderStates states) {
 
     if (!_timer.isFinished())
         _target->draw(_timer);
-    if (_hasWinner && _finishers.size() > 0) {
+    if (_hasWinner) {
         _target->draw(_finishNameLabel);
         _target->draw(_finishLabel);
     }
+}
+
+void RaceScene::onFinishPassed() {
+    _finishNameLabel.setString(_players[_finishers[0]].nameLabel.getString());
+    _finishNameLabel.setOrigin(_finishNameLabel.getLocalBounds().getSize() / 2.f);
+    _finishNameLabel.setPosition(_size / 2.f);
+
+    if (_finishers[0] == _selected) {
+        _finishLabel.setString(")you won)");
+    } else {
+        _finishLabel.setString("has won");
+    }
+    _finishLabel.setOrigin(_finishLabel.getLocalBounds().getSize() / 2.f);
+    float nameLabelHeight = _finishNameLabel.getLocalBounds().getSize().y;
+    _finishLabel.setPosition(_size / 2.f + sf::Vector2f(0, nameLabelHeight));
 }
 
 void RaceScene::updatePlayerPosition(Player &player, const RectangleShape2 &track) {

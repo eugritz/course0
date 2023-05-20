@@ -37,6 +37,7 @@ struct Player {
 class RaceScene : public Scene {
     sf::Vector2f _size;
     bool _finishing;
+    size_t _selected;
     SharedResource<sf::Font> _nameFont;
 
     TileMap _layers[3];
@@ -51,7 +52,8 @@ class RaceScene : public Scene {
     int _raceDelay;
 
 public:
-    RaceScene(sf::RenderTarget *target, PlayerOption players[RACE_PLAYERS]);
+    RaceScene(sf::RenderTarget *target, PlayerOption players[RACE_PLAYERS],
+              size_t selected);
 
     void update(sf::Time elapsed);
     void draw(sf::RenderStates states);
@@ -68,6 +70,7 @@ private:
 
     void onKeyPressed(const sf::Event::KeyEvent &event);
     void onKeyReleased(const sf::Event::KeyEvent &event);
+    void onFinishPassed();
 
     void updatePlayerPosition(Player &player, const RectangleShape2 &track);
 };
