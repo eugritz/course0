@@ -1,10 +1,9 @@
 #include "SynthesizerMenu.h"
 
-#include <iostream>
+#include <cmath>
 
-#include "AtomicEnvelopeADSR.hpp"
-#include "AtomicSquareWave.hpp"
-#include "AtomicWaveSummator.hpp"
+#include "AtomicEnvelopeADSR.h"
+#include "AtomicSquareWave.h"
 #include "Course0.h"
 #include "Event/MenuOpenEvent.h"
 

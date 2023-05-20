@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../GameEvent.h"
-#include "../RacePlayer.hpp"
+#include "../RacePlayer.h"
 
 class Course0;
 

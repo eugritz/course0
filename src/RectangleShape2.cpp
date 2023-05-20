@@ -1,7 +1,6 @@
 #include "RectangleShape2.h"
 
 #include <cmath>
-#include <iostream>
 
 RectangleShape2::RectangleShape2() {
     _iters = 0;

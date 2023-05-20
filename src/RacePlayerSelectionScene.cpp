@@ -5,9 +5,7 @@
 #include "Course0.h"
 #include "Event/MenuOpenEvent.h"
 #include "Event/RaceOpenEvent.h"
-#include "RacePlayer.hpp"
 #include "RaceScene.h"
-#include "Scroll.hpp"
 
 RacePlayerSelectionScene::RacePlayerSelectionScene(sf::RenderTarget *target)
         : Scene(target) {

@@ -6,7 +6,7 @@
 
 #include "Event/RaceOpenEvent.h"
 #include "Scene.h"
-#include "Scroll.hpp"
+#include "Scroll.h"
 
 const sf::String NAMES[] = { "John",    "Doe",      "Jack",    "Sparrow",
                              "James",   "Bond",     "Tony",    "Stark",

@@ -1,7 +1,6 @@
 #include "MenuScene.h"
 
 #include <cmath>
-#include <iostream>
 
 #include "FragmentRectangleShape.h"
 #include "Course0.h"

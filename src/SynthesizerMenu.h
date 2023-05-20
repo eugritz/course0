@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "AtomicWaveSummator.hpp"
+#include "AtomicWaveSummator.h"
 #include "MenuScene.h"
 #include "Synthesizer.h"
 #include "SynthesizerKeyboard.h"

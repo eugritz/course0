@@ -1,5 +1,4 @@
 #include "MenuContainer.h"
-#include <iostream>
 
 MenuContainer::MenuContainer() { }
 MenuContainer::MenuContainer(const sf::Font &font, unsigned characterSize) {

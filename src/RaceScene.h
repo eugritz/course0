@@ -2,12 +2,12 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "RacePlayer.hpp"
+#include "RacePlayer.h"
 #include "RectangleShape2.h"
 #include "Resources.hpp"
 #include "Scene.h"
-#include "TileMap.hpp"
-#include "Timer.hpp"
+#include "TileMap.h"
+#include "Timer.h"
 
 #define RACE_COLOR_SWITCH_DELAY 600000
 #define RACE_DELAY 10000

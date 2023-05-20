@@ -2,13 +2,10 @@
 
 #include <algorithm>
 #include <cmath>
-#include <iostream>
 #include <random>
 
 #include "Course0.h"
 #include "Event/MenuOpenEvent.h"
-#include "RacePlayer.hpp"
-#include "Timer.hpp"
 
 // Backgrounds/Tilesets/TilesetFloor.png
 const int LAYER0[] = {
