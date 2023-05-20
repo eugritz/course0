@@ -206,6 +206,15 @@ void RaceScene::update(sf::Time elapsed) {
         onFinishPassed();
         _hasWinner = true;
     }
+    if (_hasWinner) {
+        if (_colorSwitchDelay >= RACE_COLOR_SWITCH_DELAY) {
+            sf::Color tmp = _finishNameLabel.getFillColor();
+            _finishNameLabel.setFillColor(_finishLabel.getFillColor());
+            _finishLabel.setFillColor(tmp);
+            _colorSwitchDelay -= RACE_COLOR_SWITCH_DELAY;
+        }
+        _colorSwitchDelay += elapsed.asMicroseconds();
+    }
 
     for (size_t i = 0; i < RACE_PLAYERS; i++) {
         const RectangleShape2 &track = _tracks[i];
@@ -298,6 +307,7 @@ void RaceScene::onFinishPassed() {
     _finishNameLabel.setString(_players[_finishers[0]].nameLabel.getString());
     _finishNameLabel.setOrigin(_finishNameLabel.getLocalBounds().getSize() / 2.f);
     _finishNameLabel.setPosition(_size / 2.f);
+    _finishNameLabel.setFillColor(sf::Color::Red);
 
     if (_finishers[0] == _selected) {
         _finishLabel.setString(")you won)");
@@ -307,6 +317,7 @@ void RaceScene::onFinishPassed() {
     _finishLabel.setOrigin(_finishLabel.getLocalBounds().getSize() / 2.f);
     float nameLabelHeight = _finishNameLabel.getLocalBounds().getSize().y;
     _finishLabel.setPosition(_size / 2.f + sf::Vector2f(0, nameLabelHeight));
+    _finishNameLabel.setFillColor(sf::Color::White);
 }
 
 void RaceScene::updatePlayerPosition(Player &player, const RectangleShape2 &track) {

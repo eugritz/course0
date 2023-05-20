@@ -9,6 +9,7 @@
 #include "TileMap.hpp"
 #include "Timer.hpp"
 
+#define RACE_COLOR_SWITCH_DELAY 600000
 #define RACE_DELAY 10000
 #define RACE_PLAYERS 3
 #define RACE_PLAYER_OFFSET_Y -15.f
@@ -49,6 +50,7 @@ class RaceScene : public Scene {
     std::vector<size_t> _finishers;
     bool _hasWinner;
 
+    int _colorSwitchDelay;
     int _raceDelay;
 
 public:
