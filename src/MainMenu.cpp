@@ -15,6 +15,9 @@ MainMenu::MainMenu(sf::RenderTarget *target) : MenuScene(target) {
     _inputAlt = false;
     _inputFocusedItem = 0;
     _inputFocusedFound = false;
+    _inputArrows = false;
+    _prevCursorFocusedItem = 0;
+    _cursorFocusedItem = 0;
 
     const int width = MAIN_MENU_ITEM_LENGTH;
     const int height = MAIN_MENU_ITEM_COUNT;
@@ -99,6 +102,10 @@ bool MainMenu::handleEvent(const sf::Event &event) {
 
 void MainMenu::onTextEntered(const sf::Event::TextEvent &event) {
     sf::String input = _inputText->getString();
+
+    _cursorFocusedFound = false;
+    updateCursorFocus();
+
     if (event.unicode == 8) {
         _input = _input.substring(0, _input.getSize() - 1);
     } else if (event.unicode > 31 && event.unicode != 127) {
@@ -117,6 +124,26 @@ void MainMenu::onKeyPressed(const sf::Event::KeyEvent &event) {
     if (event.code == sf::Keyboard::Enter) {
         if (_inputFocusedFound)
             _items[_inputFocusedItem].callback();
+        else if (_cursorFocusedFound && _inputArrows)
+            _items[_cursorFocusedItem].callback();
+    } else if (event.code == sf::Keyboard::Up) {
+        if (!_inputArrows && !_inputFocusedFound) {
+            _inputArrows = true;
+            _prevCursorFocusedItem = _cursorFocusedItem = 0;
+            _cursorFocusedFound = true;
+        } else {
+            moveCursorFocus(-1);
+        }
+        updateCursorFocus();
+    } else if (event.code == sf::Keyboard::Down) {
+        if (!_inputArrows && !_inputFocusedFound) {
+            _inputArrows = true;
+            _prevCursorFocusedItem = _cursorFocusedItem = 0;
+            _cursorFocusedFound = true;
+        } else {
+            moveCursorFocus(+1);
+        }
+        updateCursorFocus();
     }
 
     if (event.control)
@@ -133,30 +160,64 @@ void MainMenu::onKeyReleased(const sf::Event::KeyEvent &event) {
 }
 
 void MainMenu::onMouseMoved(const sf::Event::MouseMoveEvent &event) {
-    bool focused = false;
+    if (_inputArrows)
+        _inputArrows = false;
     for (auto it = _items.begin(); it != _items.end(); it++) {
-        sf::Text *item = &_menu[it->itemIndex];
+        sf::Text *cur = &_menu[it->itemIndex];
         sf::Vector2f cursor(event.x, event.y);
         sf::FloatRect bounds = _menu.getTransform().transformRect(
-            item->getGlobalBounds()
+            cur->getGlobalBounds()
         );
 
-        if (!focused && bounds.contains(cursor)) {
-            item->setStyle(item->getStyle() | sf::Text::Bold);
+        if (bounds.contains(cursor)) {
             _cursorFocusedItem = it - _items.begin();
-            focused = true;
-        } else {
-            item->setStyle(item->getStyle() & ~sf::Text::Bold);
+            _cursorFocusedFound = true;
+            updateCursorFocus();
+            return;
         }
     }
-    _cursorFocusedFound = focused;
+    _cursorFocusedFound = false;
 }
 
 void MainMenu::onMouseButtonPressed(const sf::Event::MouseButtonEvent &event) {
     if (event.button == sf::Mouse::Left) {
-        if (_cursorFocusedFound)
+        if (_cursorFocusedFound && !_inputArrows)
             _items[_cursorFocusedItem].callback();
     }
+}
+
+void MainMenu::moveCursorFocus(int diff) {
+    const std::size_t itemCount = _items.size();
+    if (diff > 0) {
+        if (_cursorFocusedItem == itemCount - 1) {
+            _cursorFocusedItem = 0;
+        } else {
+            _cursorFocusedItem++;
+        }
+    } else if (diff < 0) {
+        if (_cursorFocusedItem == 0)
+            _cursorFocusedItem = itemCount - 1;
+        else
+            _cursorFocusedItem--;
+    }
+}
+
+void MainMenu::updateCursorFocus() {
+    sf::Text *cur = &_menu[_items[_cursorFocusedItem].itemIndex];
+    sf::Text *prev = &_menu[_items[_prevCursorFocusedItem].itemIndex];
+
+    if (!_cursorFocusedFound && _inputArrows) {
+        _inputArrows = false;
+        cur->setStyle(cur->getStyle() & ~sf::Text::Bold);
+        return;
+    }
+    if (!_cursorFocusedFound)
+        return;
+
+    cur->setStyle(cur->getStyle() | sf::Text::Bold);
+    if (_prevCursorFocusedItem != _cursorFocusedItem)
+        prev->setStyle(prev->getStyle() & ~sf::Text::Bold);
+    _prevCursorFocusedItem = _cursorFocusedItem;
 }
 
 void MainMenu::inputHint() {

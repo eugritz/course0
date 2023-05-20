@@ -23,6 +23,9 @@ class MainMenu : public MenuScene {
     bool _inputBlinkingSwitch;
     int _inputBlinkingTimeout;
 
+    bool _inputArrows;
+    std::size_t _prevCursorFocusedItem;
+
     bool _inputControl;
     bool _inputAlt;
 
@@ -47,6 +50,9 @@ private:
     void onKeyReleased(const sf::Event::KeyEvent &event);
     void onMouseMoved(const sf::Event::MouseMoveEvent &event);
     void onMouseButtonPressed(const sf::Event::MouseButtonEvent &event);
+
+    void moveCursorFocus(int diff);
+    void updateCursorFocus();
 
     void inputHint();
     void addItem(MenuItem item);
