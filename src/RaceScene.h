@@ -38,7 +38,6 @@ struct Player {
 class RaceScene : public Scene {
     sf::Vector2f _size;
     bool _finishing;
-    size_t _selected;
     SharedResource<sf::Font> _nameFont;
 
     TileMap _layers[3];
@@ -46,6 +45,7 @@ class RaceScene : public Scene {
     Player _players[RACE_PLAYERS];
     Timer _timer;
 
+    size_t _selected;
     sf::Text _finishNameLabel, _finishLabel;
     std::vector<size_t> _finishers;
     bool _hasWinner;

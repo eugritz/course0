@@ -66,6 +66,7 @@ RaceScene::RaceScene(sf::RenderTarget *target,
     _finishing = false;
     _selected = selected;
     _hasWinner = false;
+    _colorSwitchDelay = 0;
     _raceDelay = 0;
 
     setupOptions(players);
@@ -120,6 +121,8 @@ void RaceScene::setupOptions(PlayerOption options[RACE_PLAYERS]) {
                 _players[i].nameLabel.getLocalBounds().getSize() / 2.f);
         _players[i].nameLabel.setOutlineThickness(1.f);
         _players[i].nameLabel.setOutlineColor(sf::Color::Black);
+        if (i == _selected)
+            _players[i].nameLabel.setFillColor(sf::Color::Yellow);
     }
 }
 
@@ -258,7 +261,7 @@ void RaceScene::update(sf::Time elapsed) {
             }
 
             bool finished = player.bound == player.start;
-            if (finished)
+            if (finished && _finishers.size() < 4)
                 _finishers.push_back(i);
 
             player.tick -= 1.f;
